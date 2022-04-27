@@ -169,7 +169,8 @@
 
             .coupon_edit_loading label,
             .discount_edit_loading label,
-            .category_edit_loading label{
+            .category_edit_loading label,
+            .size_edit_loading label{
                 background-color: #f2f2f2;
                 height: 25px;
                 width: 100%;
@@ -180,7 +181,8 @@
             .discount_edit_loading input,
             .discount_edit_loading select,
             .category_edit_loading input,
-            .category_edit_loading select{
+            .category_edit_loading select,
+            .size_edit_loading input{
                 background-color: #f2f2f2;
                 height: 50px;
                 width: 100%;
@@ -191,7 +193,8 @@
 
             .coupon_edit_loading .modal-title,
             .discount_edit_loading .modal-title,
-            .category_edit_loading .modal-title{
+            .category_edit_loading .modal-title,
+            .size_edit_loading .modal-title{
                 background-color: #f2f2f2;
                 height: 30px;
                 width:calc(100% - 60px);
@@ -203,7 +206,9 @@
             .discount_edit_loading .close_discount_form,
             .discount_edit_loading .discount_update_btn,
             .category_edit_loading .close_category_form,
-            .category_edit_loading .category_update_btn {
+            .category_edit_loading .category_update_btn,
+            .size_edit_loading .close_size_form,
+            .size_edit_loading .size_update_btn {
                 background-color: #f2f2f2;
                 height: 30px;
                 width:50px;
@@ -390,6 +395,17 @@
                                 <ul class="sub-menu" aria-expanded="false">
                                     <li><a href="{{ route('coupon.index') }}">Coupon</a></li>
                                     <li><a href="{{ route('discount.index') }}">Discount</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                    <i class="bx bxl-product-hunt"></i>
+                                    <span key="t-maps">Product</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="{{ route('coupon.index') }}">Products</a></li>
+                                    <li><a href="{{ route('coupon.index') }}">Add Product</a></li>
+                                    <li><a href="{{ route('size.index') }}">Size</a></li>
                                 </ul>
                             </li>
 
@@ -727,7 +743,7 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-sm-12 text-center">
-                                <script>document.write(new Date().getFullYear())</script> © Lettuce.
+                                <span id="copyright_text"></span>
                             </div>
                         </div>
                     </div>
@@ -750,15 +766,13 @@
         <script src="{{ asset('dashboard_assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js') }}"></script>
         <script src="{{ asset('dashboard_assets/js/app.js') }}"></script>
 
+        @yield('footer_script')
 
-        @yield('faq_script')
-        @yield('user_script')
-        @yield('country_script')
-        @yield('city_script')
-        @yield('profile_script')
-        @yield('coupon_script')
-        @yield('discount_script')
-        @yield('category_script')
+        <script>
+
+            document.getElementById('copyright_text').innerHTML = new Date().getFullYear() + " © Lettuce."
+
+        </script>
 
     </body>
 

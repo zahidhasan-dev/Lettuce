@@ -165,7 +165,7 @@
     <!-- end modal -->
 @endsection
 
-@section('user_script')
+@section('footer_script')
         
     <script>
         $(document).ready(function(){
@@ -306,6 +306,12 @@
                             alert(data.error);
                         }
 
+                    },
+                    complete:function(){
+                        setTimeout(() => {
+                            alert("Please reload the page.");
+                            location.reload(true);
+                        }, 3000);
                     },
                     error:function(){
                         alert("Something went wrong!");

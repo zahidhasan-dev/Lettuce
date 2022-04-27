@@ -210,7 +210,7 @@
 @endsection
 
 
-@section('discount_script')
+@section('footer_script')
  
     <script>
         $(document).ready(function()
@@ -403,8 +403,6 @@
                     }
                 });
             });
-
-
 
 
             $(document).on('click','.edit_discount', function(event)

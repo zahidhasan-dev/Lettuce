@@ -262,7 +262,7 @@
 
 
 
-@section('faq_script')
+@section('footer_script')
     <script>
         $(document).ready(function()
         {   

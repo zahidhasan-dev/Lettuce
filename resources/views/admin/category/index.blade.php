@@ -82,7 +82,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
                             @endif
-                            <div class="info_form">
+                            <div class="info_form" id="add_category_form">
                                 <form action="{{ route('category.store') }}" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <div class="row">
@@ -90,7 +90,7 @@
                                             <div class="mt-4">
                                                 <label for="category-parent-input" class="form-label">Parent Category :</label>
                                                 <select class="form-control text-capitalize" id="category-parent-input" name="parent_category" >
-                                                    <option value=""selected disabled>-- Select Category --</option>
+                                                    <option value="" selected>-- Select Category --</option>
                                                     @forelse ($parent_categories as $parent_category)
                                                         <option value="{{ $parent_category->id }}">{{ $parent_category->category_name }}</option>
                                                         @if($parent_category->sub_category->count() > 0)
@@ -154,7 +154,7 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <input type="hidden" class="modal_category_id" name="category_id" value="">
-                            <label for="recipient-name" class="col-form-label">category Type:</label>
+                            <label for="recipient-name" class="col-form-label">Parent Category:</label>
                             <select class="form-control text-capitalize parent_category_input" id="category-parent-input" name="parent_category" >
                                 <option value=""selected>-- Select Category --</option>
                                 @forelse ($parent_categories as $parent_category)
@@ -170,7 +170,7 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="category-name" class="col-form-label">category Name:</label>
+                            <label for="category-name" class="col-form-label">Category Name:</label>
                             <input type="text" class="form-control category_name" name="category_name">
                         </div>
                         <div class="mb-3 category_modal_photo_input_wrapper">
@@ -215,7 +215,7 @@
 
  
 
-@section('category_script')
+@section('footer_script')
  
     <script>
 
@@ -227,6 +227,51 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+
+
+            $('#category_search').on('search', function(){
+                $('#categories_table_wrapper').load(' #categories_table_wrapper >* ');
+            });
+
+
+
+            function categoryQuery(category_query = '',url,page){
+
+                $.ajax({
+                    type:'GET',
+                    url:url,
+                    data:{category_query:category_query,page:page},
+                    success:function(data){
+                        $('#categories_table_wrapper').find('tbody').html(data);
+                    },
+                    error:function(){
+                        alert('Something went wrong');
+                    }
+                });
+
+            }
+
+            $(document).on('keyup','#category_search', function(){
+                let category_query = $(this).val().trim();
+                let url = "{{ route('category.search') }}";
+                let page = $('#hidden_page').val();
+                
+                categoryQuery(category_query,url,page);
+            });
+
+            $(document).on('click','.pagination a', function(event){
+
+                event.preventDefault();
+
+                let category_query = $('#category_search').val().trim();
+                let page = $(this).attr('href').split('page=')[1];
+                $('#hidden_page').val(page);
+                $('li').removeClass('active');
+                $(this).parent().addClass('active');
+                let url = "{{ route('category.search') }}";
+
+                categoryQuery(category_query,url,page);
+            })
 
 
 
@@ -376,6 +421,8 @@
                 $.each(['category_name'], function(key,elem){
                     $('#editCategory').find('.'+elem).css('border-color','#ced4da');
                 });
+
+                $('#editCategory').load(' #editCategory >* ');
             }
 
             
@@ -406,15 +453,9 @@
             });
 
 
+            $(document).on('submit','#category_edit_form', function(event){
 
-
-
-
-
-
-            $('#category_edit_form').on('submit',function(){
                 event.preventDefault();
-
                 resetEditForm();
                 $category_edit_form_validated = categoryEditFormValidation();
 
@@ -433,13 +474,16 @@
                         contentType: false,
                         success:function(data){
                             if(data.success){
-
                                 $('#editCategory').modal('hide');
                                 $('#categories_table_wrapper').load(' #categories_table_wrapper > *');
                                 $('.category_alert').text(data.success);
                                 $('.category_alert').delay(500).fadeIn(300);
                                 $('.category_alert').delay(1500).fadeOut(300);
-                                
+                                $('#editCategory').load(' #editCategory >* ');
+                            }
+                            else if(data.cat_exists){
+                                $('#editCategory').find('.category_name').after("<small class='text-danger'>"+data.cat_exists+"</small>");
+                                $('#editCategory').find('.category_name').css('border-color','red');
                             }
                             else if(data.extnsn_error){
                                 $('.category_modal_photo_input_wrapper').append("<small class='text-danger'>"+data.extnsn_error+"</small>");
@@ -455,10 +499,6 @@
             });
 
 
-
-
-
-
             $(document).on('click','.category_delete', function()
             {
 
@@ -472,24 +512,27 @@
                 let id = $(this).data('id');
                 let url = "{{ route('category.destroy', ':id') }}";
                     url = url.replace(':id', id);
+                let category_query = $('#category_search').val().trim();
 
                 $.ajax({
                     type:"DELETE",
                     url:url,
+                    data:{category_query:category_query},
                     success:function(data){
-                        
-                        if(data.success){
-
-                            $('#deleteCategory').modal('hide');
-                            $('#categories_table_wrapper').load(' #categories_table_wrapper > *');
-
-                            $('.category_alert').text(data.success);
-                            $('.category_alert').delay(500).fadeIn(300);
-                            $('.category_alert').delay(1500).fadeOut(300);
-
+                        if(data.error){
+                            alert(data.error);
                         }
                         else{
-                            alert(data.error);
+                            console.log(data)
+
+                            $('#deleteCategory').modal('hide');
+                            $('#add_category_form').load(' #add_category_form >* ');
+
+                            $('.category_alert').text("Category deleted.");
+                            $('.category_alert').delay(500).fadeIn(300);
+                            $('.category_alert').delay(1500).fadeOut(300);
+                            $('#categories_table_wrapper').find('tbody').html(data);
+
                         }
 
                     },
@@ -498,7 +541,7 @@
                     }
                 });
                     
-            })
+            });
 
         });
     </script>

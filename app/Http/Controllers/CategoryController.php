@@ -114,41 +114,50 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        $category->parent_category = $request->parent_category;
-        $category->category_name = $request->category_name;
-        $category->category_slug = Str::slug($request->category_name);
-        
 
-        if($request->hasFile('category_photo')){
+        $category_exists = Category::where('id','!=',$category->id)->where('category_name',$request->category_name)->exists();
 
-            $allowed_extension = ['jpg','jpeg','png','webp','svg'];
-            $uploaded_img = $request->file('category_photo');
-            $img_extension = $uploaded_img->getClientOriginalExtension();
+        if(!$category_exists){
+           
+            if($request->hasFile('category_photo')){
 
-            if(in_array($img_extension,$allowed_extension)){
+                $allowed_extension = ['jpg','jpeg','png','webp','svg'];
+                $uploaded_img = $request->file('category_photo');
+                $img_extension = $uploaded_img->getClientOriginalExtension();
 
-                if($category->category_photo != null){
-                    $delete_photo = base_path('public/uploads/category/'.$category->category_photo);
-                    unlink($delete_photo);
+                if(in_array($img_extension,$allowed_extension)){
+
+                    if($category->category_photo != null){
+                        $delete_photo = base_path('public/uploads/category/'.$category->category_photo);
+                        unlink($delete_photo);
+                    }
+
+                    $new_img_name = 'category'.'_'.$category->id.'_'.Carbon::now()->timestamp.'.'.$img_extension;
+                    $new_img_location = base_path('public/uploads/category/'.$new_img_name);
+
+                    Image::make($uploaded_img)->resize(100,100)->save($new_img_location);
+
+                    $category->category_photo = $new_img_name;
+
+                }
+                else{
+                    return response()->json(['extnsn_error'=>'Invalid file type.']);
                 }
 
-                $new_img_name = 'category'.'_'.$category->id.'_'.Carbon::now()->timestamp.'.'.$img_extension;
-                $new_img_location = base_path('public/uploads/category/'.$new_img_name);
-
-                Image::make($uploaded_img)->resize(100,100)->save($new_img_location);
-
-                $category->category_photo = $new_img_name;
-
             }
-            else{
-                return response()->json(['extnsn_error'=>'Invalid file type.']);
-            }
+
+            $category->parent_category = $request->parent_category;
+            $category->category_name = $request->category_name;
+            $category->category_slug = Str::slug($request->category_name);
+            $category->save();
+
+            return response()->json(['success'=>'Category updated.']);
 
         }
-
-        $category->save();
-
-        return response()->json(['success'=>'Category updated.']);
+        else {
+            return response()->json(['cat_exists'=>'Category already exists.']);
+        }
+  
     }
 
     /**
@@ -157,22 +166,33 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Category $category)
+    public function destroy(Category $category,Request $request)
     {
         $delete_photo = base_path('public/uploads/category/'.$category->category_photo);
         unlink($delete_photo);
 
         $delete = $category->delete();
 
-
         if($delete){
 
-            return response()->json(['success'=>'Category deleted.']);
+            if($request->category != ''){
+                $categories = Category::where('category_name','like','%'.$request->category_query.'%')
+                                        ->orWhere('parent_category','like','%'.$request->category_query.'%')
+                                        ->orderBy('category_name','asc')
+                                        ->paginate(10);
+            }
+            else{
+                $categories = Category::orderBy('category_name','asc')->paginate(10);
+            }
+
+            return view('admin.category.query_data', compact('categories'))->render();
 
         }
 
         return response()->json(['error'=>'Something went wrong.']);
 
+            
+            
     }
 
 
@@ -198,4 +218,27 @@ class CategoryController extends Controller
         return response()->json(['error'=>'Something went wrong!']);
 
     }
+
+
+
+    public function queryCategory(Request $request)
+    {
+
+        $categories = Category::orderBy('category_name','asc')->paginate(10);
+
+        if($request->category_query != ''){
+            $categories = Category::where('category_name','like','%'.$request->category_query.'%')
+                                    ->orWhere('parent_category','like','%'.$request->category_query.'%')
+                                    ->orderBy('category_name','asc')
+                                    ->paginate(10);
+        }
+
+        return view('admin.category.query_data',compact('categories'))->render();
+    }
+
+    
+
+
+
+
 }

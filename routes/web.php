@@ -1,19 +1,20 @@
 <?php
 
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\BannerController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\CityController;
-use App\Http\Controllers\CountryController;
-use App\Http\Controllers\CouponController;
-use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\DiscountController;
-use App\Http\Controllers\FaqController;
-use App\Http\Controllers\FrontendController;
-use App\Http\Controllers\SearchController;
-use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FaqController;
+use App\Http\Controllers\CityController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\BannerController;
+use App\Http\Controllers\CouponController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\CountryController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\FrontendController;
+use App\Http\Controllers\ProductSizeController;
 
 
 
@@ -90,10 +91,13 @@ Route::middleware(['auth','verified','prevent-back-history'])->group(function(){
             Route::get('/profile/city/by/country/{country_id}', [AdminController::class, 'getCityList'])->name('admin.profile.citybycountry');
             
 
-
+            Route::get('category/search', [CategoryController::class, 'queryCategory'])->name('category.search');
             Route::resource('category',CategoryController::class);
             Route::post('category/{category}/status',[CategoryController::class, 'updateCategoryStatus'])->name('category.status.update');
             Route::post('category/update/{category}',[CategoryController::class, 'update'])->name('category.update');
+
+
+            Route::resource('size', ProductSizeController::class);
         
         });
     

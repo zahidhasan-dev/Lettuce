@@ -125,7 +125,7 @@
 @endsection
 
 
-@section('profile_script')
+@section('footer_script')
 
     <script>
         $(document).ready(function(){

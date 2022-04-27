@@ -170,7 +170,7 @@
 
 
 
-@section('user_script')
+@section('footer_script')
         
 <script>
     $(document).ready(function(){
@@ -314,6 +314,7 @@
                 complete:function(){
                     setTimeout(() => {
                         alert("Please reload the page.");
+                        location.reload(true);
                     }, 3000);
                 },
                 error:function(){

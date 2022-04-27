@@ -154,7 +154,7 @@
 @endsection
 
 
-@section('country_script')
+@section('footer_script')
  
     <script>
         $(document).ready(function()

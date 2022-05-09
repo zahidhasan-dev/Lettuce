@@ -14,7 +14,6 @@
         <!-- App favicon -->
         
 
-        
         <!-- Responsive -->
         <link href="{{ asset('dashboard_assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('dashboard_assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
@@ -266,6 +265,81 @@
                 opacity: 0;
             }
 
+            .multiple_img_preview img{
+                width:200px;
+                padding:10px;
+            }
+
+            #product_thumbnail_wrapper {
+                height: 180px;
+                width: 180px;
+                position: relative;
+                border: 1px dashed gray;
+            }
+            #product_thumbnail_wrapper #product_thumbnail_preview{
+                position: absolute;
+                height: 100%;
+                width:100%;
+                max-width:100%;
+                padding:10px;
+            }
+            #product_thumbnail_label {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 0 !important;
+                cursor:pointer;
+                z-index:9;
+            }
+           
+           
+            .has_preview .preview_overlay{
+                position: absolute;
+                height: 100%;
+                width: 100%;
+                background: #000;
+                opacity: 0;
+                z-index: -1;
+            }
+            .has_preview > *{
+                opacity:0;
+                color:#fff !important;
+                
+            }
+            
+            .has_preview:hover.has_preview > *{
+                opacity:1;
+                transition: opacity .3s ease;
+            }
+            .has_preview:hover .preview_overlay{
+                opacity: .5;
+            }
+
+            #product_multiple_photo_label {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 0 !important;
+                cursor:pointer;
+                z-index: 9;
+            }
+
+            .product_multiple_photo_wrapper {
+                position: relative;
+                width: 100%;
+                min-height: 200px;
+                border: 1px dashed gray;
+                overflow: hidden;
+            }
+
         </style>
 
     </head>
@@ -351,7 +425,7 @@
                                     <i class="bx bx-layout"></i>
                                     <span key="t-layouts">Frontend</span>
                                 </a>
-                                <ul class="sub-menu" aria-expanded="true">
+                                <ul class="sub-menu" aria-expanded="false">
                                     <li><a href="{{ route('banner.index') }}" key="t-light-sidebar">Banner</a></li>
                                     <li><a href="{{ route('faq.index') }}" key="t-compact-sidebar">FAQ</a></li>
                                 </ul>
@@ -362,7 +436,7 @@
                                     <i class="bx bx-user-circle"></i>
                                     <span key="t-layouts">Users</span>
                                 </a>
-                                <ul class="sub-menu" aria-expanded="true">
+                                <ul class="sub-menu" aria-expanded="false">
                                     <li><a href="{{ route('user.admin') }}" key="t-light-sidebar">Admins</a></li>
                                     <li><a href="{{ route('user.customer') }}" key="t-compact-sidebar">Customers</a></li>
                                     <li><a href="{{ route('admin.user.register') }}" key="t-compact-sidebar">Add User</a></li>
@@ -374,6 +448,19 @@
                                     <i class="bx bx-list-ul"></i>
                                     <span key="t-layouts">Category</span>
                                 </a>
+                            </li>
+                            <li class="@yield('parent_active')">
+                                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                    <i class="bx bxl-product-hunt"></i>
+                                    <span key="t-maps">Product</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="{{ route('product.index') }}" class="@yield('active')">Products</a></li>
+                                    <li><a href="{{ route('product.create') }}">Add Product</a></li>
+                                    <li><a href="{{ route('product.create') }}">Product Discount</a></li>
+                                    <li><a href="{{ route('size.index') }}">Size</a></li>
+                                    <li><a href="{{ route('product.create') }}">Trash</a></li>
+                                </ul>
                             </li>
 
                             <li>
@@ -397,17 +484,7 @@
                                     <li><a href="{{ route('discount.index') }}">Discount</a></li>
                                 </ul>
                             </li>
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="bx bxl-product-hunt"></i>
-                                    <span key="t-maps">Product</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="{{ route('coupon.index') }}">Products</a></li>
-                                    <li><a href="{{ route('coupon.index') }}">Add Product</a></li>
-                                    <li><a href="{{ route('size.index') }}">Size</a></li>
-                                </ul>
-                            </li>
+                            
 
                             <li class="menu-title" key="t-apps">Apps</li>
 
@@ -736,7 +813,7 @@
             <!-- Start right Content here -->
             <!-- ============================================================== -->
             <div class="main-content">
-
+                
                 @yield('content')
                 
                 <footer class="footer">

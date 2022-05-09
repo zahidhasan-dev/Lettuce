@@ -14,6 +14,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\FrontendController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductSizeController;
 
 
@@ -42,7 +43,6 @@ Route::controller(FrontendController::class)->group(function(){
 Route::middleware(['auth','verified','prevent-back-history'])->group(function(){
     
     Route::get('/customer/account', [CustomerController::class, 'customerAccount'])->name('customer.account');
-
     
     Route::middleware(['admin'])->group(function(){
         
@@ -87,7 +87,6 @@ Route::middleware(['auth','verified','prevent-back-history'])->group(function(){
             Route::post('/profile/update', [AdminController::class, 'updateUserDetails'])->name('admin.profile.update');
             Route::post('/profile/avatar/update', [AdminController::class, 'updateUserAvatar'])->name('admin.profile.avatar.update');
             Route::delete('/profile/avatar/remove', [AdminController::class, 'removeUserAvatar'])->name('admin.profile.avatar.remove');
-
             Route::get('/profile/city/by/country/{country_id}', [AdminController::class, 'getCityList'])->name('admin.profile.citybycountry');
             
 
@@ -96,6 +95,9 @@ Route::middleware(['auth','verified','prevent-back-history'])->group(function(){
             Route::post('category/{category}/status',[CategoryController::class, 'updateCategoryStatus'])->name('category.status.update');
             Route::post('category/update/{category}',[CategoryController::class, 'update'])->name('category.update');
 
+            Route::resource('product', ProductController::class);
+            Route::post('product/{id}/feature/update', [ProductController::class, 'updateProductFeature'])->name('product.feature.update');
+            Route::post('product/{id}/status/update', [ProductController::class, 'updateProductStatus'])->name('product.status.update');
 
             Route::resource('size', ProductSizeController::class);
         

@@ -43,10 +43,10 @@ class LoginController extends Controller
     {
         if(auth()->user()->is_admin)
         {
-            return redirect('admin/dashboard');
+            return redirect()->intended('admin/dashboard');
         }
 
-        return redirect('/');
+        return redirect()->intended('/');
     }
 
 

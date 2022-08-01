@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Intervention\Image\Facades\Image;
 use App\Http\Requests\CategoryFormPost;
 
@@ -17,12 +19,18 @@ class CategoryController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
+    {   
+               
         $categories = Category::orderBy('category_name','asc')->paginate(10);
 
-        $parent_categories = Category::whereNull('parent_category')->with('sub_category', function($query){
-            $query->select('id','parent_category','category_name');
-        })->orderBy('category_name','asc')->get();
+        //  parent category with sub-category
+
+        // $parent_categories = Category::whereNull('parent_category')->with('sub_category', function($query){
+        //     $query->select('id','parent_category','category_name');
+        // })->orderBy('category_name','asc')->get();
+
+
+        $parent_categories = Category::whereNull('parent_category')->orderBy('category_name','asc')->get();
 
         return view('admin.category.index', compact('categories','parent_categories'));
 
@@ -90,8 +98,49 @@ class CategoryController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Category $category)
-    {
-        //
+    {   
+
+        // category with products
+        // $ids = collect();
+        // $parent = $category->id;
+        // $ids = collect($parent);
+
+        // if($category->sub_category->count() > 0){
+        //     foreach($category->sub_category as $sub_category){
+        //         $ids  = $ids->merge($sub_category->id);
+        //     }
+        // }
+
+        // $products = Product::whereHas('categories', function($query) use($ids){
+        //     $query->whereIn('id',$ids);
+        // })->with('categories.main_category')->get();
+
+        
+
+
+
+
+            // category with products count
+
+        // $categories = Category::whereNull('parent_category')->with(['sub_category' => function ($query) {
+        //     $query->withCount('products');
+        // }])->withCount('products')->get();
+
+
+        // foreach($categories as $parentCategory){
+
+        //     foreach($parentCategory->sub_category as $subCategory){
+
+        //         echo $subCategory->products_count.':::child<br><br>';
+
+        //     }
+        //     echo  $parentCategory->products_count + $parentCategory->sub_category->sum('products_count').'parent:::<br><br>';
+
+        // }
+
+
+         
+
     }
 
     /**
@@ -176,8 +225,8 @@ class CategoryController extends Controller
         if($delete){
 
             if($request->category != ''){
-                $categories = Category::where('category_name','like','%'.$request->category_query.'%')
-                                        ->orWhere('parent_category','like','%'.$request->category_query.'%')
+                $categories = Category::where('category_name','LIKE','%'.$request->category_query.'%')
+                                        ->orWhere('category_slug','LIKE','%'.$request->category_query.'%')
                                         ->orderBy('category_name','asc')
                                         ->paginate(10);
             }
@@ -224,20 +273,17 @@ class CategoryController extends Controller
     public function queryCategory(Request $request)
     {
 
-        $categories = Category::orderBy('category_name','asc')->paginate(10);
+        $categories = Category::orderBy('category_name','asc')->paginate(1);
 
         if($request->category_query != ''){
-            $categories = Category::where('category_name','like','%'.$request->category_query.'%')
-                                    ->orWhere('parent_category','like','%'.$request->category_query.'%')
+            $categories = Category::where('category_name','LIKE','%'.$request->category_query.'%')
+                                    ->orWhere('category_slug','LIKE','%'.$request->category_query.'%')
                                     ->orderBy('category_name','asc')
-                                    ->paginate(10);
+                                    ->paginate(1);
         }
 
         return view('admin.category.query_data',compact('categories'))->render();
     }
-
-    
-
 
 
 

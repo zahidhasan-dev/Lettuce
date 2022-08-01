@@ -15,6 +15,7 @@
         
 
         <!-- Responsive -->
+        <link href="{{ asset('dashboard_assets/libs/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('dashboard_assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('dashboard_assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('dashboard_assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" /> 
@@ -276,14 +277,22 @@
                 position: relative;
                 border: 1px dashed gray;
             }
-            #product_thumbnail_wrapper #product_thumbnail_preview{
+            #banner_image_wrapper {
+                height: 180px;
+                width: 230px;
+                position: relative;
+                border: 1px dashed gray;
+            }
+            #product_thumbnail_wrapper #product_thumbnail_preview,
+            #banner_image_wrapper #banner_image_preview{
                 position: absolute;
                 height: 100%;
                 width:100%;
                 max-width:100%;
                 padding:10px;
             }
-            #product_thumbnail_label {
+            #product_thumbnail_label,
+            #banner_image_label {
                 position: absolute;
                 width: 100%;
                 height: 100%;
@@ -339,7 +348,75 @@
                 border: 1px dashed gray;
                 overflow: hidden;
             }
+            .product_table_btn_wrapper {
+                display: flex;
+                justify-content: end;
+            }
+            .product_delete_all{
+                cursor: pointer;
+            }
 
+            div#current_photos_wrapper {
+                position: relative;
+                max-width: 100%;
+                min-height: 200px;
+                border: 1px dashed gray;
+                overflow: hidden;
+                margin: 15px 0px 30px;
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .photo_container {
+                min-width:200px;
+                max-width: 200px;
+                height: 200px;
+                margin: 15px 10px;
+                position: relative;
+                flex: 1;
+            }
+            .photo_container img{
+                max-width:100%;
+                width:100%;
+                height: 100%;
+            }
+
+            .photo_overlay_wrapper {
+                position: absolute;
+                height: 70px;
+                width:70px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index:9;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+            .photo_overlay_wrapper .photo_overlay{
+                height: 100%;
+                width:100%;
+                background-color: #fff;
+                opacity: .8;
+                border-radius: 5px;
+                position: absolute;
+            }
+            .photo_overlay_wrapper .delete_photo_btn{
+                cursor:pointer;
+                color:#000;
+                z-index:99;
+                height: 100%;
+                width: 100%;
+                text-align: center;
+                font-size: 56px;
+            }
+
+            .dash_banner_img_container{
+                max-width:100%;
+                width:570px;
+            }
+
+            
         </style>
 
     </head>
@@ -419,14 +496,20 @@
                                     <span key="t-dashboards">Dashboard</span>
                                 </a>
                             </li>
-
+                            
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
                                     <i class="bx bx-layout"></i>
-                                    <span key="t-layouts">Frontend</span>
+                                    <span key="t-multi-level">Frontend</span>
                                 </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="{{ route('banner.index') }}" key="t-light-sidebar">Banner</a></li>
+                                <ul class="sub-menu" aria-expanded="true">
+                                    <li>
+                                        <a href="javascript: void(0);" class="has-arrow" key="t-level-1-2">Banner</a>
+                                        <ul class="sub-menu" aria-expanded="true">
+                                            <li><a href="{{ route('banner.index') }}" key="t-level-2-1">Banners</a></li>
+                                            <li><a href="{{ route('banner.create') }}" key="t-level-2-2">Add New Banner</a></li>
+                                        </ul>
+                                    </li>
                                     <li><a href="{{ route('faq.index') }}" key="t-compact-sidebar">FAQ</a></li>
                                 </ul>
                             </li>
@@ -457,9 +540,9 @@
                                 <ul class="sub-menu" aria-expanded="false">
                                     <li><a href="{{ route('product.index') }}" class="@yield('active')">Products</a></li>
                                     <li><a href="{{ route('product.create') }}">Add Product</a></li>
-                                    <li><a href="{{ route('product.create') }}">Product Discount</a></li>
+                                    <li><a href="{{ route('product.discount.create') }}">Product Discount</a></li>
                                     <li><a href="{{ route('size.index') }}">Size</a></li>
-                                    <li><a href="{{ route('product.create') }}">Trash</a></li>
+                                    <li><a href="{{ route('product.trash') }}">Trash</a></li>
                                 </ul>
                             </li>
 
@@ -820,7 +903,7 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-sm-12 text-center">
-                                <span id="copyright_text"></span>
+                                <span id="copyright_text"><?=  date('Y').' © Lettuce.' ?></span>
                             </div>
                         </div>
                     </div>
@@ -847,7 +930,12 @@
 
         <script>
 
-            document.getElementById('copyright_text').innerHTML = new Date().getFullYear() + " © Lettuce."
+            function roundNumber(number) {
+                var results = Number((Math.abs(number) * 100).toPrecision(15));
+                return Math.round(results) / 100 * Math.sign(number);
+            }
+            
+            // document.getElementById('copyright_text').innerHTML = new Date().getFullYear() + " © Lettuce.";
 
         </script>
 

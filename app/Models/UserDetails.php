@@ -20,7 +20,7 @@ class UserDetails extends Model
 
     function getcountry()
     {
-        return $this->hasOne(Country::class,'id','city');
+        return $this->hasOne(Country::class,'id','country');
     }
 
     function getcity()

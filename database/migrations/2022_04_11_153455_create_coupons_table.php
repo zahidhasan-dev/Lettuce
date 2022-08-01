@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('coupon_code');
             $table->integer('coupon_value');
             $table->string('coupon_type');
-            $table->dateTime('coupon_validity');
+            $table->dateTime('coupon_validity')->useCurrent();
             $table->integer('status')->default(0);
             $table->timestamps();
         });

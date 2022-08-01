@@ -6660,7 +6660,7 @@ ul.wp-block-latest-posts.is-grid.alignwide {
   .ltn__product-item-3 .product-img::before {
     display: none; }
   .ltn__product-item-3 .product-info {
-    padding: 25px 30px 15px; }
+    padding: 25px 20px 15px; }
   .ltn__product-item-3 .product-title {
     font-size: 16px;
     margin-bottom: 3px; }
@@ -6937,7 +6937,7 @@ ul.wp-block-latest-posts.is-grid.alignwide {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  padding: 30px 25px;
+  padding: 30px 20px;
   border: 2px solid;
   border-color: var(--border-color-1);
   margin-bottom: 30px;
@@ -9768,7 +9768,7 @@ input.cart-plus-minus-box {
   width: 100%; }
 
 .shoping-cart-table td {
-  padding: 20px 25px;
+  padding: 20px 20px;
   vertical-align: middle; }
 
 .cart-product-image img {

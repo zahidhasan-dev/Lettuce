@@ -37,8 +37,24 @@ class ProductFormPost extends FormRequest
             'stock'=>'required|numeric',
             'product_scale'=>'required|numeric',
             'size_value'=>'required|numeric',
-            'product_thumbnail'=>'required|image',
+            'product_has_discount'=>'boolean',
+            'product_discount'=>'required_if:product_has_discount,1|numeric',
+            'product_featured'=>'boolean',
+            'product_status'=>'boolean',
+            'product_thumbnail'=>'required|mimes:jpeg,png|max:512|dimensions:min_width=600,min_height=600,max_width=1000,max_height=1000',
             'product_desc'=>'max:2000',
+            'product_multiple_photo'=>'array',
+            'product_multiple_photo.*'=>'mimes:jpeg,png|max:512|dimensions:min_width=600,min_height=600,max_width=1000,max_height=1000',
+        ];
+    }
+
+
+    public function messages()
+    {
+        return [
+            'product_multiple_photo.*.mimes'=>'Invalid image type.',
+            'product_multiple_photo.*.max'=>'Image must be within 512 kilobytes.',
+            'product_multiple_photo.*.dimensions'=>'Invalid image dimensions.',
         ];
     }
 

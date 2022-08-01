@@ -20,6 +20,7 @@ return new class extends Migration
             $table->bigInteger('phone')->nullable();
             $table->string('city')->nullable();
             $table->string('country')->nullable();
+            $table->string('address')->nullable();
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });

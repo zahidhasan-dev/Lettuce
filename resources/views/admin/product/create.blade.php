@@ -13,7 +13,8 @@
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
                                 <li class="breadcrumb-item"><a href="{{ route('admin.home') }}">Home</a></li>
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">Add Product</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('product.index') }}">Product</a></li>
+                                <li class="breadcrumb-item active">Add Product</li>
                             </ol>
                         </div>
                     </div>
@@ -27,7 +28,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-
+                            
                             @if (session('success'))
                                <div class="alert alert-success alert-dismissible fade show" role="alert">
                                     {{ session('success') }}
@@ -40,6 +41,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
                             @endif
+
                             <h4 class="mb-4">Add Product</h4>
 
                             <form action="{{ route('product.store') }}" method="POST" enctype="multipart/form-data">
@@ -84,8 +86,23 @@
                                         </div>
                                         <div class="mb-3">
                                             <label for="size_value">Size Value</label>
-                                            <input id="size_value" name="size_value" type="number" class="form-control" placeholder="Size Value" value="{{ old('size_value') }}">
+                                            <input id="size_value" name="size_value" type="number" min="0" class="form-control" placeholder="Size Value" value="{{ old('size_value') }}">
                                             @error('size_value')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="price">Price</label>
+                                            <input id="price" name="price" type="number" min="0" step="any" class="form-control" placeholder="Price" value="{{ old('price') }}">
+                                            @error('price')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="stock">Stock</label>
+                                            <input id="stock" name="stock" type="number" min="0" class="form-control" placeholder="Stock" value="{{ old('stock') }}">
+                                            @error('stock')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
                                         </div>
@@ -95,27 +112,56 @@
                                     <div class="col-sm-6">
                                         
                                         <div class="mb-3">
-                                            <label for="price">Price</label>
-                                            <input id="price" name="price" type="number" class="form-control" placeholder="Price" value="{{ old('price') }}">
-                                            @error('price')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="stock">Stock</label>
-                                            <input id="stock" name="stock" type="number" class="form-control" placeholder="Stock" value="{{ old('stock') }}">
-                                            @error('stock')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="mb-3">
                                             <label for="productDesc">Product Description</label>
                                             <textarea class="form-control" id="productDesc" rows="5" placeholder="Product Description" name="product_desc">{{ old('product_desc') }}</textarea>
                                             @error('product_desc')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
                                         </div>
-                                        
+                                        <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="hasDiscountCheck" value="1" name="product_has_discount" {{ old('product_has_discount') == 1 ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="hasDiscountCheck">
+                                                    Has Discount
+                                                </label>
+                                            </div>
+                                            @error('product_has_discount')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
+                                        <div class="mb-3"  id="discount_select_wrapper" style="{{ old('product_has_discount') == 1 ? 'display:block;' :'display:none;' }}">
+                                            <select class="form-control" name="product_discount">
+                                                <option selected disabled>Select Discount</option>
+                                                @foreach ($discounts as $discount)
+                                                    <option {{ (old('product_has_discount') == 1 && old('product_discount') == $discount->id)?'selected':'' }} value="{{ $discount->id }}">{{ $discount->discount_name.' ( '.discountValueType($discount->id).' )' }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('product_discount')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="featuredCheck" value="1" name="product_featured">
+                                                <label class="form-check-label" for="featuredCheck">
+                                                    Is Featured
+                                                </label>
+                                            </div>
+                                            @error('product_featured')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="productStatusCheck" value="1" name="product_status">
+                                                <label class="form-check-label" for="productStatusCheck">
+                                                    Is Active
+                                                </label>
+                                            </div>
+                                            @error('product_status')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
                                     </div>
                                     <div class="col-12">
                                         <h4 class="card-title mb-3">Product Images</h4>
@@ -144,6 +190,9 @@
                                                 <div class="multiple_img_preview">
                                                 </div>
                                             </div>
+                                            @error('product_multiple_photo.*')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
@@ -174,6 +223,25 @@
 
  
     <script>
+
+
+    function toggleDiscountSelect(){
+
+        let discount_select_box = document.getElementById('discount_select_wrapper');
+        let discount_checkbox = document.getElementById('hasDiscountCheck');
+
+        if(discount_checkbox.checked == true ){
+            discount_select_box.style.display = 'block';
+        }
+        else{
+            discount_select_box.style.display = 'none';
+        }
+
+    }
+
+    document.getElementById('hasDiscountCheck').addEventListener('change',function(){
+        toggleDiscountSelect();
+    });
 
 
         $(document).ready(function()

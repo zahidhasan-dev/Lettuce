@@ -16,6 +16,7 @@ class CouponController extends Controller
      */
     public function index()
     {
+
         $coupons  = Coupon::orderBy('created_at','desc')->paginate(10);
 
         return view('admin.offers.coupon.index', compact('coupons'));
@@ -40,7 +41,20 @@ class CouponController extends Controller
      */
     public function store(CouponFormPost $request)
     {
-        $create_coupon = Coupon::create($request->all());
+
+        $coupon_validity = localDateTimeToUTC($request->coupon_validity);
+
+        
+        $coupon_value = $request->coupon_value;
+
+        if($request->coupon_type === 'fixed'){
+            $coupon_value = $request->coupon_value * 100;
+        }
+
+        $create_coupon = Coupon::create($request->except(['coupon_validity','coupon_value'])+[
+            'coupon_validity'=>$coupon_validity,
+            'coupon_value'=>$coupon_value,
+        ]);
 
         if($create_coupon){
             return redirect()->back()->with(['success'=>'Created successfully!']);
@@ -74,9 +88,12 @@ class CouponController extends Controller
                         <option value="fixed" '.(($coupon->coupon_type == 'fixed')?'selected':'').'>Fixed</option>
                         <option value="percent" '.(($coupon->coupon_type == 'percent')?'selected':'').'>Percent</option>';
 
+        $coupon_validity = UTCdateTimeToLocal($coupon->coupon_validity);
+
         $data_array =[
             'coupon'=>$coupon,
             'coupon_type'=>$coupon_type,
+            'coupon_validity'=>$coupon_validity,
         ];
 
         return response()->json($data_array);
@@ -94,12 +111,20 @@ class CouponController extends Controller
     {
         $coupon_exists = Coupon::where('id','!=',$coupon->id)->where('coupon_code',$request->coupon_code)->first();
 
+        $coupon_validity = localDateTimeToUTC($request->coupon_validity);
+
+        $coupon_value = $request->coupon_value;
+
+        if($request->coupon_type === 'fixed'){
+            $coupon_value = $request->coupon_value * 100;
+        }
+
         if($coupon_exists != true){
 
             $coupon->coupon_type = $request->coupon_type;
             $coupon->coupon_code = $request->coupon_code;
-            $coupon->coupon_value = $request->coupon_value;
-            $coupon->coupon_validity = $request->coupon_validity;
+            $coupon->coupon_value = $coupon_value;
+            $coupon->coupon_validity = $coupon_validity;
 
             $coupon_update = $coupon->save();
 

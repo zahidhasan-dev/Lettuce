@@ -19,7 +19,7 @@ return new class extends Migration
             $table->longText('product_desc')->nullable();
             $table->integer('price');
             $table->integer('stock');
-            $table->integer('in_stock');
+            $table->integer('in_stock')->default(0);
             $table->string('thumbnail')->nullable();
             $table->string('slug');
             $table->boolean('has_discount')->default(false);

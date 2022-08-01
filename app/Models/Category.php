@@ -25,6 +25,11 @@ class Category extends Model
     {
         return $this->hasMany(Category::class,'parent_category');
     }
+    
+    public function subCategories()
+    {
+        return $this->hasMany(Category::class,'parent_category');
+    }
 
 
     public function products()
@@ -32,6 +37,11 @@ class Category extends Model
         return $this->belongsToMany(Product::class);
     }
 
+
+    public function banners()
+    {
+        return $this->hasMany(Banner::class);
+    }
     
 
 }

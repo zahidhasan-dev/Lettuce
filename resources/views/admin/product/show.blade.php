@@ -1,7 +1,5 @@
 @extends('layouts.dashboard')
 
-
-
 @section('active')
 active
 @endsection
@@ -23,7 +21,8 @@ mm-active
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
                                 <li class="breadcrumb-item"><a href="{{ route('admin.home') }}">Home</a></li>
-                                <li class="breadcrumb-item active">Product</li>
+                                <li class="breadcrumb-item"><a href="{{ route('product.index') }}">Product</a></li>
+                                <li class="breadcrumb-item active">View Product</li>
                             </ol>
                         </div>
 
@@ -37,6 +36,18 @@ mm-active
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
+                                @if (session('success'))
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        {{ session('success') }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                @endif
+                                @if (session('error'))
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        {{ session('error') }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                @endif
                                 <div class="col-12">
                                     <div class="mb-5">
                                         <a href="{{ route('product.index') }}" class="btn btn-dark"><i class="bx bx-arrow-back"></i> Back</a>
@@ -99,20 +110,35 @@ mm-active
                                         </p>
                                         <p class="text-muted mb-4">( 152 Customers Review )</p>
             
-                                        @if($product->has_discount)
-                                            <h6 class="text-success text-uppercase">20 % Off</h6>
+                                        @if($product->has_discount == 1 && getProductDiscount($product->id) != null)
+                                            @if (validateDiscount(getProductDiscount($product->id)->id) == true)
+                                                <h6 class="text-success text-uppercase">{{ discountValueType(getProductDiscount($product->id)->id) }} Off </h6>
+                                            @endif
                                         @endif
                                         <h5 class="mb-4">Price : 
-                                            @if($product->has_discount)
-                                                <span class="text-muted me-2"><del>$240 USD</del></span> <b>$225 USD</b>
+                                            @if($product->has_discount == 1  && getProductDiscount($product->id) != null)
+                                                @if (validateDiscount(getProductDiscount($product->id)->id) == true)
+                                                    <span class="text-muted me-2"><del>${{ round(($product->price / 100),2) }}</del></span> <b>${{ discountPrice($product->id) }}</b>
+                                                @endif
                                             @else       
-                                                <span class="text-muted me-2">${{ $product->price / 100 }}</span>
+                                                <span class="text-muted me-2">${{ round(($product->price / 100),2) }}</span>
                                             @endif
                                         </h5>
                                         <p class="text-muted mb-4">{{ $product->product_desc }}</p>
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <div>
+                                                    @if ($product->has_discount == 1 && getProductDiscount($product->id) != null)
+                                                        @if(validateDiscount(getProductDiscount($product->id)->id) == true)
+                                                            <p class="text-muted">
+                                                                <i class="bx bxs-offer font-size-16 align-middle text-primary me-1"></i><b>Discount : </b>
+                                                                {{ getProductDiscount($product->id)->discount_name.' '.'( '.discountValueType(getProductDiscount($product->id)->id).' )' }}
+                                                            </p>
+                                                        @endif
+                                                    @endif
+                                                    <p class="text-muted"><i class="fas fa-weight-hanging font-size-14 align-middle text-primary me-1"></i><b>Weight / Pieces : </b>
+                                                        {{ productSize($product->id) }}
+                                                    </p>
                                                     <p class="text-muted"><i class="bx bxs-hourglass font-size-16 align-middle text-primary me-1"></i> <b>In Stock :</b> {{ $product->in_stock }}</p>
                                                     <p class="text-muted"><i class="fas fa-warehouse font-size-14 align-middle text-primary me-1"></i> <b>Stock :</b> {{ $product->stock }}</p>
                                                     <p class="text-muted"><i class="bx bx-link font-size-16 align-middle text-primary me-1"></i> <b>Slug :</b> {{ $product->slug }}</p>

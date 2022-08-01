@@ -28,75 +28,52 @@
                     <div class="card-body">
                         <div class="row mb-2">
                             <div class="col-sm-12 col-md-6 col-lg-5">
-                                  <div class="alert alert-success faq_add_alert" style="display: none" role="alert">
-                                    
-                                  </div>
-                            </div>
-                            <div class="col-sm-12 text-right">
-                                <div class="text-sm-start float-start">
-                                    <button type="button" class="btn btn-danger btn-rounded waves-effect waves-light mb-2 me-2 faq_delete_all" >Delete All</button>
+                                <div class="alert alert-success banner_alert" style="display: none" role="alert">
+                                
                                 </div>
-                                <div class="text-sm-end">
-                                    <button type="button" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target="#addFaq"><i class="mdi mdi-plus me-1"></i> Add New FAQ</button>
+                                @if (session('success'))
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        {{ session('success') }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-sm-6 col-md-7 col-lg-8">
+                                <div class="text-center text-sm-start text-md-start text-lg-start text-xl-start">
+                                    <a href="{{ route('banner.create') }}" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2"><i class="mdi mdi-plus me-1"></i> Add New Banner</a>
+                                </div>
+                            </div><!-- end col-->
+                            <div class="col-sm-6 col-md-5 col-lg-4">
+                                <div class="text-center text-sm-end text-md-end text-lg-end text-xl-end">
+                                    <label class="d-block mb-4 text-center text-sm-end text-md-end text-lg-end text-xl-end"><input type="search" class="form-control form-control-sm" id="banner_search" name="banner_search" placeholder="Search"></label>
                                 </div>
                             </div><!-- end col-->
                         </div>
 
-                        <div class="table-responsive" id="faq_table">
-                            <table class="table align-middle table-nowrap table-check" >
+                        <div class="table-responsive" id="banner_table_wrapper">
+                            <table id="banner_table" class="table align-middle table-nowrap table-check" >
                                 <thead class="table-light">
                                     <tr>
-                                        <th style="width: 20px;" class="align-middle">
-                                            <div class="form-check font-size-16">
-                                                <input class="form-check-input" type="checkbox" id="faqCheckAll">
-                                                <label class="form-check-label" for="faqCheckAll"></label>
-                                            </div>
-                                        </th>
                                         <th class="align-middle">SL NO.</th>
-                                        <th class="align-middle">Faq Question</th>
-                                        <th class="align-middle">Faq Answer</th>
+                                        <th class="align-middle">Banner Image</th>
+                                        <th class="align-middle">Banner Type</th>
+                                        <th class="align-middle">Banner Title</th>
+                                        <th class="align-middle">Banner Button</th>
+                                        <th class="align-middle">Category</th>
+                                        <th class="align-middle">Discount</th>
+                                        <th class="align-middle">Banner Slug</th>
                                         <th class="align-middle">Status</th>
                                         <th class="align-middle">View Details</th>
                                         <th class="align-middle">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr id="">
-                                        <td>
-                                            <div class="form-check font-size-16">
-                                                <input class="form-check-input faqCheck" type="checkbox" id="faqCheck" name="faqCheck[]" data-id="">
-                                                <label class="form-check-label" for="orderidcheck01"></label>
-                                            </div>
-                                        </td>
-                                        <td></td>
-                                        <td>
-                                            
-                                        </td>
-                                        <td>
-                                            
-                                        </td>
-                                        <td>
-                                            <div class="form-check form-switch form-switch-md mb-3" dir="ltr">
-                                                <input class="form-check-input SwitchFaqStatus" type="checkbox" data-id="" id="SwitchFaqStatus">
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <!-- Button trigger modal -->
-                                            <button type="button" class="btn btn-primary btn-sm btn-rounded view_faq" data-id="" data-bs-toggle="modal" data-bs-target="#viewFaq">
-                                                View Details
-                                            </button>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex gap-3">
-                                                <a href="javascript:void(0);" class="text-success edit_faq" data-id="" data-bs-toggle="modal" data-bs-target="#editFaq"><i class="mdi mdi-pencil font-size-18"></i></a>
-                                                <a href="javascript:void(0);" class="text-danger faq_delete" data-id="" data-bs-toggle="modal" data-bs-target="#deleteFaq"><i class="mdi mdi-delete font-size-18"></i></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                        <tr><td colspan="7"><h4 class="text-center">No data found!</h4></td></tr>
-                                    
+                                    @include('admin.banner.banner_data')
                                 </tbody>
                             </table>
+                            <input type="hidden" name="hidden_page" id="hidden_page_value" value="1">
                             <div>
                                
                             </div>
@@ -116,11 +93,11 @@
 
 <!-- delete faq modal -->
 
-<div class="modal fade" id="deleteFaq" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteFaqLabel" aria-modal="true" role="dialog">
+<div class="modal fade" id="deleteBanner" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteBannerLabel" aria-modal="true" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="deleteFaqLabel">Delete FAQ</h3>
+                <h3 class="modal-title" id="deleteBannerLabel">Delete Banner</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -128,13 +105,173 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger faq_delete_modal" data-id="">Delete</button>
+                <button type="button" class="btn btn-danger banner_delete_modal" data-id="">Delete</button>
             </div>
         </div>
     </div>
 </div>
 
 
+@endsection
+
+
+
+
+@section('footer_script')
+    <script>
+
+        $(document).ready(function(){
+
+            $.ajaxSetup({
+                headers:{
+                    'X-CSRF-TOKEN':$('meta[name=csrf-token]').attr('content')
+                }
+            });
+
+
+
+
+
+
+
+            
+
+
+
+            function generateBannerSlug(){
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+            $(document).on('click','.banner_delete', function (event){
+                event.preventDefault();
+                $('.banner_delete_modal').data('id',$(this).data('id'));
+            });
+
+            $(document).on('click','.banner_delete_modal', function(event){
+                let id = $(this).data('id');
+                let url = "{{ route('banner.destroy',':id') }}";
+                    url = url.replace(':id',id);
+
+                $.ajax({
+                    type:'DELETE',
+                    url:url,
+                    success:function(data){
+                        $('#deleteBanner').modal('hide');
+                        $('.banner_alert').text(data.success);
+                        setTimeout(() => {
+                            $('#banner_table').load(' #banner_table >* ');
+                            $('.banner_alert').fadeIn().delay(800).fadeOut();
+                        }, 400);
+                    },
+                    error:function(){
+                        alert('Something went wrong!');
+                    }
+                });
+            });
+
+
+            $(document).on('click','.switchBannerStatus', function(event){
+                event.preventDefault();
+
+                let id = $(this).data('id');
+                let url = "{{ route('banner.status.update',':id') }}";
+                    url = url.replace(':id',id);
+                
+                $.ajax({
+                    type:'GET',
+                    url:url,
+                    success:function(data){
+
+                        if(data.banner_status == 1){
+                            $('#switchBannerStatus_'+id).prop('checked',true);
+                        }
+                        else{
+                            $('#switchBannerStatus_'+id).prop('checked',false);
+                        }
+
+                        $('.banner_alert').text(data.success);
+                        setTimeout(() => {
+                            $('.banner_alert').fadeIn().delay(800).fadeOut();
+                        }, 200);
+
+                    },
+                    error:function(){
+                        alert('Something went wrong!');
+                    }
+                });
+
+            });
+
+
+            $(document).on('search','#banner_search', function(){
+                $('#banner_table').load(' #banner_table >* ');
+            });
+
+
+
+            $(document).on('keyup','#banner_search', function(){
+
+                let banner_query = $(this).val();
+                    banner_query = $.trim(banner_query);
+                let url = "{{ route('banner.search') }}";
+
+                queryBanner(banner_query,url);
+
+            });
+
+
+
+            $(document).on('click','.pagination a', function(event){
+                event.preventDefault();
+               
+                $('li').removeClass('active');
+                $(this).parent().addClass('active');
+                
+                let banner_query = $('#banner_search').val();
+                    banner_query = $.trim(banner_query);
+                let url = "{{ route('banner.search') }}";
+                let page = $(this).attr('href').split('page=')[1];
+
+                $('#hidden_page_value').val(page); 
+
+                queryBanner(banner_query,url,page);
+
+            });
+
+
+
+            function queryBanner(banner_query='',url,page=''){
+        
+                $.ajax({
+                    type:'GET',
+                    url:url,
+                    data:{banner_query:banner_query,page:page},
+                    success:function(data){
+                        $('#banner_table').find('tbody').html(data);
+                    },
+                    error:function(){
+                        console.log("Something went wrong!");
+                    }
+                });
+
+            }
+
+
+        });
+
+
+
+    </script>
 @endsection
 
 

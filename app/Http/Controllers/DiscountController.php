@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\DiscountFormPost;
+
+use Carbon\Carbon;
 use App\Models\Discount;
-use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use App\Http\Requests\DiscountFormPost;
 
 class DiscountController extends Controller
 {
@@ -16,7 +19,6 @@ class DiscountController extends Controller
      */
     public function index()
     {   
-
         $discounts = Discount::orderBy('created_at','desc')->paginate(10);
 
         return view('admin.offers.discount.index', compact('discounts'));
@@ -42,9 +44,20 @@ class DiscountController extends Controller
     public function store(DiscountFormPost $request)
     {   
 
+        $validityDateTimeUTC  = localDateTimeToUTC($request->discount_validity);
+   
         // $discount_slug = Str::slug($request->discount_name);
 
-        $create_discount = Discount::create($request->all());
+        $discount_value = $request->discount_value;
+
+        if($request->discount_type === 'fixed'){
+            $discount_value = $request->discount_value * 100;
+        }
+
+        $create_discount = Discount::create($request->except(['discount_validity','discount_value'])+[
+            'discount_validity'=>$validityDateTimeUTC,
+            'discount_value'=>$discount_value,
+        ]);
 
         if($create_discount){
             return redirect()->back()->with(['success'=>'Created successfully!']);
@@ -77,9 +90,12 @@ class DiscountController extends Controller
                             <option value="fixed" '.(($discount->discount_type == 'fixed')?'selected':'').'>Fixed</option>
                             <option value="percent" '.(($discount->discount_type == 'percent')?'selected':'').' >Percent</option>';
 
+        $discount_validity = UTCdateTimeToLocal($discount->discount_validity);
+
         $data_array = [
             'discount'=>$discount,
             'discount_type'=>$discount_type,
+            'discount_validity'=>$discount_validity,
         ];
 
         return response()->json($data_array);
@@ -96,14 +112,21 @@ class DiscountController extends Controller
     {
         $discount_exists = Discount::where('id','!=',$discount->id)->where('discount_name',$discount->discount_name)->first();
 
+        $validityDateTimeUTC  = localDateTimeToUTC($request->discount_validity);
+
+        $discount_value = $request->discount_value;
+        
+        if($request->discount_type === 'fixed'){
+            $discount_value = $request->discount_value * 100;
+        }
+
         if($discount_exists != true){
 
             $discount->discount_type = $request->discount_type;
             $discount->discount_name = $request->discount_name;
             $discount->discount_slug = $request->discount_slug;
-            $discount->discount_value = $request->discount_value;
-            $discount->discount_validity = $request->discount_validity;
-
+            $discount->discount_value = $discount_value;
+            $discount->discount_validity = $validityDateTimeUTC;
 
             $update = $discount->save();
 
@@ -160,26 +183,14 @@ class DiscountController extends Controller
     }
 
 
-    public function updateStatusOnExpiry($discount_id)
-    {
+    // public function updateStatusOnExpiry()
+    // {
 
-        $discount = Discount::where('id',$discount_id)->first();
+    //     updateDiscountStatusOnExpiry();
 
-        if($discount->status == 1){
-            $discount->status = 0;
-            $discount->save();
-
-            $data_array = [
-                'updated'=>'status updated',
-                'discount_id'=>$discount->id,
-            ];
-
-            return response()->json($data_array);
-        }
-
-        return response()->json(['notUpdated'=>'status not updated.']);
+    //     return response(null, Response::HTTP_NO_CONTENT);
         
-    }
+    // }
 
 
 

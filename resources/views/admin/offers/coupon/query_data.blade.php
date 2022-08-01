@@ -2,7 +2,7 @@
         <tr class="coupon_row" id="coupon_row_{{ $coupon->id }}">
             <td>{{ $coupons->firstitem()+$index }}</td>
             <td>{{ $coupon->coupon_code }}</td>
-            <td>{{ $coupon->coupon_value }}</td>
+            <td>{{ couponValue($coupon->id) }}</td>
             <td>{{ $coupon->coupon_type }}</td>
             <td data-time="{{ $coupon->coupon_validity }}" data-id="{{ $coupon->id }}" class="coupon_validity_date"><span class="badge {{ (couponExpiryDate($coupon->id)['status'] === 'active')?'bg-success':'bg-danger' }}" style="padding:5px;min-width:95px">{{ couponExpiryDate($coupon->id)['result'] }}</span></td>
             <td>

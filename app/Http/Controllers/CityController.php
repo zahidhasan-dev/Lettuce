@@ -68,7 +68,7 @@ class CityController extends Controller
      */
     public function show(City $city)
     {
-        //
+        // 
     }
 
     /**

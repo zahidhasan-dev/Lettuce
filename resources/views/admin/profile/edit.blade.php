@@ -147,7 +147,7 @@
                     url:url,
                     success:function(data){
                         if(data.success){
-                            $('.profile_city_list').html("<option disabled selected value=''>--Select Country--</option>"+data.city_list);
+                            $('.profile_city_list').html("<option disabled selected value=''>--Select City--</option>"+data.city_list);
                         }
                         else{
                             alert('Something went wrong!');

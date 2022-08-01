@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('discount_type');
             $table->integer('discount_value');
             $table->string('discount_slug');
-            $table->dateTime('discount_validity');
+            $table->dateTime('discount_validity')->useCurrent();
             $table->integer('status')->default(0);
             $table->timestamps();
         });

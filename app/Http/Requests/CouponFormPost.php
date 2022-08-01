@@ -42,7 +42,7 @@ class CouponFormPost extends FormRequest
             'coupon_code'=>'required|unique:coupons|max:20',
             'coupon_value'=>$condition,
             'coupon_type'=>'required|in:fixed,percent',
-            'coupon_validity'=>'required',
+            'coupon_validity'=>'required|date',
         ];
     }
 }

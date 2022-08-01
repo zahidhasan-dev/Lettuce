@@ -93,11 +93,11 @@
                                                     <option value="" selected>-- Select Category --</option>
                                                     @forelse ($parent_categories as $parent_category)
                                                         <option value="{{ $parent_category->id }}">{{ $parent_category->category_name }}</option>
-                                                        @if($parent_category->sub_category->count() > 0)
+                                                        {{-- @if($parent_category->sub_category->count() > 0)
                                                             @foreach ($parent_category->sub_category as $sub_category)
                                                                 <option value="{{ $sub_category->id }}">-- {{ $sub_category->category_name }}</option>
                                                             @endforeach
-                                                        @endif
+                                                        @endif --}}
                                                     @empty
                                                         <option value="" disabled>Not Available</option>
                                                     @endforelse
@@ -159,11 +159,11 @@
                                 <option value=""selected>-- Select Category --</option>
                                 @forelse ($parent_categories as $parent_category)
                                     <option value="{{ $parent_category->id }}">{{ $parent_category->category_name }}</option>
-                                    @if($parent_category->sub_category->count() > 0)
+                                    {{-- @if($parent_category->sub_category->count() > 0)
                                         @foreach ($parent_category->sub_category as $sub_category)
                                             <option value="{{ $sub_category->id }}">-- {{ $sub_category->category_name }}</option>
                                         @endforeach
-                                    @endif
+                                    @endif --}}
                                 @empty
                                     <option value="" disabled>Not Available</option>
                                 @endforelse
@@ -231,14 +231,19 @@
 
             $('#category_search').on('search', function(){
                 $('#categories_table_wrapper').load(' #categories_table_wrapper >* ');
+                // let category_query = $(this).val().trim();
+                // let url = "{{ route('category.search') }}";
+                // let page = $('#hidden_page').val();
+                
+                // categoryQuery(category_query,url,page);
             });
 
 
 
-            function categoryQuery(category_query = '',url,page){
+            function categoryQuery(category_query = '',url,page=''){
 
                 $.ajax({
-                    type:'GET',
+                    type:'POST',
                     url:url,
                     data:{category_query:category_query,page:page},
                     success:function(data){
@@ -254,24 +259,39 @@
             $(document).on('keyup','#category_search', function(){
                 let category_query = $(this).val().trim();
                 let url = "{{ route('category.search') }}";
-                let page = $('#hidden_page').val();
-                
-                categoryQuery(category_query,url,page);
+
+                if(category_query != ''){
+                    categoryQuery(category_query,url);
+                }
+                else{
+                    $('#categories_table_wrapper').load(' #categories_table_wrapper >* ');
+                }
+
             });
 
             $(document).on('click','.pagination a', function(event){
+                if($('#category_search').val().trim() != ''){
+                    
+                    event.preventDefault();
+    
+                    let category_query = $('#category_search').val().trim();
+                    let page = $(this).attr('href').split('page=')[1];
+                    $('#hidden_page').val(page);
+                    $('li').removeClass('active');
+                    $(this).parent().addClass('active');
+                    let url = "{{ route('category.search') }}";
 
-                event.preventDefault();
+                    if(category_query != ''){
+                        categoryQuery(category_query,url,page);
+                    }
+                    else{
+                        $('#categories_table_wrapper').load(' #categories_table_wrapper >* ');
+                    }
 
-                let category_query = $('#category_search').val().trim();
-                let page = $(this).attr('href').split('page=')[1];
-                $('#hidden_page').val(page);
-                $('li').removeClass('active');
-                $(this).parent().addClass('active');
-                let url = "{{ route('category.search') }}";
+                }
+            });
 
-                categoryQuery(category_query,url,page);
-            })
+            
 
 
 
@@ -523,8 +543,6 @@
                             alert(data.error);
                         }
                         else{
-                            console.log(data)
-
                             $('#deleteCategory').modal('hide');
                             $('#add_category_form').load(' #add_category_form >* ');
 

@@ -43,7 +43,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($admins as $admin)
+                                    @foreach($admins as $admin)
                                     <tr id="user_row_{{ $admin->id }}">
                                         <td>
                                             <div>
@@ -76,11 +76,7 @@
                                             </div>
                                         </td>
                                     </tr>
-                                    @empty
-                                        <tr>
-                                            <td>No data found!</td>
-                                        </tr>
-                                    @endforelse
+                                    @endforeach
                                 
                                 </tbody>
                             </table>

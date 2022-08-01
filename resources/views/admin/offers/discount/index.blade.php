@@ -213,6 +213,8 @@
 @section('footer_script')
  
     <script>
+
+
         $(document).ready(function()
         {   
 
@@ -230,11 +232,13 @@
 
                 elements.each(function() {
 
-                    let validityDate = $(this).find('.discount_validity_date').data('time');
-                    let countDownTime = new Date(validityDate).getTime();
+                    let validityDateTime = $(this).find('.discount_validity_date').data('time');
 
-                    let validityTime = countDownTime - currentTime;
+                    let offset = new Date().getTimezoneOffset();
+                    let validityDate = new Date(validityDateTime).getTime() - (offset * 60 * 1000);
 
+                    let validityTime = validityDate - currentTime;
+                    
                     if(validityTime > 0){
                     
                         let days = Math.floor(validityTime / (1000 * 60 * 60 * 24));
@@ -242,35 +246,16 @@
                         let minutes = Math.floor((validityTime % (1000 * 60 * 60)) / (1000 * 60));
                         let seconds = Math.floor((validityTime % (1000 * 60 )) / 1000);
 
-                        $(this).find('.discount_validity_date').html('<span class="badge bg-success" style="padding:5px;min-width:95px">'+days+"d "+hours+"h "+minutes+"m "+seconds+"s "+'</span>')
+                        $(this).find('.discount_validity_date').html('<span class="badge bg-success" style="padding:5px;min-width:95px">'+days+"d "+hours+"h "+minutes+"m "+seconds+"s "+'</span>');
 
                     }
                     else{
-                        $(this).find('.discount_validity_date').html('<span class="badge bg-danger" style="padding:5px;min-width:95px">expired</span>')
-
-                        let id = $(this).find('.discount_validity_date').data('id');
-                        let url = "{{ route('discount.expired.status.update',':id') }}";
-                            url = url.replace(':id',id);
-                        
-                        let seconds = Math.floor(validityTime / 1000);
-
-                        if(seconds >= -10){
-                            
-                            $.ajax({
-                                type:'POST',
-                                url:url,
-                                success:function(data){
-                                    if(data.updated){
-                                        $('#discount_row_'+data.discount_id).find('.switchDiscountStatus').prop('checked', false);
-                                    }
-                                }
-                            });
-                        }
+                        $(this).find('.discount_validity_date').html('<span class="badge bg-danger" style="padding:5px;min-width:95px">expired</span>');
+                        $(this).find('.switchDiscountStatus').prop('checked', false);
                     }
 
                 });
             }
-
 
             setInterval(() => {
                 discountValidityDate();
@@ -280,9 +265,11 @@
             function createDiscountSlug(discount_name_input,discount_slug_input){
                 $(document).on('input',discount_name_input, function(){
 
-                    let value = $(this).val();
-                        value = value.split(' ');
-                        value = value.join('-');
+                    let value = $(this).val().trim();
+                        value = value.split(' ').filter(s => s).join('-')
+                        // value = value.replace(/\s+/g, ' ');
+                        // value = value.split(' ');
+                        // value = value.join('-');
 
                     $(discount_slug_input).val(value);
 
@@ -386,7 +373,7 @@
 
                 $.ajax({
 
-                    type:'POST',
+                    type:'GET',
                     url:url,
                     success:function(data){
                         if(data.success){
@@ -401,8 +388,10 @@
                     error:function(){
                         alert("Something went wrong!");
                     }
+
                 });
             });
+
 
 
             $(document).on('click','.edit_discount', function(event)
@@ -421,17 +410,28 @@
                     },
                     success:function(data){
 
-                        let offset = new Date().getTimezoneOffset();
-                        let date = Date.parse(data.discount.discount_validity) - (offset * 60 * 1000);
-                        let validity_date = new Date(date).toISOString().substring(0, 16);
+                        let offset = new Date().getTimezoneOffset() * 60 * 1000;
+                        let discount_validity_time = new Date(data.discount_validity).getTime();
+                        let validity_time = discount_validity_time - offset;
+                        let validity_date = new Date(validity_time).toISOString().substring(0, 16);
 
                         setTimeout(() => {
+
+                            let discount_value = 0;
+
+                            if(data.discount.discount_type == 'fixed'){
+                                discount_value = roundNumber(data.discount.discount_value / 100);
+                            }
+                            else {
+                                discount_value = data.discount.discount_value;
+                            }
+
 
                             $('#editDiscount').removeClass('discount_edit_loading');
                             $('.discount_edit_form').find('.discount_type').html(data.discount_type);
                             $('.discount_edit_form').find('.discount_name').val(data.discount.discount_name);
                             $('.discount_edit_form').find('.discount_slug').val(data.discount.discount_slug);
-                            $('.discount_edit_form').find('.discount_value').val(data.discount.discount_value);
+                            $('.discount_edit_form').find('.discount_value').val(discount_value);
                             $('.discount_edit_form').find('.discount_validity').val(validity_date);
                             $('#editDiscountPost').data('id',data.discount.id);
                             
@@ -538,7 +538,6 @@
 
             $('#editDiscountPost').on('click',function(){
 
-                
                 resetEditForm();
 
                 $discount_edit_form_validated = discountEditFormValidation();

@@ -42,7 +42,7 @@ class DiscountFormPost extends FormRequest
             'discount_slug'=>'required|max:100',
             'discount_value'=>$condition,
             'discount_type'=>'required|in:fixed,percent',
-            'discount_validity'=>'required',
+            'discount_validity'=>'required|date',
         ];
     }
 }

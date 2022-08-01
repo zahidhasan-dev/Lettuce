@@ -39,12 +39,17 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
+
     protected function authenticated()
     {
         if(auth()->user()->is_admin)
         {
             return redirect()->intended('admin/dashboard');
         }
+
+        $this->sessionWishlistToDB();
+        
+        $this->sessionCartToDB();
 
         return redirect()->intended('/');
     }
@@ -55,22 +60,30 @@ class LoginController extends Controller
 
         if(auth()->user()->is_admin)
         {
-
             $this->guard()->logout();
             request()->session()->invalidate();
             request()->session()->regenerateToken();
 
             return redirect()->route('login');
-
         }
-        
         
         $this->guard()->logout();
         request()->session()->invalidate();
         request()->session()->regenerateToken();
 
         return redirect('/');
-
-        
     }
+
+
+    protected function sessionWishlistToDB()
+    {
+        insertSessionWishlistToDB();
+    }
+
+
+    protected function sessionCartToDB()
+    {
+        insertSessionCartToDB();
+    }
+    
 }

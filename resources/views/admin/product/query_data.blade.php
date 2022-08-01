@@ -1,5 +1,11 @@
-@forelse ($products as $index => $product)
+@foreach ($products as $index => $product)
 <tr class="product_row" id="product_row_{{ $product->id }}">
+    <td>
+        <div class="form-check font-size-16">
+            <input class="form-check-input product_check" type="checkbox" id="product_check_{{ $product->id }}" value="{{ $product->id }}">
+            <label class="form-check-label" for="product_check_{{ $product->id }}"></label>
+        </div>
+    </td>
     <td>
         <img width="80px" src="{{ asset('uploads/product/'.$product->thumbnail) }}" alt="">
     </td>
@@ -18,7 +24,7 @@
             {{ $size->pivot->size_value.' '.$size->scale_name }}
         @endforeach
     </td>
-    <td>{{ $product->price / 100 }}</td>
+    <td>{{ round(($product->price / 100),2) }}</td>
     <td>
         @if($product->in_stock == 0)
             <span class="badge bg-danger">out of stock</span>
@@ -29,7 +35,12 @@
             {{ $product->in_stock }}
         @endif
     </td>
-    <td>{{ $product->has_discount }}</td>
+    <td>@if($product->has_discount == 1)
+        {{ getProductDiscount($product->id)->discount_name.' ('.discountValueType(getProductDiscount($product->id)->id).')' }}
+        @else
+        N/A
+        @endif
+    </td>
     <td>
         <div class="form-check form-switch form-switch-sm mb-3" dir="ltr">
             <input class="form-check-input productFeaturedUpdate" type="checkbox" data-id="{{ $product->id }}" {{ ($product->is_featured == 1)?'checked':'' }}>
@@ -43,14 +54,14 @@
     </td>
     <td>
         <div class="d-flex gap-3">
-            <a href="{{ route('product.show',$product->id) }}" class="text-primary edit_product"><i class="mdi mdi-eye font-size-18"></i></a>
+            <a href="{{ route('product.show',$product->id) }}" class="text-primary view_product"><i class="mdi mdi-eye font-size-18"></i></a>
             <a href="{{ route('product.edit',$product->id) }}" class="text-success edit_product" ><i class="mdi mdi-pencil font-size-18"></i></a>
-            <a href="javascript:void(0);" class="text-danger product_delete" data-id="{{ $product->id }}" data-bs-toggle="modal" data-bs-target="#deleteProduct"><i class="mdi mdi-delete font-size-18"></i></a>
+            <form action="{{ route('product.destroy',$product->id) }}" method="post" id="product_delete_form_{{ $product->id }}">
+                @csrf
+                @method('DELETE')
+                <a href="javascript:void(0);" class="text-danger product_delete" data-id="{{ $product->id }}" data-bs-toggle="modal" data-bs-target="#deleteProduct"><i class="mdi mdi-delete font-size-18"></i></a>
+            </form>
         </div>
     </td>
 </tr>
-@empty
-<tr>
-    <td colspan="9" class="text-center">No data found!</td>
-</tr>
-@endforelse
+@endforeach

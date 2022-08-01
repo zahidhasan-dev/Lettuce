@@ -78,7 +78,7 @@
                     $this.addClass('close');
                 }
             });
-            $('.ltn__utilize-close, .ltn__utilize-overlay').on('click', function (e) {
+            $(document).on('click','.ltn__utilize-close, .ltn__utilize-overlay', function (e) {
                 e.preventDefault();
                 $body.removeClass('ltn__utilize-open');
                 $ltn__utilize.removeClass('ltn__utilize-open');
@@ -541,6 +541,8 @@
             dots: false,
             infinite: true,
             speed: 300,
+            // rows: 2,
+            // slidesPerRow: 4,
             slidesToShow: 4,
             slidesToScroll: 1,
             prevArrow: '<a class="slick-prev"><i class="fas fa-arrow-left" alt="Arrow Icon"></i></a>',
@@ -550,6 +552,7 @@
                     breakpoint: 1200,
                     settings: {
                         slidesToShow: 3,
+                        // slidesPerRow: 3,
                         slidesToScroll: 1
                     }
                 },
@@ -559,6 +562,7 @@
                         arrows: false,
                         dots: true,
                         slidesToShow: 2,
+                        // slidesPerRow: 2,
                         slidesToScroll: 1
                     }
                 },
@@ -568,6 +572,7 @@
                         arrows: false,
                         dots: true,
                         slidesToShow: 2,
+                        // slidesPerRow: 2,
                         slidesToScroll: 1
                     }
                 },
@@ -577,6 +582,7 @@
                         arrows: false,
                         dots: true,
                         slidesToShow: 2,
+                        // slidesPerRow: 2,
                         slidesToScroll: 1
                     }
                 }
@@ -592,7 +598,9 @@
             dots: true,
             infinite: true,
             speed: 300,
-            slidesToShow: 1,
+            // slidesToShow: 1,
+            rows:3,
+            slidesPerRow:1,
             slidesToScroll: 1,
             prevArrow: '<a class="slick-prev"><i class="fas fa-arrow-left" alt="Arrow Icon"></i></a>',
             nextArrow: '<a class="slick-next"><i class="fas fa-arrow-right" alt="Arrow Icon"></i></a>',
@@ -600,7 +608,7 @@
                 {
                     breakpoint: 1200,
                     settings: {
-                        slidesToShow: 1,
+                        // slidesToShow: 1,
                         slidesToScroll: 1
                     }
                 },
@@ -609,7 +617,7 @@
                     settings: {
                         arrows: false,
                         dots: true,
-                        slidesToShow: 1,
+                        // slidesToShow: 1,
                         slidesToScroll: 1
                     }
                 },
@@ -618,7 +626,7 @@
                     settings: {
                         arrows: false,
                         dots: true,
-                        slidesToShow: 1,
+                        // slidesToShow: 1,
                         slidesToScroll: 1
                     }
                 },
@@ -627,7 +635,7 @@
                     settings: {
                         arrows: false,
                         dots: true,
-                        slidesToShow: 1,
+                        // slidesToShow: 1,
                         slidesToScroll: 1
                     }
                 }
@@ -1261,22 +1269,22 @@
         -------------------------------------------------------- */
         $(".cart-plus-minus").prepend('<div class="dec qtybutton">-</div>');
         $(".cart-plus-minus").append('<div class="inc qtybutton">+</div>');
-        $(".qtybutton").on("click", function() {
-            var $button = $(this);
-            var oldValue = $button.parent().find("input").val();
-            if ($button.text() == "+") {
-                var newVal = parseFloat(oldValue) + 1;
-            } 
-            else {
-                if (oldValue > 0) {
-                    var newVal = parseFloat(oldValue) - 1;
-                } 
-                else {
-                    newVal = 0;
-                }
-            }
-            $button.parent().find("input").val(newVal);
-        });
+        // $(".qtybutton").on("click", function() {
+        //     var $button = $(this);
+        //     var oldValue = $button.parent().find("input").val();
+        //     if ($button.text() == "+") {
+        //         var newVal = parseFloat(oldValue) + 1;
+        //     } 
+        //     else {
+        //         if (oldValue > 0) {
+        //             var newVal = parseFloat(oldValue) - 1;
+        //         } 
+        //         else {
+        //             newVal = 0;
+        //         }
+        //     }
+        //     $button.parent().find("input").val(newVal);
+        // });
 
 
 	    /* --------------------------------------------------------

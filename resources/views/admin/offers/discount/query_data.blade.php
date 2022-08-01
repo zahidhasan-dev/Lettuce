@@ -2,7 +2,7 @@
         <tr class="discount_row" id="discount_row_{{ $discount->id }}">
             <td>{{ $discounts->firstitem()+$index }}</td>
             <td>{{ $discount->discount_name }}</td>
-            <td>{{ $discount->discount_value }}</td>
+            <td>{{ discountValue($discount->id) }}</td>
             <td>{{ $discount->discount_type }}</td>
             <td>{{ $discount->discount_slug }}</td>
             <td data-time="{{ $discount->discount_validity }}" data-id="{{ $discount->id }}" class="discount_validity_date"><span class="badge {{ (discountExpiryDate($discount->id)['status'] === 'active')?'bg-success':'bg-danger' }}" style="padding:5px;min-width:95px">{{ discountExpiryDate($discount->id)['result'] }}</span></td>

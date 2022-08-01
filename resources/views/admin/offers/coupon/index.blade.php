@@ -64,6 +64,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title mb-2">Add Coupon</h4>
+                           
                             @if (session('success'))
                                 <div class="alert alert-success">
                                     {{ session('success') }}
@@ -74,6 +75,7 @@
                                     {{ session('error') }}
                                 </div>
                             @endif
+
                             <div class="info_form">
                                 <form action="{{ route('coupon.store') }}" method="POST">
                                     @csrf
@@ -199,6 +201,7 @@
 @section('footer_script')
  
     <script>
+
         $(document).ready(function()
         {   
 
@@ -217,10 +220,11 @@
 
                 elements.each(function() {
 
-                    let validityDate = $(this).find('.coupon_validity_date').data('time');
-                    let countDownTime = new Date(validityDate).getTime();
+                    let validityDateTime = $(this).find('.coupon_validity_date').data('time');
+                    let offset = new Date().getTimezoneOffset();
+                    let validityDate = new Date(validityDateTime).getTime() - (offset * 60 * 1000);
 
-                    let validityTime = countDownTime - currentTime;
+                    let validityTime = validityDate - currentTime;
 
                     if(validityTime > 0){
                     
@@ -234,30 +238,6 @@
                     }
                     else{
                         $(this).find('.coupon_validity_date').html('<span class="badge bg-danger" style="padding:5px;min-width:95px">expired</span>');
-
-                        let id = $(this).find('.coupon_validity_date').data('id');
-                        let url = "{{ route('coupon.expired.status.update',':id') }}";
-                            url = url.replace(':id',id);
-
-                            let seconds = Math.floor(validityTime / 1000);
-
-                        if(seconds > -10){
-
-                            $.ajax({
-                                type:'POST',
-                                url:url,
-                                success:function(data){
-                                    if(data.updated){
-
-                                        $('#coupon_row_'+data.coupon_id).find('.switchCouponStatus').prop('checked', false);
-                                        
-                                    }
-                                }
-                            });
-
-                        }
-                        
-
                     }
 
                 });
@@ -397,16 +377,26 @@
                     },
                     success:function(data){
 
-                        // let offset = new Date().getTimezoneOffset();
-                        // let date = Date.parse(data.coupon.coupon_validity) - (offset * 60 * 1000);
-                        let validity_date = new Date(data.coupon.coupon_validity).toISOString().substring(0, 16);
+                        let offset = new Date().getTimezoneOffset();
+                        let validity_time = Date.parse(data.coupon_validity) - (offset * 60 * 1000);
+                        let validity_date = new Date(validity_time).toISOString().substring(0, 16);
+
+
+                        let coupon_value = 0;
+
+                        if(data.coupon.coupon_type === 'fixed'){
+                            coupon_value = roundNumber(data.coupon.coupon_value / 100);
+                        }
+                        else {
+                            coupon_value = data.coupon.coupon_value;
+                        }
 
                         setTimeout(() => {
 
                             $('#editCoupon').removeClass('coupon_edit_loading');
                             $('.coupon_edit_form').find('.coupon_type').html(data.coupon_type);
                             $('.coupon_edit_form').find('.coupon_code').val(data.coupon.coupon_code);
-                            $('.coupon_edit_form').find('.coupon_value').val(data.coupon.coupon_value);
+                            $('.coupon_edit_form').find('.coupon_value').val(coupon_value);
                             $('.coupon_edit_form').find('.coupon_validity').val(validity_date);
                             $('#editCouponPost').data('id',data.coupon.id);
                             

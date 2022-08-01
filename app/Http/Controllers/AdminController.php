@@ -36,11 +36,8 @@ class AdminController extends Controller
             'password'=>Hash::make($request->password),
         ]);
 
-        if($update_password)
-        {
-
+        if($update_password){
             return redirect()->back()->with(['passupdated'=>'Password updated successfully!']);
-            
         }
 
         return redirect()->back()->with(['passerror'=>'Something went wrong!']);

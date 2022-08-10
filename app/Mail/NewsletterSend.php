@@ -2,28 +2,23 @@
 
 namespace App\Mail;
 
-use App\Models\Subscriber;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class NewsletterSubscribed extends Mailable
+class NewsletterSend extends Mailable
 {
     use Queueable, SerializesModels;
-
-
-    protected $subscriber;
-
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(Subscriber $subscriber)
+    public function __construct()
     {
-        $this->subscriber = $subscriber;
+        //
     }
 
     /**
@@ -33,10 +28,6 @@ class NewsletterSubscribed extends Mailable
      */
     public function build()
     {
-        return $this->from('info@lettuce.com')
-                    ->view('frontend.newsletter.welcome')
-                    ->with([
-                        'subscriber'=>$this->subscriber
-                    ]);
+        return $this->view('view.name');
     }
 }

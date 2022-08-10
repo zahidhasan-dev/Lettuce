@@ -56,8 +56,8 @@ Route::post('/checkout/pay', [CheckoutController::class, 'pay'])->name('checkout
 Route::post('checkout/cart/destroy', [CheckoutController::class, 'destroyCart'])->name('checkout.cart.destroy');
 
 Route::post('/subscribe', [SubscriberController::class, 'subscribe'])->name('subscribe');
-Route::get('/newsletter/unsubscribe', [SubscriberController::class, 'unsubscribe'])->name('unsubscribe');
-Route::get('/unsubscribe', [SubscriberController::class, 'unsubscribeView'])->name('unsubscribe.view');
+Route::get('/unsubscribe', [SubscriberController::class, 'unsubscribe'])->name('unsubscribe');
+
 
 Route::middleware(['auth','verified','prevent-back-history'])->group(function(){
 

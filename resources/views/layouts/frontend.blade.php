@@ -30,6 +30,38 @@
 
 
     <style>
+        .mobile_header_menu li.active a{
+            color: #80B500;
+        }
+        .mobile_header_menu li a:hover{
+            color: #80B500;
+        }
+
+        #contact-form textarea{
+            padding:15px 40px 15px 20px;
+        }
+        #contact-form textarea::placeholder{
+            color:#8cb2b2;
+        }
+
+        #newsletter_form_btn:disabled{
+            cursor: not-allowed;
+        }
+
+
+        .newsletter_success_msg{
+            margin:0;
+        }
+
+        .newsletter_modal_content h1{
+            margin-top:20px;
+            margin-bottom:0;
+        }
+
+        .newsletter_form_error {
+            position: absolute;
+            bottom: -25px;
+        }
 
         #order_item_modal .table td, #order_item_modal .table th {
             vertical-align: middle;
@@ -277,149 +309,139 @@
 
 
 
+                /* Variables */
+        * {
+        box-sizing: border-box;
+        }
 
 
+        #payment-form form {
+        width: 100%;
+        min-width: 500px;
+        align-self: center;
+        box-shadow: 0px 0px 0px 0.5px rgba(50, 50, 93, 0.1),
+            0px 2px 5px 0px rgba(50, 50, 93, 0.1), 0px 1px 1.5px 0px rgba(0, 0, 0, 0.07);
+        border-radius: 7px;
+        padding: 40px;
+        }
 
+        #payment-form .hidden {
+        display: none;
+        }
 
+        #payment-form #payment-message {
+        color: rgb(105, 115, 134);
+        font-size: 16px;
+        line-height: 20px;
+        padding-top: 12px;
+        text-align: center;
+        }
 
+        #payment-form #payment-element {
+        margin-bottom: 24px;
+        }
 
+        /* Buttons and links */
+        #payment-form button {
+        background: #80B500;
+        font-family: Arial, sans-serif;
+        color: #ffffff;
+        border: 0;
+        padding: 12px 16px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        display: block;
+        transition: all 0.2s ease;
+        box-shadow: 0px 4px 5.5px 0px rgba(0, 0, 0, 0.07);
+        width: 100%;
+        }
+        #payment-form button:hover {
+        filter: contrast(115%);
+        color:#000;
+        border:1px solid #000;
+        }
+        #payment-form button:disabled {
+        opacity: 0.5;
+        cursor: default;
+        }
 
+        /* spinner/processing state, errors */
+        #payment-form .spinner,
+        #payment-form .spinner:before,
+        #payment-form .spinner:after {
+        border-radius: 50%;
+        }
+        #payment-form .spinner {
+        color: #ffffff;
+        font-size: 22px;
+        text-indent: -99999px;
+        margin: 0px auto;
+        position: relative;
+        width: 20px;
+        height: 20px;
+        box-shadow: inset 0 0 0 2px;
+        -webkit-transform: translateZ(0);
+        -ms-transform: translateZ(0);
+        transform: translateZ(0);
+        }
+        #payment-form .spinner:before,
+        #payment-form .spinner:after {
+        position: absolute;
+        content: "";
+        }
+        #payment-form .spinner:before {
+        width: 10.4px;
+        height: 20.4px;
+        background: #80B500;
+        border-radius: 20.4px 0 0 20.4px;
+        top: -0.2px;
+        left: -0.2px;
+        -webkit-transform-origin: 10.4px 10.2px;
+        transform-origin: 10.4px 10.2px;
+        -webkit-animation: loading 2s infinite ease 1.5s;
+        animation: loading 2s infinite ease 1.5s;
+        }
+        #payment-form .spinner:after {
+        width: 10.4px;
+        height: 10.2px;
+        background: #80B500;
+        border-radius: 0 10.2px 10.2px 0;
+        top: -0.1px;
+        left: 10.2px;
+        -webkit-transform-origin: 0px 10.2px;
+        transform-origin: 0px 10.2px;
+        -webkit-animation: loading 2s infinite ease;
+        animation: loading 2s infinite ease;
+        }
 
+        @-webkit-keyframes loading {
+        0% {
+            -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+        }
+        100% {
+            -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+        }
+        }
+        @keyframes loading {
+        0% {
+            -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+        }
+        100% {
+            -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+        }
+        }
 
-        /* Variables */
-* {
-  box-sizing: border-box;
-}
-
-
-#payment-form form {
-  width: 100%;
-  min-width: 500px;
-  align-self: center;
-  box-shadow: 0px 0px 0px 0.5px rgba(50, 50, 93, 0.1),
-    0px 2px 5px 0px rgba(50, 50, 93, 0.1), 0px 1px 1.5px 0px rgba(0, 0, 0, 0.07);
-  border-radius: 7px;
-  padding: 40px;
-}
-
-#payment-form .hidden {
-  display: none;
-}
-
-#payment-form #payment-message {
-  color: rgb(105, 115, 134);
-  font-size: 16px;
-  line-height: 20px;
-  padding-top: 12px;
-  text-align: center;
-}
-
-#payment-form #payment-element {
-  margin-bottom: 24px;
-}
-
-/* Buttons and links */
-#payment-form button {
-  background: #80B500;
-  font-family: Arial, sans-serif;
-  color: #ffffff;
-  border: 0;
-  padding: 12px 16px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  display: block;
-  transition: all 0.2s ease;
-  box-shadow: 0px 4px 5.5px 0px rgba(0, 0, 0, 0.07);
-  width: 100%;
-}
-#payment-form button:hover {
-  filter: contrast(115%);
-  color:#000;
-  border:1px solid #000;
-}
-#payment-form button:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
-/* spinner/processing state, errors */
-#payment-form .spinner,
-#payment-form .spinner:before,
-#payment-form .spinner:after {
-  border-radius: 50%;
-}
-#payment-form .spinner {
-  color: #ffffff;
-  font-size: 22px;
-  text-indent: -99999px;
-  margin: 0px auto;
-  position: relative;
-  width: 20px;
-  height: 20px;
-  box-shadow: inset 0 0 0 2px;
-  -webkit-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  transform: translateZ(0);
-}
-#payment-form .spinner:before,
-#payment-form .spinner:after {
-  position: absolute;
-  content: "";
-}
-#payment-form .spinner:before {
-  width: 10.4px;
-  height: 20.4px;
-  background: #80B500;
-  border-radius: 20.4px 0 0 20.4px;
-  top: -0.2px;
-  left: -0.2px;
-  -webkit-transform-origin: 10.4px 10.2px;
-  transform-origin: 10.4px 10.2px;
-  -webkit-animation: loading 2s infinite ease 1.5s;
-  animation: loading 2s infinite ease 1.5s;
-}
-#payment-form .spinner:after {
-  width: 10.4px;
-  height: 10.2px;
-  background: #80B500;
-  border-radius: 0 10.2px 10.2px 0;
-  top: -0.1px;
-  left: 10.2px;
-  -webkit-transform-origin: 0px 10.2px;
-  transform-origin: 0px 10.2px;
-  -webkit-animation: loading 2s infinite ease;
-  animation: loading 2s infinite ease;
-}
-
-@-webkit-keyframes loading {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-@keyframes loading {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-
-@media only screen and (max-width: 600px) {
-  #payment-form form {
-    width: 80vw;
-    min-width: initial;
-  }
-}
-
+        @media only screen and (max-width: 600px) {
+            #payment-form form {
+                width: 80vw;
+                min-width: initial;
+            }
+        }
 
     </style>
 
@@ -652,7 +674,7 @@
                 <div class="ltn__utilize-menu-inner ltn__scrollbar">
                     <div class="ltn__utilize-menu-head">
                         <div class="site-logo">
-                            <a href="index.html"><img src="{{ asset('frontend_assets/img/logo.png') }}" alt="Logo"></a>
+                            <a href="{{ route('index') }}"><img src="{{ asset('frontend_assets/img/logo.png') }}" alt="Logo"></a>
                         </div>
                         <button class="ltn__utilize-close">×</button>
                     </div>
@@ -662,11 +684,11 @@
                             <button><i class="fas fa-search"></i></button>
                         </form>
                     </div>
-                    <div class="ltn__utilize-menu">
+                    <div class="ltn__utilize-menu mobile_header_menu">
                         <ul>
-                            <li><a href="{{ route('index') }}">Home</a></li>
-                            <li><a href="{{ route('shop') }}">Shop</a></li>
-                            <li><a href="{{ url('/contact') }}">Contact</a></li>
+                            <li class="{{ request()->is('/') ? 'active' : '' }}"><a href="{{ route('index') }}">Home</a></li>
+                            <li class="{{ request()->is('shop*') ? 'active' : '' }}"><a href="{{ route('shop') }}">Shop</a></li>
+                            <li class="{{ request()->is('contact*') ? 'active' : '' }}"><a href="{{ url('/contact') }}">Contact</a></li>
                         </ul>
                     </div>
                     <div class="ltn__utilize-buttons ltn__utilize-buttons-2">
@@ -885,11 +907,12 @@
                                     <h4 class="footer-title">Newsletter</h4>
                                     <p>Subscribe to our weekly Newsletter and receive updates via email.</p>
                                     <div class="footer-newsletter">
-                                        <form action="{{ route('subscribe') }}" method="POST" id="newsletter_form">
+                                        <form action="" method="POST" id="newsletter_form">
                                             @csrf
+                                            <small class="newsletter_form_error text-danger"></small>
                                             <input type="email" name="subscriber_email" placeholder="Email*">
                                             <div class="btn-wrapper">
-                                                <button class="theme-btn-1 btn" type="submit"><i class="fas fa-location-arrow"></i></button>
+                                                <button class="theme-btn-1 btn" id="newsletter_form_btn" type="submit"><i class="fas fa-location-arrow"></i></button>
                                             </div>
                                         </form>
                                     </div>
@@ -1012,6 +1035,38 @@
                 </div>
             </div>
             <!-- MODAL AREA END -->
+
+            <!-- MODAL AREA START (newsletter Modal) -->
+            <div class="ltn__modal-area ltn__newsletter-modal-area">
+                <div class="modal fade" id="newsletter_success_modal" tabindex="-1">
+                    <div class="modal-dialog modal-md" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="ltn__quick-view-modal-inner">
+                                    <div class="modal-product-item">
+                                        <div class="row">
+                                            <div class="col-12 text-center">
+                                                <div class="newsletter_modal_content">
+                                                    <img width="80px" src="{{ asset('frontend_assets/img/mail_icon.png') }}" alt="">
+                                                    <h1>Thank You!</h1>
+                                                    <p class="newsletter_success_msg"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- MODAL AREA END -->
+
         </div>
         <!-- Body main wrapper end -->    
 
@@ -1435,8 +1490,9 @@
 
                     e.preventDefault();
 
-                    let formData = $(this).serialize();
+                    $('.newsletter_form_error').html('');
 
+                    let formData = $(this).serialize();
                     let url = "{{ route('subscribe') }}";
 
 
@@ -1444,22 +1500,33 @@
                         type:'POST',
                         url:url,
                         data:formData,
+                        beforeSend:function(){
+                            $('#newsletter_form_btn').attr('disabled',true);
+                        },
                         success:function(data){
+
+                            $('#newsletter_form_btn').attr('disabled',false);
 
                             if(data.error){
                                 $.each(data.error, function(key,error){
-                                    alert(error);
+                                    $('.newsletter_form_error').html(error);
                                 });
                             }
-                            else if(data.subscriber_exists){
-                                alert(data.subscriber_exists);
-                            }
                             else if(data.success){
-                                alert(data.success);
+
+                                $('#newsletter_form').load(' #newsletter_form >* ');
+                                
+                                $('#newsletter_success_modal').find('.newsletter_success_msg').html(data.success);
+
+                                setTimeout(() => {
+                                    $('#newsletter_success_modal').modal('show');
+                                }, 500);
+
                             }
                             
                         },
                         error:function(){
+                            $('#newsletter_form_btn').attr('disabled',false);
                             alert('Something went wrong! Try reloading the page');
                         }
                     });

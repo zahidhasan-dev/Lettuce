@@ -16,7 +16,6 @@ class SubscriberController extends Controller
 
     public function subscribe(Request $request)
     {   
-
         if($request->ajax()){
 
             $validator = Validator::make($request->all(),
@@ -38,7 +37,8 @@ class SubscriberController extends Controller
             if($subscriber != null){
                 
                 if($subscriber->subscribed){
-                    return response()->json(['subscriber_exists'=>'You are already subscribed to our newsletter.']);
+                    $errors = $validator->errors()->add('subscriber_exists','You are already subscribed to our newsletter.');
+                    return response()->json(['error'=>$errors]);
                 }
     
                 $subscriber->subscribed = 1;
@@ -57,7 +57,7 @@ class SubscriberController extends Controller
 
             Mail::to($subscriber->subscriber_email)->send(new NewsletterSubscribed($subscriber));
             
-            return response()->json(['success'=>'Thank you for subscribing to our newslettter!']);
+            return response()->json(['success'=>'You have successfully subscribed to our newslettter!']);
         }
 
         abort(500);
@@ -68,22 +68,17 @@ class SubscriberController extends Controller
     public function unsubscribe()
     {
         $s_email = request()->get('s_email');
+        $s_id = request()->get('s_id');
 
-        $subscriber = Subscriber::where('subscriber_email',$s_email)->firstOrFail();
+        $subscriber = Subscriber::where('subscriber_id',$s_id)->where('subscriber_email',$s_email)->firstOrFail();
 
         $subscriber->subscribed = 0;
         $subscriber->save();
 
-        return redirect()->route('unsubscribe.view')->with(['subscriber'=>$subscriber]);
-        // return redirect()->to(url('/unsubscribe'))->with(['subscriber'=>$subscriber]);
-    }
-
-    public function unsubscribeView()
-    {
-        $subscriber = session()->get('subscriber');
-
         return view('frontend.unsubscribe', compact('subscriber'));
     }
+
+
 
 
 

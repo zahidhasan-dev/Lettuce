@@ -29,6 +29,74 @@
 
 
         <style>
+
+            #newsletter_preview_preloader.active{
+                display: flex;
+            }
+
+            .newsletter_form_error{
+                margin-top:5px;
+                font-size:14px;
+                display: block;
+            }
+
+            #newsletter_preview_preloader {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                height: 100%;
+                width: 100%;
+                background: #021d2e;
+                display: none;
+                justify-content: center;
+                align-items: center;
+                border-radius:3px;
+            }
+
+            #newsletter_preview_preloader h5{
+                color:#fff;
+            }
+
+            #newsletter_preview_wrapper{
+                position: relative;
+            }
+
+            #newsletter_preview {
+                border-radius: 3px;
+                background: #eff2f7;
+            }
+
+            #newsletter_preview iframe{
+                min-height: 600px;
+                width: 100%;
+                display: block;
+                padding: 10px;
+            }
+
+            #newsletter_code_input,
+            #newsletter_details_code{
+                background: #021d2e;
+                color: #fff;
+            }
+            
+            #newsletter_details_code{
+                padding: 20px;
+                line-height: 30px;
+                height: 600px;
+                overflow-y: scroll;
+                border-radius: 3px;
+            }
+            #newsletter_code_input::placeholder{
+                color: #fff;
+            }
+
+            .newsletter_tab_wrapper {
+                display:none;
+            }
+            .newsletter_tab_wrapper.active{
+                display:block;
+            }
             
             #viewUserDetails .profile_avatar {
                 height: 120px;
@@ -567,12 +635,23 @@
                                     <li><a href="{{ route('discount.index') }}">Discount</a></li>
                                 </ul>
                             </li>
+
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                    <i class="mdi mdi-email-newsletter"></i>
+                                    <span key="t-maps">Newsletter</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="{{ route('newsletter.subscriber') }}">Subscribers</a></li>
+                                    <li><a href="{{ route('newsletter.index') }}">Newsletters</a></li>
+                                    <li><a href="{{ route('newsletter.create') }}">Create Newsletter</a></li>
+                                </ul>
+                            </li>
                             
 
                             <li class="menu-title" key="t-apps">Apps</li>
 
-                
-
+                            
                             <li>
                                 <a href="javascript: void(0);" class="waves-effect">
                                     <i class="bx bx-calendar"></i><span class="badge rounded-pill bg-success float-end">New</span>
@@ -934,6 +1013,38 @@
                 var results = Number((Math.abs(number) * 100).toPrecision(15));
                 return Math.round(results) / 100 * Math.sign(number);
             }
+
+
+            $(document).ready(function(){
+
+                removeNewsletterPreview();
+
+                function removeNewsletterPreview(){
+
+                    let url = "{{ route('newsletter.preview.remove') }}";
+
+                    $.ajax({
+                        type:'POST',
+                        url:url,
+                        beforeSend:function(){
+                            $('#newsletter_preview_preloader').addClass('active');
+                        },
+                        success:function(data){
+                            if(data.status == 'success'){
+
+                                setTimeout(() => {
+                                    $('#newsletter_preview_preloader').removeClass('active');
+                                }, 200);
+
+                                $('#newsletter_preview').load(' #newsletter_preview>* ');
+
+                            }
+                        }
+                    });
+
+                }
+
+            });
             
             // document.getElementById('copyright_text').innerHTML = new Date().getFullYear() + " © Lettuce.";
 

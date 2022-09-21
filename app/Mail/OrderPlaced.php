@@ -33,6 +33,11 @@ class OrderPlaced extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name')->with(['order'=>$this->order]);
+        return $this->from('info@lettuce.com')
+                    ->subject('Order Placed')
+                    ->view('emails.order.order_placed')
+                    ->with([
+                        'order'=>$this->order
+                    ]);
     }
 }

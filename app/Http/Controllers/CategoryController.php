@@ -240,8 +240,6 @@ class CategoryController extends Controller
 
         return response()->json(['error'=>'Something went wrong.']);
 
-            
-            
     }
 
 
@@ -273,13 +271,13 @@ class CategoryController extends Controller
     public function queryCategory(Request $request)
     {
 
-        $categories = Category::orderBy('category_name','asc')->paginate(1);
+        $categories = Category::orderBy('category_name','asc')->paginate(10);
 
         if($request->category_query != ''){
             $categories = Category::where('category_name','LIKE','%'.$request->category_query.'%')
                                     ->orWhere('category_slug','LIKE','%'.$request->category_query.'%')
                                     ->orderBy('category_name','asc')
-                                    ->paginate(1);
+                                    ->paginate(10);
         }
 
         return view('admin.category.query_data',compact('categories'))->render();

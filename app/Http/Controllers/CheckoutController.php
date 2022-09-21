@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrderPlaced;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -9,6 +10,7 @@ use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 use function PHPUnit\Framework\isNull;
 use Illuminate\Support\Facades\Validator;
@@ -17,7 +19,7 @@ class CheckoutController extends Controller
 {
 
 
-    public function pay($json_obj)
+    public function pay($json_obj,$order)
     {
 
         \Stripe\Stripe::setApiKey(getenv('STRIPE_SECRET'));
@@ -43,7 +45,7 @@ class CheckoutController extends Controller
                 $intent->confirm();
             }
 
-            $this->generateResponse($intent);
+            $this->generateResponse($intent,$order);
 
         } catch (\Stripe\Exception\ApiErrorException $e) {
             DB::rollback();
@@ -55,7 +57,7 @@ class CheckoutController extends Controller
         
     }
     
-    public function generateResponse($intent) {
+    public function generateResponse($intent,$order) {
 
         # Note that if your API version is before 2019-02-11, 'requires_action'
         # appears as 'requires_source_action'.
@@ -71,6 +73,9 @@ class CheckoutController extends Controller
             # The payment didn’t need any additional actions and completed!
             # Handle post-payment fulfillment
             $this->destroyCart();
+
+            Mail::to($order->billing_email)->send(new OrderPlaced($order));
+
             echo json_encode([
                 "success" => true
             ]);
@@ -122,16 +127,20 @@ class CheckoutController extends Controller
             $this->decreaseProductQuantity();
     
             if($request_data['payment_method'] === 'card'){
-               $this->pay($json_obj);
+               $this->pay($json_obj,$order);
             }
            
             DB::commit();
 
             session()->flash('order_success','Order Successfull!');
-
+            
+            
             if($request_data['payment_method'] === 'cod'){
                 $this->destroyCart();
-               return response()->json(['success'=>'order success!']);
+
+                Mail::to($order->billing_email)->send(new OrderPlaced($order));
+
+                return response()->json(['success'=>'order success!']);
             }
 
         } catch (\Exception $e) {

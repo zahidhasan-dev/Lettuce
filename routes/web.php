@@ -16,6 +16,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\FrontendController;
+use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductReviewController;
 use App\Http\Controllers\ProductSizeController;
@@ -128,14 +129,29 @@ Route::middleware(['auth','verified','prevent-back-history'])->group(function(){
             Route::post('product/photo/delete',[ProductController::class, 'deleteProductPhoto'])->name('product.photo.delete');
             Route::get('product/{id}/feature/update', [ProductController::class, 'updateProductFeature'])->name('product.feature.update');
             Route::get('product/{id}/status/update', [ProductController::class, 'updateProductStatus'])->name('product.status.update');
-            Route::get('product/discount/create', [ProductController::class , 'create_product_discount'])->name('product.discount.create');
-            Route::post('product/discount/store', [ProductController::class , 'store_product_discount'])->name('product.discount.store');
+            Route::get('product/discount/create', [ProductController::class, 'create_product_discount'])->name('product.discount.create');
+            Route::post('product/discount/store', [ProductController::class, 'store_product_discount'])->name('product.discount.store');
             Route::post('product/by/category/products', [ProductController::class , 'products_by_category'])->name('product.category.products');
-            Route::get('product/discount/{discount}/edit', [ProductController::class , 'edit_product_discount'])->name('product.discount.edit');
-            Route::post('product/{product_id}/discount/update', [ProductController::class , 'update_product_discount'])->name('product.discount.update');
-            Route::delete('product/{product_id}/discount/delete', [ProductController::class , 'deleteProductDiscount'])->name('product.discount.delete');
+            Route::get('product/discount/{discount}/edit', [ProductController::class, 'edit_product_discount'])->name('product.discount.edit');
+            Route::post('product/{product_id}/discount/update', [ProductController::class, 'update_product_discount'])->name('product.discount.update');
+            Route::delete('product/{product_id}/discount/delete', [ProductController::class, 'deleteProductDiscount'])->name('product.discount.delete');
 
             Route::resource('size', ProductSizeController::class);
+
+            Route::post('newsletter/subscribers', [SubscriberController::class, 'querySubscriber'])->name('subscriber.search');
+            Route::get('newsletter/subscribers', [SubscriberController::class, 'subscribers'])->name('newsletter.subscriber');
+            Route::get('newsletter/subscriber/{subscriber_id}', [SubscriberController::class, 'show'])->name('newsletter.subscriber.show');
+            Route::delete('newsletter/subscriber/{subscriber_id}/delete', [SubscriberController::class, 'destroy'])->name('newsletter.subscriber.delete');
+
+            Route::get('newsletters', [NewsletterController::class, 'index'])->name('newsletter.index');
+            Route::post('newsletters', [NewsletterController::class, 'queryNewsletter'])->name('newsletter.search');
+            Route::get('newsletters/{newsletter}/show', [NewsletterController::class, 'show'])->name('newsletter.show');
+            Route::delete('newsletters/{newsletter}/delete', [NewsletterController::class, 'destroy'])->name('newsletter.delete');
+            Route::get('newsletter/create', [NewsletterController::class, 'createNewsletter'])->name('newsletter.create');
+            Route::post('newsletter/send', [NewsletterController::class, 'sendNewsletter'])->name('newsletter.send');
+            Route::post('newsletter/preview', [NewsletterController::class, 'writePreviewNewsletter'])->name('newsletter.preview.write');
+            Route::get('newsletter/preview', [NewsletterController::class, 'previewNewsletter'])->name('newsletter.preview');
+            Route::post('newsletter/preview/remove', [NewsletterController::class, 'removeNewsletterPreview'])->name('newsletter.preview.remove');
         
         });
     

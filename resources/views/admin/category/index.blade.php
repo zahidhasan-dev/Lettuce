@@ -257,6 +257,7 @@
             }
 
             $(document).on('keyup','#category_search', function(){
+                
                 let category_query = $(this).val().trim();
                 let url = "{{ route('category.search') }}";
 

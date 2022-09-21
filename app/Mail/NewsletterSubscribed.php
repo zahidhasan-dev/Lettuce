@@ -34,7 +34,8 @@ class NewsletterSubscribed extends Mailable
     public function build()
     {
         return $this->from('info@lettuce.com')
-                    ->view('frontend.newsletter.welcome')
+                    ->subject('Welcome')
+                    ->view('emails.newsletter.welcome')
                     ->with([
                         'subscriber'=>$this->subscriber
                     ]);

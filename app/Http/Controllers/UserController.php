@@ -19,12 +19,12 @@ class UserController extends Controller
     }
 
 
-
     
     public function addUser()
     {
         return view('admin.users.register_user');
     }
+    
 
     public function createUser(addUserFormPost $request)
     {

@@ -274,14 +274,12 @@
             });
 
 
-            function validateFaqForm(validate_form)
-            {  
+            function validateFaqForm(validate_form){  
                 
                 var faq_ques =$(validate_form).find('.faq_ques');
                 var faq_ans = $(validate_form).find('.faq_ans');
 
-                if(faq_ques.val() == "" && faq_ans.val() == "")
-                {
+                if(faq_ques.val() == "" && faq_ans.val() == ""){
                     faq_ques.parent().append("<small class='text-danger'>required</small>");
                     faq_ans.parent().append("<small class='text-danger'>required</small>");
 
@@ -291,8 +289,7 @@
                     return false;
                 }
 
-                if(faq_ques.val() == "")
-                {
+                if(faq_ques.val() == ""){
                     faq_ques.parent().append("<small class='text-danger'>required</small>");
 
                     $('.faq_ques').css('border-color','red');
@@ -300,8 +297,7 @@
                     return false;
                 }
 
-                if(faq_ans.val() == "")
-                {
+                if(faq_ans.val() == ""){
                     faq_ans.parent().append("<small class='text-danger'>required</small>");
                     
                     $('.faq_ans').css('border-color','red');
@@ -311,8 +307,7 @@
             }
 
 
-            $('.close_faq_form').on('click',function()
-            {
+            $('.close_faq_form').on('click',function(){
                 $('small').remove('');
 
                 $('.faq_ques').css('border-color','#ced4da');
@@ -324,8 +319,7 @@
             });
 
 
-            $('.modal').on('show.bs.modal', function () 
-            {
+            $('.modal').on('show.bs.modal', function (){
                 $('small').remove('');
 
                 $('.faq_ques').css('border-color','#ced4da');
@@ -336,8 +330,7 @@
             });
 
 
-            $('#addFaqBtn').on('click', function(event)
-            {
+            $('#addFaqBtn').on('click', function(event){
                 event.preventDefault();
 
                 $('small').remove('');
@@ -348,8 +341,7 @@
                 var checkvalidate = validateFaqForm('.faq_form');
 
 
-                if(checkvalidate != false )
-                {
+                if(checkvalidate != false ){
                     var faq_ques_val = $('.faq_ques').val();
                     var faq_ans_val = $('.faq_ans').val();
                    $.ajax({
@@ -358,8 +350,7 @@
                         dataType: 'json',
                         data:{faq_ques:faq_ques_val,faq_ans:faq_ans_val},
                         success:function(data){
-                            if(data.success)
-                            {
+                            if(data.success){
                                 $('#addFaq').modal('hide');
                                 
                                 $("#faq_table").load(" #faq_table  > *");
@@ -383,8 +374,7 @@
             });
 
 
-            $(document).on('click','.view_faq', function()
-            {
+            $(document).on('click','.view_faq', function(){
                 let id = $(this).data('id');
                 let url = "{{ route('faq.show', ':id') }}";
                     url = url.replace(":id", id);
@@ -396,8 +386,7 @@
                     beforeSend:function(){
                         $('#viewFaq').addClass('faq_view_loading');
                     },
-                    success:function(data)
-                    {   
+                    success:function(data){   
                         setTimeout(() => {
                             $('#viewFaq').removeClass('faq_view_loading');
                             $('.faq_ques_view p').text(data.faq_ques);
@@ -405,22 +394,22 @@
                         }, 200);
                     },
                     error:function(){
-                        alert("Something went wrong!");
+                        if(confirm('Something went wrong! Try reloading the page.')){
+                            window.location.reload();
+                        };
                     }
                 });
             });
 
             
-            $('.close_faq_view').on('click',function()
-            {
+            $('.close_faq_view').on('click',function(){
                 $('.faq_ques_view p').text('');
                 $('.faq_ans_view p').text('');
 
             });
 
 
-            $(document).on('click','.edit_faq', function(event)
-            {
+            $(document).on('click','.edit_faq', function(event){
                 event.preventDefault();
 
                 let id = $(this).data('id');
@@ -445,15 +434,16 @@
                         $('#editFaqPost').data('id',data.id);
                     },
                     error:function(){
-                        alert("Something went wrong!");
+                        if(confirm('Something went wrong! Try reloading the page.')){
+                            window.location.reload();
+                        };
                     }
                 });
 
             });
 
 
-            $('#editFaqPost').on('click', function(event)
-            {
+            $('#editFaqPost').on('click', function(event){
                 event.preventDefault();
 
                 $('small').remove('');
@@ -478,8 +468,7 @@
                         data:{faq_ques:faq_ques_val,faq_ans:faq_ans_val},
                         success:function(data){
 
-                            if(data.success)
-                            {
+                            if(data.success){
                                 $('#editFaq').modal('hide');
                                 
                                 $("#faq_table").load(" #faq_table  > *");
@@ -495,9 +484,10 @@
                                 alert(data.error);
                             }
                         },
-                        error:function()
-                        {
-                            alert("Something went wrong!");
+                        error:function(){
+                            if(confirm('Something went wrong! Try reloading the page.')){
+                                window.location.reload();
+                            };
                         }
 
                    });
@@ -507,8 +497,7 @@
             });
 
 
-            $(document).on('click','.SwitchFaqStatus', function()
-            {
+            $(document).on('click','.SwitchFaqStatus', function(){
                 let id = $(this).data('id');
                 let url = "{{ route('faq.updatestatus', ':id') }}";
                     url = url.replace(":id", id);
@@ -528,29 +517,28 @@
                         }
                     },
                     error:function(){
-                        alert("Something went wrong!");
+                        if(confirm('Something went wrong! Try reloading the page.')){
+                            window.location.reload();
+                        };
                     }
                 });
             });
 
 
             // select all faq
-            $(document).on('click','#faqCheckAll', function()
-            {
+            $(document).on('click','#faqCheckAll', function(){
                 $('.faqCheck').not(this).prop('checked',this.checked);
             });
 
 
             // delete single faq item
-            $(document).on('click','.faq_delete', function()
-            {   
+            $(document).on('click','.faq_delete', function(){   
                 let id = $(this).data('id');
                 $('.faq_delete_modal').data('id',id);
             });
 
 
-            $('.faq_delete_modal').on('click', function()
-            {   
+            $('.faq_delete_modal').on('click', function(){   
                 let id = $(this).data('id');
                 let url = "{{ route('faq.destroy', ':id') }}";
                     url = url.replace(":id", id);
@@ -559,10 +547,8 @@
                     type:'DELETE',
                     url:url,
                     data:{},
-                    success:function(data)
-                    {
-                        if(data.success)
-                        {   
+                    success:function(data){
+                        if(data.success){   
                             $('#deleteFaq').modal('hide');
 
                             $("#faq_table").load(" #faq_table  > *");
@@ -575,9 +561,10 @@
                             alert(data.error);
                         }
                     },
-                    error:function()
-                    {
-                        alert("Something went wrong!");
+                    error:function(){
+                        if(confirm('Something went wrong! Try reloading the page.')){
+                            window.location.reload();
+                        };
                     }
                 });
             });
@@ -585,17 +572,14 @@
 
 
             // delete all faq
-            $(document).on('click','.faq_delete_all', function()
-            {   
+            $(document).on('click','.faq_delete_all', function(){   
                 let all_vals = [];
 
-                $('.faqCheck:checked').each(function()
-                {
+                $('.faqCheck:checked').each(function(){
                     all_vals.push($(this).data('id'));
                 });
 
-                if(all_vals != 0)
-                {
+                if(all_vals != 0){
                     $('#deleteAllFaq').modal('show');
                     $('.faq_delete_all_modal').data('id',all_vals);  
                 }
@@ -606,22 +590,18 @@
             });
 
 
-            $('.faq_delete_all_modal').on('click', function()
-            {   
+            $('.faq_delete_all_modal').on('click', function(){   
                 let ids = $(this).data('id');
                 let url = "{{ route('faq.deleteall', ':ids') }}";
                     url = url.replace(":ids",ids);
 
-                if(ids != 0)
-                {
+                if(ids != 0){
                     $.ajax({
                         type:'DELETE',
                         url:url,
                         data:{ids:ids},
-                        success:function(data)
-                        {
-                            if(data.success)
-                            {   
+                        success:function(data){
+                            if(data.success){   
                                 $('#deleteAllFaq').modal('hide');
 
                                 $("#faq_table").load(" #faq_table  > *");
@@ -636,9 +616,10 @@
                             }
 
                         },
-                        error:function()
-                        {
-                            alert("Something went wrong!");
+                        error:function(){
+                            if(confirm('Something went wrong! Try reloading the page.')){
+                                window.location.reload();
+                            };
                         }
                     });
 

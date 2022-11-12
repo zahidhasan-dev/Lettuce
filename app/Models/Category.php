@@ -10,9 +10,7 @@ class Category extends Model
 {
     use HasFactory;
 
-
     protected $fillable = ['parent_category','category_name','category_slug','category_photo'];
-
 
 
     public function main_category()

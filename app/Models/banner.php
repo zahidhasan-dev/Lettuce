@@ -11,7 +11,7 @@ class Banner extends Model
     use HasFactory;
 
 
-    protected $fillable = ['banner_type','banner_title','banner_button','banner_slug','category_id','discount_id','banner_image','status'];
+    protected $fillable = ['banner_type','banner_sub_title','banner_title','banner_button','banner_slug','category_id','discount_id','banner_image','status','url'];
 
 
 

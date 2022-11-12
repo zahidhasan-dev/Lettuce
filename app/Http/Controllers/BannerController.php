@@ -9,7 +9,6 @@ use App\Models\Category;
 use App\Models\Discount;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Validator;
@@ -25,7 +24,7 @@ class BannerController extends Controller
     public function index()
     {
         
-        $banners = Banner::orderBy('id','desc')->paginate(2);
+        $banners = Banner::orderBy('id','desc')->paginate(20);
 
         return view('admin.banner.index',compact('banners'));
 
@@ -70,18 +69,29 @@ class BannerController extends Controller
         $status = $request->banner_status ?? 0;
         $banner_slug = Str::slug($request->banner_slug,'-');
 
+        $url = route('shop');
+
+        if($request->banner_category != '' && $request->banner_discount == ''){
+           $url = route('shop',$banner_slug);
+        }
+        else if($request->banner_discount != ''){
+           $url = route('shop.sale',$banner_slug);
+        }
+
         DB::beginTransaction();
 
         try {
             
             $banner = Banner::create([
                 'banner_type'=>$request->banner_type,
+                'banner_sub_title'=>$request->banner_sub_title,
                 'banner_title'=>$request->banner_title,
                 'banner_button'=>$request->banner_button_text,
                 'category_id'=>$request->banner_category,
                 'discount_id'=>$request->banner_discount,
                 'banner_slug'=>$banner_slug,
                 'status'=>$status,
+                'url'=>$url,
                 'created_at'=>Carbon::now(),
             ]);
      
@@ -167,14 +177,25 @@ class BannerController extends Controller
 
             $banner_status = $request->banner_status ?? 0;
             $banner_slug = Str::slug($request->banner_slug,'-');
+
+            $url = route('shop');
+
+            if($request->banner_category != '' && $request->banner_discount == ''){
+                $url = route('shop',$banner_slug);
+            }
+            else if($request->banner_discount != ''){
+                $url = route('shop.sale',$banner_slug);
+            }
             
             $banner->banner_type = $request->banner_type;
+            $banner->banner_sub_title = $request->banner_sub_title;
             $banner->banner_title = $request->banner_title;
             $banner->banner_button = $request->banner_button_text;
             $banner->category_id = $request->banner_category;
             $banner->discount_id = $request->banner_discount;
             $banner->banner_slug = $banner_slug;
             $banner->status = $banner_status;
+            $banner->url = $url;
             $banner->save();
 
             if($request->hasFile('banner_image')){
@@ -252,7 +273,7 @@ class BannerController extends Controller
     public function bannerQuery(Request $request)
     {
 
-        $banners = Banner::orderBy('id','desc')->paginate(2);
+        $banners = Banner::orderBy('id','desc')->paginate(20);
 
         $banner_query = $request->query('banner_query');
 
@@ -269,7 +290,7 @@ class BannerController extends Controller
                                 $query->whereHas('category',function($q) use ($banner_query){
                                     $q->where('category_name','LIKE','%'.$banner_query.'%');
                                 });
-                            })->orderBy('id','desc')->paginate(2);
+                            })->orderBy('id','desc')->paginate(20);
 
         }
 
@@ -300,17 +321,38 @@ class BannerController extends Controller
     
         $validator = Validator::make($request,[
             'banner_type'=>'required|in:hero,campaign',
+            'banner_sub_title'=>'string|max:80|nullable',
             'banner_title'=>'string|max:100|nullable',
             'banner_button_text'=>'string|max:20|nullable',
             'banner_category'=>'numeric|exists:categories,id',
             'banner_discount'=>'numeric|exists:discounts,id',
-            'banner_slug'=>['required',new SlugRule('banners','banner_slug',$except_id)],
+            'banner_slug'=>['required_with:banner_category','required_with:banner_discount',new SlugRule('banners','banner_slug',$except_id)],
             'banner_image'=>[$image_rule,'mimes:jpg,jpeg,png','max:512','dimensions:min_width=360,min_height=240,max_width=1920,max_height=1200'],
             'banner_status'=>'boolean',
         ]);
 
         return $validator;
 
+    }
+
+
+
+    public function createBannerSlug(Request $request)
+    {
+        $category_name = '';
+        $discount_name = '';
+
+        if($request->category_id != ''){
+            $category_name = get_category_name($request->category_id);
+        }
+
+        if($request->discount_id != ''){
+            $discount_name = get_discount_name($request->discount_id);
+        }
+
+        $slug = Str::slug($category_name.' '.$discount_name,'-');
+
+        return $slug;
     }
 
 

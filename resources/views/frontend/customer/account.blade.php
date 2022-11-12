@@ -278,7 +278,9 @@
                             
                         },
                         error:function(){
-                            alert('Something went wrong! Try reloading the page.');
+                            if(confirm('Something went wrong! Try reloading the page.')){
+                                window.location.reload();
+                            }
                         }
                     });
                 });
@@ -299,7 +301,9 @@
                             $('#customer_city_wrap .nice-select .list').html('<li data-value="Select City" class="option selected disabled focus">Select City</li>'+data.city_lists);
                         },
                         error:function(){
-                            alert("Something went wrong!");
+                            if(confirm('Something went wrong! Try reloading the page.')){
+                                window.location.reload();
+                            }
                         }
                     });
 
@@ -335,7 +339,9 @@
 
                         },
                         error:function(){
-                            alert('Something went wrong! Try reloading the page.');
+                            if(confirm('Something went wrong! Try reloading the page.')){
+                                window.location.reload();
+                            }
                         }
                     });
 

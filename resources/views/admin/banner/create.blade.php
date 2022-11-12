@@ -62,6 +62,14 @@
                                         </div>
 
                                         <div class="mb-3">
+                                            <label for="bannerSubTitle">Banner Sub-Title</label>
+                                            <input id="bannerSubTitle" name="banner_sub_title" type="text" class="form-control" placeholder="Banner Sub-Title" value="{{ old('banner_sub_title') }}">
+                                            @error('banner_sub_title')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
+
+                                        <div class="mb-3">
                                             <label for="bannerTitle">Banner Title</label>
                                             <input id="bannerTitle" name="banner_title" type="text" class="form-control" placeholder="Banner Title" value="{{ old('banner_title') }}">
                                             @error('banner_title')
@@ -79,7 +87,7 @@
 
                                         <div class="mb-3">
                                             <label class="control-label">Category</label>
-                                            <select class="form-control text-capitalize" name="banner_category">
+                                            <select class="form-control text-capitalize" name="banner_category" id="banner_category">
                                                 <option selected disabled>Select Category</option>
                                                 @foreach ($categories as $category)
                                                     <option style="font-weight:600;" {{ (old('banner_category') == $category->id)?'selected':'' }} value="{{ $category->id }}">{{ $category->category_name }}</option>
@@ -97,7 +105,7 @@
                                     
                                         <div class="mb-3"  id="discount_select_wrapper">
                                             <label for="">Discount</label>
-                                            <select class="form-control" name="banner_discount">
+                                            <select class="form-control" name="banner_discount" id="banner_discount">
                                                 <option selected disabled>Select Discount</option>
                                                 @foreach ($discounts as $discount)
                                                     <option {{  old('banner_discount') == $discount->id ? 'selected' : '' }} value="{{ $discount->id }}">{{ $discount->discount_name.' ( '.discountValueType($discount->id).' )' }}</option>
@@ -182,6 +190,19 @@
 
 
 
+            $(document).on('change','#banner_category, #banner_discount', function(){
+                
+                let category_id = $('#banner_category').val();
+                let discount_id = $('#banner_discount').val();
+                
+                generateBannerSlug(function(result){
+                    $('#banner_slug').val(result);
+                },category_id,discount_id);
+                
+            });
+
+
+
             $(document).on('change','#banner_image', function(event){
                let file = event.target.files[0];
 
@@ -200,7 +221,6 @@
 
                     addPreviewOverlay('#banner_image_wrapper','#banner_image_label');
 
-
                }
 
             });
@@ -209,25 +229,6 @@
                 event.preventDefault();
                 removeInputPhoto('#banner_image','#banner_image_wrapper','#remove_banner_image','#banner_image_label');
             });
-
-
-            function removeInputPhoto(input,preview_wrapper,remove_btn,remove_overlay){
-                $(input).val('');
-                $(preview_wrapper).find('img').remove();
-                $(remove_overlay).removeClass('has_preview');
-                $(remove_overlay).find('.preview_overlay').remove();
-                $(remove_btn).remove();
-            }
-
-
-            function addPreviewOverlay(preview_wrapper,input_label){
-
-                if($(preview_wrapper).children('.has_preview').length == 0){
-                    $(input_label).addClass('has_preview');
-                    $(preview_wrapper).find('.has_preview').prepend('<span class="preview_overlay"></span>');
-                }
-
-            }
 
 
 

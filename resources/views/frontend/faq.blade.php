@@ -28,17 +28,21 @@
                             <div class="btn-wrapper mb-30">
                                 <a href="{{ url('/contact') }}" class="theme-btn-1 btn">Contact Us</a>
                             </div>
-                            <h3><i class="fas fa-phone"></i> +0123-456-789</h3>
+                            @if (primary_contact_phone() != null)
+                                <h3><i class="fas fa-phone"></i> +{{ primary_contact_phone() }}</h3>
+                            @endif
+                            
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-4">
                     <aside class="sidebar-area ltn__right-sidebar">
-                        <!-- Banner Widget -->
-                        <div class="widget ltn__banner-widget">
-                            <a href="{{ url('/shop') }}"><img src="{{ asset('uploads/banner/'.$banner->banner_image) }}" alt="Banner Image"></a>
-                        </div>
-
+                        @if($banner != null)
+                            <!-- Banner Widget -->
+                            <div class="widget ltn__banner-widget">
+                                <a href="{{ $banner->url }}"><img src="{{ asset('uploads/banner/'.$banner->banner_image) }}" alt="Banner Image"></a>
+                            </div>
+                        @endif
                     </aside>
                 </div>
             </div>

@@ -38,9 +38,9 @@ class CountryController extends Controller
      */
     public function store(CountryFormPost $request)
     {
-        $add_country = Country::create($request->all());
+        $country = Country::create($request->all());
 
-        if($add_country)
+        if($country)
         {
             return redirect()->back()->with(['success'=>'Country added succesfully!']);
         }

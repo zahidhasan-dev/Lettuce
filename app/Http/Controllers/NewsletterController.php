@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+
 use Carbon\Carbon;
 use App\Models\Newsletter;
 use App\Models\Subscriber;
 use App\Mail\NewsletterSend;
 use Illuminate\Http\Request;
+use App\Jobs\NewsletterSendJob;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\NewsletterFormRequest;
+use Illuminate\Support\Facades\DB;
 
 class NewsletterController extends Controller
 {
@@ -21,7 +24,7 @@ class NewsletterController extends Controller
 
     public function index()
     {
-        $newsletters = Newsletter::paginate(20);
+        $newsletters = Newsletter::orderBy('created_at','desc')->paginate(20);
 
         return view('admin.newsletter.index', compact('newsletters'));
     }
@@ -97,7 +100,7 @@ class NewsletterController extends Controller
 
             file_put_contents(resource_path()."/views/admin/newsletter/preview.blade.php", "");
 
-            file_put_contents(resource_path()."/views/emails/newsletter/newsletter.blade.php", "");
+            // file_put_contents(resource_path()."/views/emails/newsletter/newsletter.blade.php", "");
 
             return response()->json(['status' => 'success',], 200);
 
@@ -118,21 +121,21 @@ class NewsletterController extends Controller
             
             if($subscribers->count() > 0){
 
-                Newsletter::create([
+                $newsletter = Newsletter::create([
                     'newsletter_code'=>$request->newsletter_code,
                     'newsletter_subject'=>$request->newsletter_subject,
                     'created_at'=>Carbon::now(),
                 ]);
+                
+                foreach($subscribers as $subscriber){
 
-                // file_put_contents(resource_path()."/views/emails/newsletter/newsletter.blade.php", $request->newsletter_code);
-    
-                // foreach($subscribers as $subscriber){
-                //     Mail::to($subscriber->subscriber_email)->send( new NewsletterSend($subscriber,$request->newsletter_subject));
-                // }
+                    $delay = DB::table('jobs')->count()*10;
+                    
+                    dispatch(new NewsletterSendJob($subscriber,$newsletter))->delay($delay);
+
+                }
 
                 file_put_contents(resource_path()."/views/admin/newsletter/preview.blade.php", "");
-
-                file_put_contents(resource_path()."/views/emails/newsletter/newsletter.blade.php", "");
 
                 return response()->json(['status' => 'success',]);
             }

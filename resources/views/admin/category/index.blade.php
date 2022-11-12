@@ -250,7 +250,9 @@
                         $('#categories_table_wrapper').find('tbody').html(data);
                     },
                     error:function(){
-                        alert('Something went wrong');
+                        if(confirm('Something went wrong! Try reloading the page.')){
+                            window.location.reload();
+                        }
                     }
                 });
 
@@ -556,7 +558,9 @@
 
                     },
                     error:function(){
-                        alert('Something went wrong!');
+                        if(confirm('Something went wrong! Try reloading the page.')){
+                            window.location.reload();
+                        }
                     }
                 });
                     

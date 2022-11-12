@@ -16,13 +16,6 @@
             @endif
         </td>
         <td>
-            @if(!is_null($banner->banner_button))
-            {{ $banner->banner_button }}
-            @else
-                N/A
-            @endif
-        </td>
-        <td>
             @if ($banner->category_id != null)
                 {{ $banner->category->category_name }}
             @else
@@ -36,7 +29,13 @@
                 N/A
             @endif
         </td>
-        <td>{{ $banner->banner_slug }}</td>
+        <td>
+            @if ($banner->banner_slug != null)
+                {{ $banner->banner_slug }}
+            @else
+                N/A
+            @endif
+        </td>
         <td>
             <div class="form-check form-switch form-switch-md mb-3" dir="ltr">
                 <input class="form-check-input switchBannerStatus" type="checkbox" data-id="{{ $banner->id }}" id="switchBannerStatus_{{ $banner->id }}" {{ ($banner->status == 1) ? 'checked' : ''}}>

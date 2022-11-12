@@ -13,7 +13,8 @@
         <meta content="Themesbrand" name="author" />
         <!-- App favicon -->
         
-
+        <!-- Place favicon.png in the root directory -->
+        <link rel="shortcut icon" href="{{ asset('dashboard_assets/images/favicon.png') }}" type="image/x-icon" />
         <!-- Responsive -->
         <link href="{{ asset('dashboard_assets/libs/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('dashboard_assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
@@ -29,6 +30,79 @@
 
 
         <style>
+
+            #editPermission .modal-content,
+            #editRole .modal-content{
+                position: relative;
+            }
+
+            .permission_edit_loading .modal_preloader,
+            .role_edit_loading .modal_preloader{
+                display: flex;
+            }
+
+            .modal_preloader{
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                background-color: #f2f2f2;
+                height: 100%;
+                width: 100%;
+                z-index: 99;
+                display: none;
+                align-items: center;
+                justify-content: center;
+            }
+
+            #message_reply_btn.hide{
+                display: none;
+            }
+
+            #reply_message_form_wrapper{
+                display: none;
+            }
+
+            #reply_message_form_wrapper.show{
+                display: block;
+            }
+
+            .reply_message_form_btn{
+                min-width:75px;
+            }
+
+            #reply_message_form_container{
+                background: #fff;
+                border:1px solid #e7e7e7;
+                padding: 10px;
+                border-radius: 5px;
+                transition: .1s;
+            }
+
+            #reply_message_form_container:hover,
+            #reply_message_form_container:focus-within{
+                box-shadow: 0px 0px 11px 7px #e7e7e7;
+            }
+
+            #reply_message_form textarea{
+                border: 0;
+            }
+
+            #reply_message_cancel_btn{
+                margin-right:5px;
+            }
+
+            .page-content {
+                min-height: 100vh;
+            }
+
+            .order_sort_btn{
+                margin-right:8px;
+                margin-bottom: 8px;
+            }
+            .order_sort_btn:last-child{
+                margin-right:0px;
+            }
 
             #newsletter_preview_preloader.active{
                 display: flex;
@@ -57,6 +131,7 @@
             #newsletter_preview_preloader h5{
                 color:#fff;
             }
+
 
             #newsletter_preview_wrapper{
                 position: relative;
@@ -235,6 +310,7 @@
                 font-size:0;
             }
 
+            .edit_contact_email_loading label,
             .coupon_edit_loading label,
             .discount_edit_loading label,
             .category_edit_loading label,
@@ -244,6 +320,8 @@
                 width: 100%;
                 font-size: 0;
             }
+
+            .edit_contact_email_loading input,
             .coupon_edit_loading input,
             .coupon_edit_loading select,
             .discount_edit_loading input,
@@ -259,6 +337,7 @@
                 font-size:0;
             }
 
+            .edit_contact_email_loading .modal-title,
             .coupon_edit_loading .modal-title,
             .discount_edit_loading .modal-title,
             .category_edit_loading .modal-title,
@@ -269,6 +348,8 @@
                 font-size: 0;
             }
 
+            .edit_contact_email_loading .close_contact_email_edit_form,
+            .edit_contact_email_loading #editContactEmailBtn,
             .coupon_edit_loading .close_coupon_form,
             .coupon_edit_loading .coupon_update_btn,
             .discount_edit_loading .close_discount_form,
@@ -345,22 +426,39 @@
                 position: relative;
                 border: 1px dashed gray;
             }
-            #banner_image_wrapper {
+            
+            #banner_image_wrapper,
+            #about_image_wrapper,
+            #feature_image_wrapper {
                 height: 180px;
                 width: 230px;
                 position: relative;
                 border: 1px dashed gray;
             }
+
             #product_thumbnail_wrapper #product_thumbnail_preview,
-            #banner_image_wrapper #banner_image_preview{
+            #banner_image_wrapper #banner_image_preview,
+            #about_image_wrapper #about_image_preview,
+            #feature_image_wrapper #feature_image_preview{
                 position: absolute;
                 height: 100%;
                 width:100%;
                 max-width:100%;
                 padding:10px;
             }
+
+            #feature_image_wrapper #feature_image_preview {
+                height: 100px;
+                width: 100px;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%,-50%);
+            }
+
             #product_thumbnail_label,
-            #banner_image_label {
+            #banner_image_label,
+            #about_image_label,
+            #feature_image_label {
                 position: absolute;
                 width: 100%;
                 height: 100%;
@@ -479,9 +577,42 @@
                 font-size: 56px;
             }
 
-            .dash_banner_img_container{
+            .dash_banner_img_container,
+            .dash_about_img_container{
                 max-width:100%;
                 width:570px;
+            }
+
+
+            #layout-wrapper{
+                position:relative;
+            }
+
+
+            #lettuce_dashboard_preloader {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                height: 100%;
+                width: 100%;
+                background: #021d2e;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border-radius: 3px;
+                z-index: 9999;
+                opacity: 0.9;
+            }
+
+            #lettuce_dashboard_preloader.hide{
+                display:none;
+                opacity: 0;
+            }
+
+            #lettuce_dashboard_preloader h3{
+                color:#fff;
+                letter-spacing: .15rem;
             }
 
             
@@ -495,18 +626,21 @@
         <!-- Begin page -->
         <div id="layout-wrapper">
 
-            
+            <div id="lettuce_dashboard_preloader" class="hide">
+                <h3>Loading...</h3>
+            </div>
+
             <header id="page-topbar">
                 <div class="navbar-header">
                     <div class="d-flex">
                         <!-- LOGO -->
                         <div class="navbar-brand-box">
-                           <a href="index.html" class="logo logo-light">
+                           <a href="{{ route('index') }}" class="logo logo-light">
                                 <span class="logo-sm">
-                                    <img src="{{ asset('dashboard_assets/images/logo-light.svg') }}" alt="" height="22">
+                                    <img src="{{ asset('dashboard_assets/images/logo-sm.png') }}" alt="" height="25">
                                 </span>
                                 <span class="logo-lg">
-                                    <img src="{{ asset('dashboard_assets/images/logo-light.png') }}" alt="" height="19">
+                                    <img src="{{ asset('dashboard_assets/images/logo-light.png') }}" alt="" height="30">
                                 </span>
                             </a>
                         </div>
@@ -565,32 +699,42 @@
                                 </a>
                             </li>
                             
-                            <li>
+                            <li class="@yield('about_parent_active')">
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
                                     <i class="bx bx-layout"></i>
                                     <span key="t-multi-level">Frontend</span>
                                 </a>
                                 <ul class="sub-menu" aria-expanded="true">
-                                    <li>
+                                    <li class="@yield('about_parent_active')">
+                                        <a href="javascript: void(0);" class="has-arrow" key="t-level-1-2">About</a>
+                                        <ul class="sub-menu" aria-expanded="true">
+                                            <li><a href="{{ route('about.index') }}" key="t-level-2-1" class="@yield('about_active')">Abouts</a></li>
+                                            <li><a href="{{ route('about.create') }}" key="t-level-2-2">Add New About</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="@yield('feature_parent_active')">
+                                        <a href="javascript: void(0);" class="has-arrow" key="t-level-1-2">Feature</a>
+                                        <ul class="sub-menu" aria-expanded="true">
+                                            <li><a href="{{ route('feature.index') }}" key="t-level-2-1" class="@yield('feature_active')">Features</a></li>
+                                            <li><a href="{{ route('feature.create') }}" key="t-level-2-2">Add New Feature</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="@yield('banner_parent_active')">
                                         <a href="javascript: void(0);" class="has-arrow" key="t-level-1-2">Banner</a>
                                         <ul class="sub-menu" aria-expanded="true">
-                                            <li><a href="{{ route('banner.index') }}" key="t-level-2-1">Banners</a></li>
+                                            <li><a href="{{ route('banner.index') }}" key="t-level-2-1" class="@yield('banner_active')">Banners</a></li>
                                             <li><a href="{{ route('banner.create') }}" key="t-level-2-2">Add New Banner</a></li>
                                         </ul>
                                     </li>
+                                    <li>
+                                        <a href="javascript: void(0);" class="has-arrow" key="t-level-1-2">Contact</a>
+                                        <ul class="sub-menu" aria-expanded="true">
+                                            <li><a href="{{ route('email.index') }}" key="t-level-2-1">Email</a></li>
+                                            <li><a href="{{ route('phone.index') }}" key="t-level-2-1">Phone</a></li>
+                                            <li><a href="{{ route('address.index') }}" key="t-level-2-1">Address</a></li>
+                                        </ul>
+                                    </li>
                                     <li><a href="{{ route('faq.index') }}" key="t-compact-sidebar">FAQ</a></li>
-                                </ul>
-                            </li>
-
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="bx bx-user-circle"></i>
-                                    <span key="t-layouts">Users</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="{{ route('user.admin') }}" key="t-light-sidebar">Admins</a></li>
-                                    <li><a href="{{ route('user.customer') }}" key="t-compact-sidebar">Customers</a></li>
-                                    <li><a href="{{ route('admin.user.register') }}" key="t-compact-sidebar">Add User</a></li>
                                 </ul>
                             </li>
 
@@ -600,6 +744,7 @@
                                     <span key="t-layouts">Category</span>
                                 </a>
                             </li>
+
                             <li class="@yield('parent_active')">
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
                                     <i class="bx bxl-product-hunt"></i>
@@ -616,23 +761,34 @@
 
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="bx bx-map"></i>
-                                    <span key="t-maps">Regions</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="{{ route('country.index') }}">Country</a></li>
-                                    <li><a href="{{ route('city.index') }}">City</a></li>
-                                </ul>
-                            </li>
-
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
                                     <i class="bx bxs-discount"></i>
-                                    <span key="t-maps">Offers</span>
+                                    <span key="t-maps">Offer</span>
                                 </a>
                                 <ul class="sub-menu" aria-expanded="false">
                                     <li><a href="{{ route('coupon.index') }}">Coupon</a></li>
                                     <li><a href="{{ route('discount.index') }}">Discount</a></li>
+                                </ul>
+                            </li>
+
+
+                            <li>
+                                <a href="{{ route('order.index') }}" class="waves-effect" id="dash_menu_order_btn">
+                                    <i class="mdi mdi-cart-arrow-down"></i>
+                                    @if (pending_orders_count() > 0)
+                                        <span class="badge rounded-pill bg-danger float-end" id="dash_menu_order_count">{{ pending_orders_count() }}</span>                                        
+                                    @endif
+                                    <span key="t-maps">Order</span>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                    <i class="bx bx-map"></i>
+                                    <span key="t-maps">Region</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="{{ route('country.index') }}">Country</a></li>
+                                    <li><a href="{{ route('city.index') }}">City</a></li>
                                 </ul>
                             </li>
 
@@ -648,317 +804,37 @@
                                 </ul>
                             </li>
                             
-
-                            <li class="menu-title" key="t-apps">Apps</li>
-
                             
-                            <li>
-                                <a href="javascript: void(0);" class="waves-effect">
-                                    <i class="bx bx-calendar"></i><span class="badge rounded-pill bg-success float-end">New</span>
-                                    <span key="t-dashboards">Calendars</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="calendar.html" key="t-tui-calendar">TUI Calendar</a></li>
-                                    <li><a href="calendar-full.html" key="t-full-calendar">Full Calendar</a></li>
-                                </ul>
-                            </li>
-
-                            <li>
-                                <a href="chat.html" class="waves-effect">
-                                    <i class="bx bx-chat"></i>
-                                    <span key="t-chat">Chat</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="apps-filemanager.html" class="waves-effect">
-                                    <i class="bx bx-file"></i>
-                                    <span class="badge rounded-pill bg-success float-end" key="t-new">New</span>
-                                    <span key="t-file-manager">File Manager</span>
-                                </a>
-                            </li>
-
-                            <li>
+                            <li class="@yield('message_parent_active')">
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="bx bx-store"></i>
-                                    <span key="t-ecommerce">Ecommerce</span>
+                                    <i class="mdi mdi-email"></i>
+                                    <span key="t-maps">Message</span>
                                 </a>
                                 <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="ecommerce-products.html" key="t-products">Products</a></li>
-                                    <li><a href="ecommerce-product-detail.html" key="t-product-detail">Product Detail</a></li>
-                                    <li><a href="ecommerce-orders.html" key="t-orders">Orders</a></li>
-                                    <li><a href="ecommerce-customers.html" key="t-customers">Customers</a></li>
-                                    <li><a href="ecommerce-cart.html" key="t-cart">Cart</a></li>
-                                    <li><a href="ecommerce-checkout.html" key="t-checkout">Checkout</a></li>
-                                    <li><a href="ecommerce-shops.html" key="t-shops">Shops</a></li>
-                                    <li><a href="ecommerce-add-product.html" key="t-add-product">Add Product</a></li>
-                                </ul>
-                            </li>
-
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="bx bx-bitcoin"></i>
-                                    <span key="t-crypto">Crypto</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="crypto-wallet.html" key="t-wallet">Wallet</a></li>
-                                    <li><a href="crypto-buy-sell.html" key="t-buy">Buy/Sell</a></li>
-                                    <li><a href="crypto-exchange.html" key="t-exchange">Exchange</a></li>
-                                    <li><a href="crypto-lending.html" key="t-lending">Lending</a></li>
-                                    <li><a href="crypto-orders.html" key="t-orders">Orders</a></li>
-                                    <li><a href="crypto-kyc-application.html" key="t-kyc">KYC Application</a></li>
-                                    <li><a href="crypto-ico-landing.html" key="t-ico">ICO Landing</a></li>
-                                </ul>
-                            </li>
-
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="bx bx-envelope"></i>
-                                    <span key="t-email">Email</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="email-inbox.html" key="t-inbox">Inbox</a></li>
-                                    <li><a href="email-read.html" key="t-read-email">Read Email</a></li>
-                                    <li>
-                                        <a href="javascript: void(0);">
-                                            <span class="badge rounded-pill badge-soft-success float-end" key="t-new">New</span>
-                                            <span key="t-email-templates">Templates</span>
+                                    <li id="dash_menu_inbox_btn">
+                                        <a href="{{ route('admin.message.index') }}" class="@yield('message_inbox_active')">Inbox
+                                            @if (total_unread_message() > 0)
+                                                <span class="badge rounded-pill bg-danger float-end" id="dash_menu_order_count">{{ total_unread_message() }}</span>
+                                            @endif
                                         </a>
-                                        <ul class="sub-menu" aria-expanded="true">
-                                            <li><a href="email-template-basic.html" key="t-basic-action">Basic Action</a></li>
-                                            <li><a href="email-template-alert.html" key="t-alert-email">Alert Email</a></li>
-                                            <li><a href="email-template-billing.html" key="t-bill-email">Billing Email</a></li>
-                                        </ul>
                                     </li>
-                                </ul>
-                            </li>
-
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="bx bx-receipt"></i>
-                                    <span key="t-invoices">Invoices</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="invoices-list.html" key="t-invoice-list">Invoice List</a></li>
-                                    <li><a href="invoices-detail.html" key="t-invoice-detail">Invoice Detail</a></li>
-                                </ul>
-                            </li>
-
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="bx bx-briefcase-alt-2"></i>
-                                    <span key="t-projects">Projects</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="projects-grid.html" key="t-p-grid">Projects Grid</a></li>
-                                    <li><a href="projects-list.html" key="t-p-list">Projects List</a></li>
-                                    <li><a href="projects-overview.html" key="t-p-overview">Project Overview</a></li>
-                                    <li><a href="projects-create.html" key="t-create-new">Create New</a></li>
-                                </ul>
-                            </li>
-
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="bx bx-task"></i>
-                                    <span key="t-tasks">Tasks</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="tasks-list.html" key="t-task-list">Task List</a></li>
-                                    <li><a href="tasks-kanban.html" key="t-kanban-board">Kanban Board</a></li>
-                                    <li><a href="tasks-create.html" key="t-create-task">Create Task</a></li>
-                                </ul>
-                            </li>
-
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="bx bxs-user-detail"></i>
-                                    <span key="t-contacts">Contacts</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="contacts-grid.html" key="t-user-grid">Users Grid</a></li>
-                                    <li><a href="contacts-list.html" key="t-user-list">Users List</a></li>
-                                    <li><a href="contacts-profile.html" key="t-profile">Profile</a></li>
-                                </ul>
-                            </li>
-
-                            <li>
-                                <a href="javascript: void(0);" class="waves-effect">
-                                    <span class="badge rounded-pill bg-success float-end" key="t-new">New</span>
-                                    <i class="bx bx-detail"></i>
-                                    <span key="t-blog">Blog</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="blog-list.html" key="t-blog-list">Blog List</a></li>
-                                    <li><a href="blog-grid.html" key="t-blog-grid">Blog Grid</a></li>
-                                    <li><a href="blog-details.html" key="t-blog-details">Blog Details</a></li>
-                                </ul>
-                            </li>
-
-                            <li class="menu-title" key="t-pages">Pages</li>
-
-                            <li>
-                                <a href="javascript: void(0);" class="waves-effect">
-                                    <span class="badge rounded-pill bg-success float-end" key="t-new">New</span>
-                                    <i class="bx bx-user-circle"></i>
-                                    <span key="t-authentication">Authentication</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="auth-login.html" key="t-login">Login</a></li>
-                                    <li><a href="auth-login-2.html" key="t-login-2">Login 2</a></li>
-                                    <li><a href="auth-register.html" key="t-register">Register</a></li>
-                                    <li><a href="auth-register-2.html" key="t-register-2">Register 2</a></li>
-                                    <li><a href="auth-recoverpw.html" key="t-recover-password">Recover Password</a></li>
-                                    <li><a href="auth-recoverpw-2.html" key="t-recover-password-2">Recover Password 2</a></li>
-                                    <li><a href="auth-lock-screen.html" key="t-lock-screen">Lock Screen</a></li>
-                                    <li><a href="auth-lock-screen-2.html" key="t-lock-screen-2">Lock Screen 2</a></li>
-                                    <li><a href="auth-confirm-mail.html" key="t-confirm-mail">Confirm Email</a></li>
-                                    <li><a href="auth-confirm-mail-2.html" key="t-confirm-mail-2">Confirm Email 2</a></li>
-                                    <li><a href="auth-email-verification.html" key="t-email-verification">Email verification</a></li>
-                                    <li><a href="auth-email-verification-2.html" key="t-email-verification-2">Email Verification 2</a></li>
-                                    <li><a href="auth-two-step-verification.html" key="t-two-step-verification">Two Step Verification</a></li>
-                                    <li><a href="auth-two-step-verification-2.html" key="t-two-step-verification-2">Two Step Verification 2</a></li>
-                                </ul>
-                            </li>
-
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="bx bx-file"></i>
-                                    <span key="t-utility">Utility</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="pages-starter.html" key="t-starter-page">Starter Page</a></li>
-                                    <li><a href="pages-maintenance.html" key="t-maintenance">Maintenance</a></li>
-                                    <li><a href="pages-comingsoon.html" key="t-coming-soon">Coming Soon</a></li>
-                                    <li><a href="pages-timeline.html" key="t-timeline">Timeline</a></li>
-                                    <li><a href="pages-faqs.html" key="t-faqs">FAQs</a></li>
-                                    <li><a href="pages-pricing.html" key="t-pricing">Pricing</a></li>
-                                    <li><a href="pages-404.html" key="t-error-404">Error 404</a></li>
-                                    <li><a href="pages-500.html" key="t-error-500">Error 500</a></li>
-                                </ul>
-                            </li>
-
-                            <li class="menu-title" key="t-components">Components</li>
-
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="bx bx-tone"></i>
-                                    <span key="t-ui-elements">UI Elements</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="ui-alerts.html" key="t-alerts">Alerts</a></li>
-                                    <li><a href="ui-buttons.html" key="t-buttons">Buttons</a></li>
-                                    <li><a href="ui-cards.html" key="t-cards">Cards</a></li>
-                                    <li><a href="ui-carousel.html" key="t-carousel">Carousel</a></li>
-                                    <li><a href="ui-dropdowns.html" key="t-dropdowns">Dropdowns</a></li>
-                                    <li><a href="ui-grid.html" key="t-grid">Grid</a></li>
-                                    <li><a href="ui-images.html" key="t-images">Images</a></li>
-                                    <li><a href="ui-lightbox.html" key="t-lightbox">Lightbox</a></li>
-                                    <li><a href="ui-modals.html" key="t-modals">Modals</a></li>
-                                    <li><a href="ui-offcanvas.html" key="t-offcanvas">Offcanvas</a></li>
-                                    <li><a href="ui-rangeslider.html" key="t-range-slider">Range Slider</a></li>
-                                    <li><a href="ui-session-timeout.html" key="t-session-timeout">Session Timeout</a></li>
-                                    <li><a href="ui-progressbars.html" key="t-progress-bars">Progress Bars</a></li>
-                                    <li><a href="ui-placeholders.html" key="t-placeholders">Placeholders</a></li>
-                                    <li><a href="ui-sweet-alert.html" key="t-sweet-alert">Sweet-Alert</a></li>
-                                    <li><a href="ui-tabs-accordions.html" key="t-tabs-accordions">Tabs & Accordions</a></li>
-                                    <li><a href="ui-typography.html" key="t-typography">Typography</a></li>
-                                    <li><a href="ui-toasts.html" key="t-toasts">Toasts</a></li>
-                                    <li><a href="ui-video.html" key="t-video">Video</a></li>
-                                    <li><a href="ui-general.html" key="t-general">General</a></li>
-                                    <li><a href="ui-colors.html" key="t-colors">Colors</a></li>
-                                    <li><a href="ui-rating.html" key="t-rating">Rating</a></li>
-                                    <li><a href="ui-notifications.html" key="t-notifications">Notifications</a></li>
-                                </ul>
-                            </li>
-
-                            <li>
-                                <a href="javascript: void(0);" class="waves-effect">
-                                    <i class="bx bxs-eraser"></i>
-                                    <span class="badge rounded-pill bg-danger float-end">10</span>
-                                    <span key="t-forms">Forms</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="form-elements.html" key="t-form-elements">Form Elements</a></li>
-                                    <li><a href="form-layouts.html" key="t-form-layouts">Form Layouts</a></li>
-                                    <li><a href="form-validation.html" key="t-form-validation">Form Validation</a></li>
-                                    <li><a href="form-advanced.html" key="t-form-advanced">Form Advanced</a></li>
-                                    <li><a href="form-editors.html" key="t-form-editors">Form Editors</a></li>
-                                    <li><a href="form-uploads.html" key="t-form-upload">Form File Upload</a></li>
-                                    <li><a href="form-xeditable.html" key="t-form-xeditable">Form Xeditable</a></li>
-                                    <li><a href="form-repeater.html" key="t-form-repeater">Form Repeater</a></li>
-                                    <li><a href="form-wizard.html" key="t-form-wizard">Form Wizard</a></li>
-                                    <li><a href="form-mask.html" key="t-form-mask">Form Mask</a></li>
-                                </ul>
-                            </li>
-
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="bx bx-list-ul"></i>
-                                    <span key="t-tables">Tables</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="tables-basic.html" key="t-basic-tables">Basic Tables</a></li>
-                                    <li><a href="tables-datatable.html" key="t-data-tables">Data Tables</a></li>
-                                    <li><a href="tables-responsive.html" key="t-responsive-table">Responsive Table</a></li>
-                                    <li><a href="tables-editable.html" key="t-editable-table">Editable Table</a></li>
-                                </ul>
-                            </li>
-
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="bx bxs-bar-chart-alt-2"></i>
-                                    <span key="t-charts">Charts</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="charts-apex.html" key="t-apex-charts">Apex Charts</a></li>
-                                    <li><a href="charts-echart.html" key="t-e-charts">E Charts</a></li>
-                                    <li><a href="charts-chartjs.html" key="t-chartjs-charts">Chartjs Charts</a></li>
-                                    <li><a href="charts-flot.html" key="t-flot-charts">Flot Charts</a></li>
-                                    <li><a href="charts-tui.html" key="t-ui-charts">Toast UI Charts</a></li>
-                                    <li><a href="charts-knob.html" key="t-knob-charts">Jquery Knob Charts</a></li>
-                                    <li><a href="charts-sparkline.html" key="t-sparkline-charts">Sparkline Charts</a></li>
-                                </ul>
-                            </li>
-
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="bx bx-aperture"></i>
-                                    <span key="t-icons">Icons</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="icons-boxicons.html" key="t-boxicons">Boxicons</a></li>
-                                    <li><a href="icons-materialdesign.html" key="t-material-design">Material Design</a></li>
-                                    <li><a href="icons-dripicons.html" key="t-dripicons">Dripicons</a></li>
-                                    <li><a href="icons-fontawesome.html" key="t-font-awesome">Font Awesome</a></li>
-                                </ul>
-                            </li>
-
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="bx bx-map"></i>
-                                    <span key="t-maps">Maps</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="maps-google.html" key="t-g-maps">Google Maps</a></li>
-                                    <li><a href="maps-vector.html" key="t-v-maps">Vector Maps</a></li>
-                                    <li><a href="maps-leaflet.html" key="t-l-maps">Leaflet Maps</a></li>
-                                </ul>
-                            </li>
-
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="bx bx-share-alt"></i>
-                                    <span key="t-multi-level">Multi Level</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="true">
-                                    <li><a href="javascript: void(0);" key="t-level-1-1">Level 1.1</a></li>
                                     <li>
-                                        <a href="javascript: void(0);" class="has-arrow" key="t-level-1-2">Level 1.2</a>
-                                        <ul class="sub-menu" aria-expanded="true">
-                                            <li><a href="javascript: void(0);" key="t-level-2-1">Level 2.1</a></li>
-                                            <li><a href="javascript: void(0);" key="t-level-2-2">Level 2.2</a></li>
-                                        </ul>
+                                        <a href="{{ route('admin.message.trash') }}">Trash</a>
                                     </li>
+                                </ul>
+                            </li>
+
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                    <i class="bx bx-user-circle"></i>
+                                    <span key="t-layouts">User Management</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="{{ route('user.admin') }}" key="t-light-sidebar">Admin</a></li>
+                                    <li><a href="{{ route('user.customer') }}" key="t-compact-sidebar">Customer</a></li>
+                                    <li><a href="{{ route('admin.user.register') }}" key="t-compact-sidebar">Add User</a></li>
+                                    <li id="dash_menu_inbox_btn"><a href="{{ route('admin.role.index') }}">Role</a></li>
+                                    <li><a href="{{ route('admin.permission.index') }}">Permission</a></li>
                                 </ul>
                             </li>
 
@@ -1015,36 +891,297 @@
             }
 
 
-            $(document).ready(function(){
+            //check all input
 
-                removeNewsletterPreview();
+            function checkAllInput(master_input,target_input) {
 
-                function removeNewsletterPreview(){
+                $(document).on('click',master_input, function(){
+                    $(target_input).not(this).prop('checked',this.checked);
+                });
 
-                    let url = "{{ route('newsletter.preview.remove') }}";
+                $(document).on('click',target_input, function(){
 
-                    $.ajax({
-                        type:'POST',
-                        url:url,
-                        beforeSend:function(){
-                            $('#newsletter_preview_preloader').addClass('active');
-                        },
-                        success:function(data){
-                            if(data.status == 'success'){
+                    has_unchecked = false;
 
-                                setTimeout(() => {
-                                    $('#newsletter_preview_preloader').removeClass('active');
-                                }, 200);
-
-                                $('#newsletter_preview').load(' #newsletter_preview>* ');
-
-                            }
+                    $(target_input).each(function(key,elem){
+                        if(!elem.checked){
+                            has_unchecked = true;
                         }
                     });
 
+                    if(has_unchecked){
+                        $(master_input).prop('checked',false);
+                    }
+                    else{
+                        $(master_input).prop('checked',true);
+                    }
+
+                });
+            }
+            
+
+
+            // delete all message 
+
+            $(document).on('click','#delete_all_message_btn', function(e){
+
+                e.preventDefault();
+
+                let all_messages = [];
+
+                $('.message_check:checked').each(function(){
+                    all_messages.push($(this).val());
+                });
+
+                if(all_messages.length != 0){
+                    $('#deleteAllMessage').modal('show');
+                    $('.modal_message_delete_all').data('id',all_messages);
                 }
+                else{
+                    alert('Please select row!');
+                }
+            });
+
+
+
+            // sort message
+
+            $(document).on('click', '.message_sort_btn', function(e){
+
+                e.preventDefault();
+
+                $('.message_sort_btn').removeClass('active');
+                $(this).addClass('active');
+
+                let url = "{{ route('admin.message.search') }}";
+                let message_status = $('#message_status').val();
+                let message_sort_by = $(this).data('value');
+                let message_query = $('#message_search').val().trim();
+                $('#current_page').val(1);
+
+                messageQuery(message_status,message_sort_by,message_query,url);
 
             });
+
+
+            // paginate message
+
+            $(document).on('click','#messages_table_wrapper .pagination a', function(e){
+                e.preventDefault();
+
+                let url = "{{ route('admin.message.search') }}";
+                let message_status = $('#message_status').val();
+                let message_sort_by = $('.message_sort_btn.active').data('value');
+                let message_query = $('#message_search').val().trim();
+                let page = $(this).attr('href').split('page=')[1];
+
+                $('#hidden_page').val(page);
+                $('#current_page').val(page);
+
+                messageQuery(message_status,message_sort_by,message_query,url,page);
+
+            });
+
+
+            // search message
+
+            $(document).on('search','#message_search', function(){
+                $('#messages_table_wrapper').load(' #messages_table_wrapper>* ');
+            });
+
+
+            $(document).on('keyup','#message_search', function(){
+
+                let url = "{{ route('admin.message.search') }}";
+                let message_status = $('#message_status').val();
+                let message_sort_by = $('.message_sort_btn.active').data('value');
+                let message_query = $(this).val().trim();
+                
+                $('#current_page').val(1);
+
+                messageQuery(message_status,message_sort_by,message_query,url);
+
+            });
+
+
+            //message query 
+
+            function messageQuery(message_status,message_sort_by='',message_query='',url,page=''){
+
+                let formData = {
+                    message_status:message_status,
+                    message_sort_by:message_sort_by,
+                    message_query:message_query,
+                    page:page
+                };
+
+                $.ajax({
+                    type:'POST',
+                    url:url,
+                    data:formData,
+                    success:function(data){
+                        $('#messages_table').find('tbody').html(data);
+                    },
+                    error:function(error){
+                        if(confirm('Something went wrong! Try reloading the page.')){
+                            window.location.reload();
+                        }
+                    }
+                });
+
+            }
+
+
+            // delete message 
+
+            function deleteMessage(url){
+
+                $.ajax({
+                    type:'DELETE',
+                    url:url,
+                    success:function(data){
+                        if(data.status == 'success'){
+
+                            $('.modal_delete_message_btn').data('id','');
+
+                            let url = "{{ route('admin.message.search') }}";
+                            let message_status = $('#message_status').val();
+                            let message_sort_by = $('.message_sort_btn.active').data('value');
+                            let message_query = $('#message_search').val().trim();
+                            let page = $('#messages_table_wrapper').find('#current_page').val();
+                            
+                            $('#hidden_page').val(page);
+
+                            messageQuery(message_status,message_sort_by,message_query,url,page);
+
+                            $('.message_alert').text('Deleted Successfully!').fadeIn().delay(1500).fadeOut();
+                            
+                            setTimeout(() => {
+                                $('.message_alert').text('');
+                            }, 2000);
+
+                        }
+                    },
+                    error:function(error){
+                        if(confirm('Something went wrong! Try reloading the page.')){
+                            window.location.reload();
+                        }
+                    }
+                });
+
+            }
+
+
+            function massDeleteMessage(url,ids){
+                $.ajax({
+                    type:'POST',
+                    url:url,
+                    data:{ids:ids},
+                    success:function(data){
+
+                        if(data.status == 'success'){
+
+                            $('.modal_message_delete_all').data('id','');
+                            $('#checkAllMessage').prop('checked',false);
+
+                            let url = "{{ route('admin.message.search') }}";
+                            let message_status = $('#message_status').val();
+                            let message_sort_by = $('.message_sort_btn.active').data('value');
+                            let message_query = $('#message_search').val().trim();
+                            let page = $('#messages_table_wrapper').find('#current_page').val();
+                            
+                            $('#hidden_page').val(page);
+
+                            messageQuery(message_status,message_sort_by,message_query,url,page);
+
+                            $('.message_alert').text('Deleted Successfully!').fadeIn().delay(1500).fadeOut();
+                            
+                            setTimeout(() => {
+                                $('.message_alert').text('');
+                            }, 2000);
+                            
+                        }
+
+                    },
+                    error:function(error){
+                        if(confirm('Something went wrong! Try reloading the page.')){
+                            window.location.reload();
+                        }
+                    }
+                });
+            }
+
+
+
+            //generate banner slug
+            
+            function generateBannerSlug(callback,category_id,discount_id){
+
+                $.ajax({
+                    type:'POST',
+                    url:"{{ route('banner.slug.create') }}",
+                    data:{category_id:category_id,discount_id:discount_id},
+                    success:function(data){
+                        callback(data)
+                    },
+                    error:function(){
+                        if(confirm('Something went wrong! Try reloading the page.')){
+                            window.location.reload();
+                        }
+                    }
+                });
+
+            }
+
+
+
+            // remove input photo
+
+            function removeInputPhoto(input,preview_wrapper,remove_btn,remove_overlay){
+                $(input).val('');
+                $(preview_wrapper).find('img').remove();
+                $(remove_overlay).removeClass('has_preview');
+                $(remove_overlay).find('.preview_overlay').remove();
+                $(remove_btn).remove();
+            }
+
+
+            // add image preview overlay 
+
+            function addPreviewOverlay(preview_wrapper,input_label){
+                if($(preview_wrapper).children('.has_preview').length == 0){
+                    $(input_label).addClass('has_preview');
+                    $(preview_wrapper).find('.has_preview').prepend('<span class="preview_overlay"></span>');
+                }
+            }
+
+
+
+            // reset modal form
+
+            function resetModalForm(modal){
+
+                if(typeof modal === 'string'){
+                    $(modal).on('hide.bs.modal', function (){
+                        let form = $(this).find('form').attr('id');
+                        $('#'+form).load(' #'+form+'>* ');
+                    });
+                }
+                
+                if(typeof modal === 'object'){
+                    $.each(modal, function(key,elem){
+                        $(elem).on('hide.bs.modal', function (){
+                            let form = $(this).find('form').attr('id');
+                            $('#'+form).load(' #'+form+'>* ');
+                        });
+                    });
+                }
+                
+            }
+            
+
+
+
             
             // document.getElementById('copyright_text').innerHTML = new Date().getFullYear() + " © Lettuce.";
 

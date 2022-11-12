@@ -106,11 +106,11 @@
                                     
                         </div>
                         @if (session('product_discount_delete'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('product_discount_delete') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ session('product_discount_delete') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
                         <div class="card-body">
                             <h4 class="card-title mb-4">Product Discount</h4>
                             <div class="table-responsive">
@@ -257,7 +257,9 @@
                         
                     },
                     error:function(){
-                        alert('Something went wrong!');
+                        if(confirm('Something went wrong! Try reloading the page.')){
+                            window.location.reload();
+                        }
                     }
                 });
 
@@ -291,7 +293,9 @@
                             discount_col.html('<select class="form-control text-capitalize" name="product_discount_edit">'+data+'</select>');
                         },
                         error:function(){
-                            alert('Something went wrong!');
+                            if(confirm('Something went wrong! Try reloading the page.')){
+                                window.location.reload();
+                            }
                         }
                     });
 
@@ -324,7 +328,9 @@
                             
                         },
                         error:function(){
-                            alert('Something went wrong!');
+                            if(confirm('Something went wrong! Try reloading the page.')){
+                                window.location.reload();
+                            }
                         }
                     });
 
@@ -354,10 +360,12 @@
                         type:'DELETE',
                         url:url,
                         success:function(data){
-                            location.reload();
+                            window.location.reload();
                         },
                         error:function(){
-                            alert('Something went wrong!');
+                            if(confirm('Something went wrong! Try reloading the page.')){
+                                window.location.reload();
+                            }
                         }
                     });
 

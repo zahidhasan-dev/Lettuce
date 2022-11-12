@@ -287,10 +287,12 @@
                             </ul>
                         </div>
                         
+                        @if ($banner != null)
                         <!-- Banner Widget -->
                         <div class="widget ltn__banner-widget">
-                            <a href="{{ url('/shop') }}"><img src="{{ asset('uploads/banner/'.$banner->banner_image) }}" alt="#"></a>
+                            <a href="{{ $banner->url }}"><img src="{{ asset('uploads/banner/'.$banner->banner_image) }}" alt="#"></a>
                         </div>
+                        @endif
 
                     </aside>
                 </div>

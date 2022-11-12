@@ -150,11 +150,15 @@
                             $('.profile_city_list').html("<option disabled selected value=''>--Select City--</option>"+data.city_list);
                         }
                         else{
-                            alert('Something went wrong!');
+                            if(confirm('Something went wrong! Try reloading the page.')){
+                                window.location.reload();
+                            }
                         }
                     },
                     error:function(){
-                        alert('Something went wrong!');
+                        if(confirm('Something went wrong! Try reloading the page.')){
+                            window.location.reload();
+                        }
                     }
                 });
 
@@ -163,9 +167,7 @@
 
             $(document).on('click','#avatar_change', function()
             {
-
                 $('#avatar').click();
-                
             });
 
 

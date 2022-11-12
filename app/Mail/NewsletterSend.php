@@ -2,20 +2,21 @@
 
 namespace App\Mail;
 
+use App\Models\Newsletter;
 use App\Models\Subscriber;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class NewsletterSend extends Mailable
+class NewsletterSend extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
 
     protected $subscriber;
 
-    protected $newsletter_subject;
+    protected $newsletter;
 
 
     /**
@@ -23,10 +24,10 @@ class NewsletterSend extends Mailable
      *
      * @return void
      */
-    public function __construct(Subscriber $subscriber,$newsletter_subject)
+    public function __construct(Subscriber $subscriber, Newsletter $newsletter)
     {
         $this->subscriber = $subscriber;
-        $this->newsletter_subject = $newsletter_subject;
+        $this->newsletter = $newsletter;
     }
 
     /**
@@ -37,9 +38,10 @@ class NewsletterSend extends Mailable
     public function build()
     {
         return $this->from('info@lettuce.com')
-                    ->subject($this->newsletter_subject)
+                    ->subject($this->newsletter->newsletter_subject)
                     ->view('emails.newsletter.newsletter')
                     ->with([
+                        'newsletter'=>$this->newsletter->newsletter_code,
                         'subscriber'=>$this->subscriber
                     ]);
     }

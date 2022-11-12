@@ -82,20 +82,17 @@ class FaqController extends Controller
      */
     public function update(Request $request, Faq $faq)
     {
+        $faq->faq_ques = $request->faq_ques;
+        $faq->faq_ans = $request->faq_ans;
 
+        $update_faq = $faq->save();
+
+        if($update_faq)
+        {
+            return response()->json(['success'=>'Faq updated successfully!']);
+        }
         
-            $faq->faq_ques = $request->faq_ques;
-            $faq->faq_ans = $request->faq_ans;
-
-            $update_faq = $faq->save();
-
-            if($update_faq)
-            {
-                return response()->json(['success'=>'Faq updated successfully!']);
-            }
-            
-            return response()->json(['error'=>'Something went wrong!']);
-
+        return response()->json(['error'=>'Something went wrong!']);
     }
 
 

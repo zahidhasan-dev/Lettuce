@@ -1,5 +1,26 @@
 <?php
 
+    if(!function_exists('get_category_name')){
+
+        function get_category_name(int $category_id){
+            $category = \App\Models\Category::where('id',$category_id)->first();
+
+            return $category->category_name;
+        }
+
+    }
+    
+    
+    if(!function_exists('get_discount_name')){
+
+        function get_discount_name(int $discount_id){
+            $discount = \App\Models\Discount::where('id',$discount_id)->first();
+
+            return $discount->discount_name;
+        }
+
+    }
+
 
     if(!function_exists('countries')){
 
@@ -377,6 +398,7 @@
 
     }
 
+    
     if(!function_exists('productPrice')){
 
         function productPrice($product_id)
@@ -460,9 +482,7 @@
         {   
             $category = \App\Models\Category::where('id',$category_id)->where('status',1)->firstOrFail();
 
-            $ids = collect();
-            $parent_category =  $category->id;
-            $ids = collect($parent_category);
+            $ids = collect($category->id);
 
             if($category->sub_category->count() > 0){
                 foreach($category->sub_category as $sub_category){
@@ -596,7 +616,6 @@
     }
 
 
-
     if(!function_exists('insertSessionCartToDB')){
 
         function insertSessionCartToDB()
@@ -663,7 +682,6 @@
     }
 
 
-
     if(!function_exists('getCart')){
 
         function getCart()
@@ -675,7 +693,11 @@
                 $carts = \App\Models\Cart::where('user_id',auth()->user()->id)->get();
 
                 foreach($carts as $cart){
-                    $cart_product = \App\Models\Product::where('id',$cart->product_id)->where('status',1)->select('id','product_name','thumbnail','price','slug','in_stock')->first();
+                    $cart_product = \App\Models\Product::where('id',$cart->product_id)
+                                                        ->where('status',1)
+                                                        ->select('id','product_name','thumbnail','price','slug','in_stock')
+                                                        ->first();
+
                     $cart_product['quantity'] = $cart->quantity;
                     $cart_products[] = $cart_product;
                 }
@@ -688,7 +710,11 @@
                     $carts = session('cart');
 
                     foreach($carts  as $cart){
-                        $cart_product = \App\Models\Product::where('id',$cart['id'])->where('status',1)->select('id','product_name','thumbnail','price','slug','in_stock')->first();
+                        $cart_product = \App\Models\Product::where('id',$cart['id'])
+                                                            ->where('status',1)
+                                                            ->select('id','product_name','thumbnail','price','slug','in_stock')
+                                                            ->first();
+
                         $cart_product['quantity'] = $cart['quantity'];
                         $cart_products[] = $cart_product;
                     }
@@ -848,9 +874,10 @@
     if(!function_exists('checkPurchase')){
 
         function checkPurchase($product_id){
-            $order_item =\App\Models\User::where('id',auth()->user()->id)->with('ordered_products', function($query) use ($product_id){
-                $query->where('product_id', $product_id);
-            })->first();
+            $order_item =\App\Models\User::where('id',auth()->user()->id)
+                                        ->with('ordered_products', function($query) use ($product_id){
+                                            $query->where('product_id', $product_id);
+                                        })->first();
     
             if($order_item->ordered_products->count() > 0){
                 return true;
@@ -865,7 +892,9 @@
     if(!function_exists('checkReview')){
 
         function checkReview($product_id){
-            $review = \App\Models\ProductReview::where('product_id',$product_id)->where('user_id',auth()->user()->id)->exists();
+            $review = \App\Models\ProductReview::where('product_id',$product_id)
+                                                ->where('user_id',auth()->user()->id)
+                                                ->exists();
     
             if($review){
                 return true;
@@ -969,11 +998,13 @@
     }
 
 
-
     if(!function_exists('top_rated_products')){
 
         function top_rated_products(){
-           return  \App\Models\Product::where('status',1)->whereHas('reviews')->withCount('reviews')->orderBy('reviews_count','desc');
+            return  \App\Models\Product::where('status',1)
+                                        ->whereHas('reviews')
+                                        ->withCount('reviews')
+                                        ->orderBy('reviews_count','desc');
         }
 
     }
@@ -995,6 +1026,93 @@
             }
 
             echo $stockStatus;
+        }
+
+    }
+
+
+    if(!function_exists('total_orders_count')){
+
+        function total_orders_count(){
+            return \App\Models\Order::count();
+        }
+
+    }
+
+
+    if(!function_exists('pending_orders_count')){
+
+        function pending_orders_count(){
+            return \App\Models\Order::where('order_status','pending')->count();
+        }
+
+    }
+
+
+    if(!function_exists('processing_orders_count')){
+
+        function processing_orders_count(){
+            return \App\Models\Order::where('order_status','processing')->count();
+        }
+
+    }
+
+
+    if(!function_exists('delivering_orders_count')){
+
+        function delivering_orders_count(){
+            return \App\Models\Order::where('order_status','delivering')->count();
+        }
+
+    }
+
+    
+    if(!function_exists('completed_orders_count')){
+
+        function completed_orders_count(){
+            return \App\Models\Order::where('order_status','completed')->count();
+        }
+
+    }
+
+
+    if(!function_exists('total_unread_message')){
+
+        function total_unread_message(){
+            return \App\Models\Message::whereNull('message_id')->where('is_read',false)->count();
+        }
+
+    }
+
+
+    if(!function_exists('contact_address')){
+
+        function contact_address(){
+            $address = \App\Models\ContactAddress::where('is_active',1)->first();
+
+            return $address->contact_address ?? null;
+        }
+
+    }
+
+
+    if(!function_exists('primary_contact_email')){
+
+        function primary_contact_email(){
+            $email = \App\Models\ContactEmail::where('is_primary',1)->where('is_active',1)->first();
+
+            return $email->contact_email ?? null;
+        }
+
+    }
+
+
+    if(!function_exists('primary_contact_phone')){
+
+        function primary_contact_phone(){
+            $phone = \App\Models\ContactPhone::where('is_primary',1)->where('is_active',1)->first();
+
+            return $phone->contact_phone ?? null;
         }
 
     }

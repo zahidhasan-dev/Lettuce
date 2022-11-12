@@ -331,10 +331,14 @@
                                 @endforelse
                             </ul>
                         </div>
-                        <!-- Banner Widget -->
-                        <div class="widget ltn__banner-widget">
-                            <a href="shop.html"><img src="{{ asset('uploads/banner/'.$banner->banner_image) }}" alt="#"></a>
-                        </div>
+
+                        @if ($banner != null)
+                            <!-- Banner Widget -->
+                            <div class="widget ltn__banner-widget">
+                                <a href="{{ $banner->url }}"><img src="{{ asset('uploads/banner/'.$banner->banner_image) }}" alt="#"></a>
+                            </div>
+                        @endif
+                        
                     </aside>
                 </div>
             </div>

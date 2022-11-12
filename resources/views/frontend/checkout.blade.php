@@ -384,8 +384,10 @@
         // This is your test publishable API key.
         const stripe = Stripe("{{ env('STRIPE_KEY') }}");
 
+        
         // Fetches a payment intent and captures the client secret
         var elements = stripe.elements();
+        
 
         // Set up Stripe.js and Elements to use in checkout form
         var style = {
@@ -408,6 +410,7 @@
             style: style,
             hidePostalCode: true,
         });
+        
         cardElement.mount('#card-element');
 
 
@@ -417,8 +420,10 @@
         form.addEventListener('submit', function(event) {
             // We don't want to let default form submission happen here,
             // which would refresh the page.
+
             event.preventDefault();
             setLoading(true);
+
 
             reset_error_msg();
 
@@ -430,13 +435,11 @@
 
                 const form_response = storeOrder(formDataValue);
 
-                setLoading(false);
-
                 if(form_response.hasError){
+                    setLoading(false);
                     return;
                 }
                 else if(form_response.success){
-
                     window.location.href = "{{ url('/thankyou') }}";
                 }
             }
@@ -537,10 +540,10 @@
                 messageContainer.classList.add("hidden");
                 messageText.textContent = "";
             }, 4000);
-            }
+        }
 
-            // Show a spinner on payment submission
-            function setLoading(isLoading) {
+        // Show a spinner on payment submission
+        function setLoading(isLoading) {
             if (isLoading) {
                 // Disable the button and show a spinner
                 document.querySelector("#order_submit").disabled = true;
@@ -553,8 +556,6 @@
             }
         }
 
-
-        
 
     </script>
 

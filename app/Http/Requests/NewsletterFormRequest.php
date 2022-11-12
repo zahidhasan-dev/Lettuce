@@ -8,9 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
 class NewsletterFormRequest extends FormRequest
 {
 
-
     public $validator;
-
 
 
     /**

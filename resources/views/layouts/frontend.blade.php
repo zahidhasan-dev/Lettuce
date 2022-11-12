@@ -30,6 +30,17 @@
 
 
     <style>
+
+        @media (max-width: 767px){
+                .site-logo {
+                width: 150px !important;
+            }
+        }
+
+        .site-logo {
+            width: 185px;
+        }
+
         .mobile_header_menu li.active a{
             color: #80B500;
         }
@@ -443,6 +454,10 @@
             }
         }
 
+        .contact_address_item{
+            min-height: 320px;
+        }
+
     </style>
 
 
@@ -464,8 +479,13 @@
                             <div class="col-md-7">
                                 <div class="ltn__top-bar-menu">
                                     <ul>
-                                        <li><a href="javascript:void(0);"><i class="icon-mail"></i> info@lettuce.com</a></li>
-                                        <li><a href="javascript:void(0);"><i class="icon-placeholder"></i> 1966 Old House Drive, Ohio</a></li>
+                                        @if (primary_contact_email() != null)
+                                            <li><a href="javascript:void(0);"><i class="icon-mail"></i> {{ primary_contact_email() }}</a></li>
+                                        @endif
+
+                                        @if (contact_address() != null)
+                                            <li><a href="javascript:void(0);"><i class="icon-placeholder"></i> {{ contact_address() }}</a></li>
+                                        @endif
                                     </ul>
                                 </div>
                             </div>
@@ -509,21 +529,23 @@
                         <div class="row">
                             <div class="col">
                                 <div class="site-logo">
-                                    <a href="{{ route('index') }}"><img src="{{ asset('frontend_assets/img/logo.png') }}" alt="Logo"></a>
+                                    <a href="{{ route('index') }}"><img src="{{ asset('frontend_assets/img/logo-dark.png') }}" alt="Logo"></a>
                                 </div>
                             </div>
                             <div class="col header-contact-serarch-column d-none d-lg-block">
                                 <div class="header-contact-search">
                                     <!-- header-feature-item -->
-                                    <div class="header-feature-item">
-                                        <div class="header-feature-icon">
-                                            <i class="icon-call"></i>
+                                    @if (primary_contact_phone() != null)
+                                        <div class="header-feature-item">
+                                            <div class="header-feature-icon">
+                                                <i class="icon-call"></i>
+                                            </div>
+                                            <div class="header-feature-info">
+                                                <h6>Phone</h6>
+                                                <p><a href="tel:{{ primary_contact_phone() }}">+{{ primary_contact_phone() }}</a></p>
+                                            </div>
                                         </div>
-                                        <div class="header-feature-info">
-                                            <h6>Phone</h6>
-                                            <p><a href="tel:0123456789">+0123-456-789</a></p>
-                                        </div>
-                                    </div>
+                                    @endif
                                     <div class="header-search-2">
                                         <form action="{{ url('shop',['category'=>request()->category->category_slug ?? '','subCategory'=>request()->subCategory->category_slug ?? '']) }}" method="GET">
                                             <input type="text" name="search" placeholder="Search here..." value="{{ request()->search }}">
@@ -545,8 +567,6 @@
                                                     <li>
                                                         <a href="#"><i class="icon-user"></i></a>
                                                         <ul>
-
-
                                                             @guest
                                                                 <li><a href="{{ route('login') }}">Sign in</a></li>
                                                                 <li><a href="{{ route('register') }}">Sign up</a></li>
@@ -562,7 +582,6 @@
                                                                 @endcustomer
                                                             @endguest
                                                             <li class="{{ (request()->is('wishlist*')) ? 'active' : '' }}"><a href="{{ url('/wishlist') }}">Wishlist</a></li>
-                                                            
                                                         </ul>
                                                     </li>
                                                 </ul>
@@ -593,7 +612,7 @@
                             <div class="col header-menu-column justify-content-center">
                                 <div class="sticky-logo">
                                     <div class="site-logo">
-                                        <a href="index.html"><img src="{{ asset('frontend_assets/img/logo.png') }}" alt="Logo"></a>
+                                        <a href="{{ route('index') }}"><img src="{{ asset('frontend_assets/img/logo-dark.png') }}" alt="Logo"></a>
                                     </div>
                                 </div>
                                 <div class="header-menu header-menu-2">
@@ -602,7 +621,7 @@
                                             <ul>
                                                 <li class="{{ (request()->is('/')) ? 'active' : '' }}"><a href="{{ route('index') }}">Home</a></li>
                                                 <li class="{{ (request()->is('shop*')) ? 'active' : '' }}"><a href="{{ route('shop') }}">Shop</a></li>
-                                                <li class="{{ (request()->is('contact*')) ? 'active' : '' }}"><a href="{{ url('/contact') }}">Contact</a></li>
+                                                <li class="{{ (request()->is('sale*')) ? 'active' : '' }}"><a href="{{ route('shop.sale') }}">Sale</a></li>
                                             </ul>
                                         </div>
                                     </nav>
@@ -674,7 +693,7 @@
                 <div class="ltn__utilize-menu-inner ltn__scrollbar">
                     <div class="ltn__utilize-menu-head">
                         <div class="site-logo">
-                            <a href="{{ route('index') }}"><img src="{{ asset('frontend_assets/img/logo.png') }}" alt="Logo"></a>
+                            <a href="{{ route('index') }}"><img src="{{ asset('frontend_assets/img/logo-dark.png') }}" alt="Logo"></a>
                         </div>
                         <button class="ltn__utilize-close">×</button>
                     </div>
@@ -836,36 +855,46 @@
                                 <div class="footer-widget footer-about-widget">
                                     <div class="footer-logo mb-10">
                                         <div class="site-logo">
-                                            <img src="{{ asset('frontend_assets/img/logo.png') }}" alt="Logo">
+                                            <a href="{{ route('index') }}">
+                                                <img src="{{ asset('frontend_assets/img/logo-dark.png') }}" alt="Logo">
+                                            </a>
                                         </div>
                                     </div>
                                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam sequi exercitationem nemo? Odio blanditiis numquam eaque!</p>
                                     <div class="footer-address">
                                         <ul>
-                                            <li>
-                                                <div class="footer-address-icon">
-                                                    <i class="icon-placeholder"></i>
-                                                </div>
-                                                <div class="footer-address-info">
-                                                    <p>Proctorville, Ohio, United States</p>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="footer-address-icon">
-                                                    <i class="icon-call"></i>
-                                                </div>
-                                                <div class="footer-address-info">
-                                                    <p><a href="tel:+0123-456789">+0123-456789</a></p>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="footer-address-icon">
-                                                    <i class="icon-mail"></i>
-                                                </div>
-                                                <div class="footer-address-info">
-                                                    <p><a href="#">info@lettuce.com</a></p>
-                                                </div>
-                                            </li>
+                                            @if (contact_address() != null)
+                                                <li>
+                                                    <div class="footer-address-icon">
+                                                        <i class="icon-placeholder"></i>
+                                                    </div>
+                                                    <div class="footer-address-info">
+                                                        <p>{{ contact_address() }}</p>
+                                                    </div>
+                                                </li>
+                                            @endif
+
+                                            @if (primary_contact_phone() != null)
+                                                <li>
+                                                    <div class="footer-address-icon">
+                                                        <i class="icon-call"></i>
+                                                    </div>
+                                                    <div class="footer-address-info">
+                                                        <p><a href="tel:{{ primary_contact_phone() }}">+{{ primary_contact_phone() }}</a></p>
+                                                    </div>
+                                                </li>
+                                            @endif
+                                            
+                                            @if (primary_contact_email() != null)
+                                                <li>
+                                                    <div class="footer-address-icon">
+                                                        <i class="icon-mail"></i>
+                                                    </div>
+                                                    <div class="footer-address-info">
+                                                        <p><a href="#">{{ primary_contact_email() }}</a></p>
+                                                    </div>
+                                                </li>
+                                            @endif
                                         </ul>
                                     </div>
                                     <div class="ltn__social-media mt-20">
@@ -1527,7 +1556,10 @@
                         },
                         error:function(){
                             $('#newsletter_form_btn').attr('disabled',false);
-                            alert('Something went wrong! Try reloading the page');
+                            
+                            if(confirm('Something went wrong! Try reloading the page.')){
+                                window.location.reload();
+                            }
                         }
                     });
 

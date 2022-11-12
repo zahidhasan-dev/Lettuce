@@ -100,6 +100,33 @@
             }
         });
 
+        removeNewsletterPreview();
+
+        function removeNewsletterPreview(){
+
+            let url = "{{ route('newsletter.preview.remove') }}";
+
+            $.ajax({
+                type:'POST',
+                url:url,
+                beforeSend:function(){
+                    $('#newsletter_preview_preloader').addClass('active');
+                },
+                success:function(data){
+                    if(data.status == 'success'){
+
+                        setTimeout(() => {
+                            $('#newsletter_preview_preloader').removeClass('active');
+                        }, 200);
+
+                        $('#newsletter_preview').load(' #newsletter_preview>* ');
+
+                    }
+                }
+            });
+
+        }
+
 
         $(document).on('click','.newsletter_tab_btn', function(e){
             e.preventDefault();

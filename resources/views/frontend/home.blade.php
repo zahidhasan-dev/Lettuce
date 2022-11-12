@@ -15,14 +15,22 @@
                             <ul>
                                 @foreach($categories as $parentCategory)
                                 <li class="ltn__category-menu-item ltn__category-menu-drop text-capitalize">
-                                    <a href="{{ url('/shop',['category'=>$parentCategory->category_slug]) }}"><img width="25px" style="margin-right:10px" src="{{ asset('uploads/category/'.$parentCategory->category_photo) }}" alt="">{{ $parentCategory->category_name.' ('.$parentCategory->products_count+$parentCategory->sub_category->sum('products_count').')' }}</a>
+                                    <a href="{{ url('/shop',['category'=>$parentCategory->category_slug]) }}">
+                                        <img width="25px" style="margin-right:10px" src="{{ asset('uploads/category/'.$parentCategory->category_photo) }}" alt="">
+                                        {{ $parentCategory->category_name.' ('.$parentCategory->products_count+$parentCategory->sub_category->sum('products_count').')' }}
+                                    </a>
                                     @if($parentCategory->sub_category->count() > 0)
                                         <ul class="ltn__category-submenu">
                                             <li class="ltn__category-submenu-title ltn__category-menu-drop text-capitalize">
                                                 <a href="javascript:void(0);">{{ $parentCategory->category_name }}</a>
                                                 <ul class="ltn__category-submenu-children">
                                                     @foreach ($parentCategory->sub_category as $subCategory)
-                                                        <li><a href="{{ url('/shop',['category'=>$parentCategory->category_slug, 'subCategory'=>$subCategory->category_slug]) }}"><img width="25px" style="margin-right:10px" src="{{ asset('uploads/category/'.$subCategory->category_photo) }}" alt="">{{ $subCategory->category_name.' ('.$subCategory->products_count.')' }}</a></li>
+                                                        <li>
+                                                            <a href="{{ url('/shop',['category'=>$parentCategory->category_slug, 'subCategory'=>$subCategory->category_slug]) }}">
+                                                                <img width="25px" style="margin-right:10px" src="{{ asset('uploads/category/'.$subCategory->category_photo) }}" alt="">
+                                                                {{ $subCategory->category_name.' ('.$subCategory->products_count.')' }}
+                                                            </a>
+                                                        </li>
                                                     @endforeach
                                                 </ul>
                                             </li>
@@ -45,34 +53,8 @@
                                         <div class="col-lg-7 col-md-7 col-sm-7 align-self-center">
                                             <div class="slide-item-info">
                                                 <div class="slide-item-info-inner ltn__slide-animation">
-                                                    <h5 class="slide-sub-title ltn__secondary-color animated text-uppercase">Up To 50% Off Today Only!</h5>
-                                                    <h1 class="slide-title  animated">Tasty & Healthy <br>  Organic Food</h1>
-                                                    <div class="slide-brief animated d-none">
-                                                        <p>Predictive analytics is drastically changing the real estate industry. In the past, providing data for quick</p>
-                                                    </div>
-                                                    <div class="btn-wrapper  animated">
-                                                        <a href="{{ route('shop') }}" class="theme-btn-1 btn btn-effect-1 text-uppercase">Shop now</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- ltn__slide-item -->
-                        <div class="ltn__slide-item ltn__slide-item-10 section-bg-1 bg-image" data-bg="{{ asset('frontend_assets/img/slider/62.jpg') }}">
-                            <div class="ltn__slide-item-inner">
-                                <div class="container">
-                                    <div class="row">
-                                        <div class="col-lg-7 col-md-7 col-sm-7 align-self-center">
-                                            <div class="slide-item-info">
-                                                <div class="slide-item-info-inner ltn__slide-animation">
                                                     <h4 class="slide-sub-title ltn__secondary-color animated text-uppercase">Welcome to our shop</h4>
                                                     <h1 class="slide-title  animated">Tasty & Healthy <br>  Organic Food</h1>
-                                                    <div class="slide-brief animated d-none">
-                                                        <p>Predictive analytics is drastically changing the real estate industry. In the past, providing data for quick</p>
-                                                    </div>
                                                     <div class="btn-wrapper  animated">
                                                         <a href="{{ route('shop') }}" class="theme-btn-1 btn btn-effect-1 text-uppercase">Shop now</a>
                                                     </div>
@@ -83,6 +65,29 @@
                                 </div>
                             </div>
                         </div>
+                        @foreach ($hero_banners as $hero_banner)     
+                            <!-- ltn__slide-item -->
+                            <div class="ltn__slide-item ltn__slide-item-10 section-bg-1 bg-image" data-bg="{{ asset('uploads/banner/'.$hero_banner->banner_image) }}">
+                                <div class="ltn__slide-item-inner">
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="col-lg-7 col-md-7 col-sm-7 align-self-center">
+                                                <div class="slide-item-info">
+                                                    <div class="slide-item-info-inner ltn__slide-animation">
+                                                        <h5 class="slide-sub-title ltn__secondary-color animated text-uppercase">{{ $hero_banner->banner_sub_title }}</h5>
+                                                        <h1 class="slide-title  animated">{{ $hero_banner->banner_title }}</h1>
+                                                        
+                                                        <div class="btn-wrapper  animated">
+                                                            <a href="{{ $hero_banner->url }}" class="theme-btn-1 btn btn-effect-1 text-uppercase">{{ $hero_banner->banner_button }}</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -419,6 +424,7 @@
     </div>
     <!-- PRODUCT SLIDER AREA END -->
 
+    @if ($banners != null)  
     <!-- BANNER AREA START -->
     <div class="ltn__banner-area mt-120">
         <div class="container">
@@ -427,7 +433,9 @@
                     <div class="col-lg-4 col-md-6">
                         <div class="ltn__banner-item">
                             <div class="ltn__banner-img" style="height:220px">
-                                <a href="{{ url('/shop') }}"><img width="100%" height="100%" src="{{ asset('uploads/banner/'.$banner->banner_image) }}" alt="Banner Image"></a>
+                                <a href="{{ $banner->url }}">
+                                    <img width="100%" height="100%" src="{{ asset('uploads/banner/'.$banner->banner_image) }}" alt="Banner Image">
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -436,6 +444,7 @@
         </div>
     </div>
     <!-- BANNER AREA END -->
+    @endif
 
     <!-- SMALL PRODUCT LIST AREA START -->
     <div class="ltn__small-product-list-area pt-80 pb-85">

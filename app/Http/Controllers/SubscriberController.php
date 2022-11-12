@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Models\Subscriber;
 use Illuminate\Http\Request;
 use App\Mail\NewsletterSubscribed;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use App\Jobs\NewsletterSubscribedJob;
 use Illuminate\Support\Facades\Validator;
 
 class SubscriberController extends Controller
@@ -102,8 +103,9 @@ class SubscriberController extends Controller
                 ]);
             }
 
+            $delay = DB::table('jobs')->count()*10;
 
-            Mail::to($subscriber->subscriber_email)->send(new NewsletterSubscribed($subscriber));
+            dispatch(new NewsletterSubscribedJob($subscriber))->delay($delay);
             
             return response()->json(['success'=>'You have successfully subscribed to our newslettter!']);
         }

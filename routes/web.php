@@ -2,29 +2,38 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AboutController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\BannerController;
-use App\Http\Controllers\CartController;
 use App\Http\Controllers\CouponController;
-use App\Http\Controllers\SearchController;
 use App\Http\Controllers\CountryController;
+use App\Http\Controllers\FeatureController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\FrontendController;
-use App\Http\Controllers\NewsletterController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ProductReviewController;
-use App\Http\Controllers\ProductSizeController;
-use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\SubscriberController;
+use App\Http\Controllers\ProductSizeController;
+use App\Http\Controllers\ContactEmailController;
+use App\Http\Controllers\ContactPhoneController;
+use App\Http\Controllers\ProductReviewController;
+use App\Http\Controllers\ContactAddressController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RoleController;
+
 
 Auth::routes(['verify'=> true]);
-
 
 Route::controller(FrontendController::class)->group(function(){
     
@@ -32,6 +41,7 @@ Route::controller(FrontendController::class)->group(function(){
     Route::get('/product/quick_view/{product}', 'quickViewProduct')->name('product.quick_view');
     Route::get('/shop/product/{product_slug}', 'productDetails')->name('product.details');
     Route::get('/shop/{category:category_slug?}/{subCategory:category_slug?}', 'shop')->name('shop');
+    Route::get('/sale/{sale:sale_slug?}', 'shopSale')->name('shop.sale');
     Route::get('/about', 'about');
     Route::get('/contact', 'contact');
     Route::get('/faq', 'faq');
@@ -59,6 +69,7 @@ Route::post('checkout/cart/destroy', [CheckoutController::class, 'destroyCart'])
 Route::post('/subscribe', [SubscriberController::class, 'subscribe'])->name('subscribe');
 Route::get('/unsubscribe', [SubscriberController::class, 'unsubscribe'])->name('unsubscribe');
 
+Route::post('message/store', [MessageController::class, 'store'])->name('message.store');
 
 Route::middleware(['auth','verified','prevent-back-history'])->group(function(){
 
@@ -75,7 +86,24 @@ Route::middleware(['auth','verified','prevent-back-history'])->group(function(){
         Route::group(['prefix'=>'admin'], function(){
 
             Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('admin.home');
-        
+
+            Route::resource('about', AboutController::class);
+            Route::get('about/{about}/status/update', [AboutController::class, 'updateAboutStatus'])->name('about.status.update');
+            
+            Route::resource('feature', FeatureController::class);
+            Route::get('feature/{id}/status/update', [FeatureController::class, 'updateFeatureStatus'])->name('feature.status.update');
+
+            Route::resource('contact/email', ContactEmailController::class);
+            Route::get('contact/email/{id}/status/update', [ContactEmailController::class, 'updateEmailStatus'])->name('email.status.update');
+            Route::get('contact/email/{id}/primary/status/update', [ContactEmailController::class, 'updatePrimaryEmailStatus'])->name('email.primary.status.update');
+
+            Route::resource('contact/phone', ContactPhoneController::class);
+            Route::get('contact/phone/{id}/status/update', [ContactPhoneController::class, 'updatePhoneStatus'])->name('phone.status.update');
+            Route::get('contact/phone/{id}/primary/status/update', [ContactPhoneController::class, 'updatePrimaryPhoneStatus'])->name('phone.primary.status.update');
+
+            Route::resource('contact/address', ContactAddressController::class);
+            Route::get('contact/address/{id}/status/update', [ContactAddressController::class, 'updateAddressStatus'])->name('address.status.update');
+
             Route::resource('faq', FaqController::class);
             Route::post('faq/{faq}/status', [ FaqController::class , 'updateStatus'])->name('faq.updatestatus');
             Route::delete('faq/alldelete/{ids}', [ FaqController::class , 'delete_all_faq'])->name('faq.deleteall');
@@ -83,6 +111,7 @@ Route::middleware(['auth','verified','prevent-back-history'])->group(function(){
             Route::get('banner/search', [BannerController::class, 'bannerQuery'])->name('banner.search');
             Route::resource('banner', BannerController::class);
             Route::get('banner/{banner}/status/update', [BannerController::class, 'updateBannerStatus'])->name('banner.status.update');
+            Route::post('banner/slug/create', [BannerController::class, 'createBannerSlug'])->name('banner.slug.create');
             
             Route::group(['prefix'=>'region'], function(){
                 Route::resource('country', CountryController::class);
@@ -138,6 +167,11 @@ Route::middleware(['auth','verified','prevent-back-history'])->group(function(){
 
             Route::resource('size', ProductSizeController::class);
 
+            Route::resource('order', OrderController::class);
+            Route::post('order', [OrderController::class, 'queryOrder'])->name('order.search');
+            Route::get('order/{order}/status/update', [OrderController::class, 'updateOrderStatus'])->name('order.status.update');
+            Route::get('order/{order}/invoice', [OrderController::class, 'orderInvoice'])->name('admin.order.invoice');
+
             Route::post('newsletter/subscribers', [SubscriberController::class, 'querySubscriber'])->name('subscriber.search');
             Route::get('newsletter/subscribers', [SubscriberController::class, 'subscribers'])->name('newsletter.subscriber');
             Route::get('newsletter/subscriber/{subscriber_id}', [SubscriberController::class, 'show'])->name('newsletter.subscriber.show');
@@ -152,11 +186,30 @@ Route::middleware(['auth','verified','prevent-back-history'])->group(function(){
             Route::post('newsletter/preview', [NewsletterController::class, 'writePreviewNewsletter'])->name('newsletter.preview.write');
             Route::get('newsletter/preview', [NewsletterController::class, 'previewNewsletter'])->name('newsletter.preview');
             Route::post('newsletter/preview/remove', [NewsletterController::class, 'removeNewsletterPreview'])->name('newsletter.preview.remove');
+
+            Route::get('messages', [MessageController::class, 'index'])->name('admin.message.index');
+            Route::post('messages', [MessageController::class, 'queryMessage'])->name('admin.message.search');
+            Route::get('messages/trash', [MessageController::class, 'message_trash'])->name('admin.message.trash');
+            Route::get('message/{message}', [MessageController::class, 'show'])->name('admin.message.show');
+            Route::delete('message/{message}', [MessageController::class, 'destroy'])->name('admin.message.destroy');
+            Route::post('message/deleteall', [MessageController::class, 'massDestroy'])->name('admin.message.destroy.mass');
+            Route::delete('message/{message}/delete', [MessageController::class, 'forceDelete'])->name('admin.message.force.destroy');
+            Route::post('message/forcedeleteall', [MessageController::class, 'massForceDelete'])->name('admin.message.force.destroy.mass');
+            Route::get('message/{message}/restore', [MessageController::class, 'restore'])->name('admin.message.restore');
+            Route::post('message/restoreall', [MessageController::class, 'massRestore'])->name('admin.message.restore.mass');
+            Route::post('message/reply', [MessageController::class, 'replyMessage'])->name('admin.message.reply');
+
+            Route::group(['as'=>'admin.'], function(){
+
+                Route::resource('role', RoleController::class);
+    
+                Route::resource('permission', PermissionController::class);
+                
+            });
+    
         
         });
     
     });
 
 });
-
-

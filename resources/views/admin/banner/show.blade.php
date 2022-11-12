@@ -1,5 +1,13 @@
 @extends('layouts.dashboard')
 
+@section('banner_parent_active')
+mm-active
+@endsection
+
+@section('banner_active')
+active
+@endsection
+
 @section('content')
 
     <div class="page-content">
@@ -57,6 +65,16 @@
                                                 <td>{{ $banner->banner_type }}</td>
                                             </tr>
                                             <tr>
+                                                <th scope="row">Banner Sub-title</th>
+                                                <td>
+                                                    @if ($banner->banner_sub_title != null)
+                                                        {{ $banner->banner_sub_title }}
+                                                    @else
+                                                        N/A
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                            <tr>
                                                 <th scope="row">Banner Title</th>
                                                 <td>
                                                     @if ($banner->banner_title != null)
@@ -98,7 +116,17 @@
                                             </tr>
                                             <tr>
                                                 <th scope="row">Slug</th>
-                                                <td>{{ $banner->banner_slug }}</td>
+                                                <td>
+                                                    @if ($banner->banner_slug != null)
+                                                        {{ $banner->banner_slug }}
+                                                    @else
+                                                        N/A
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Url</th>
+                                                <td>{{ $banner->url }}</td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">Status</th>

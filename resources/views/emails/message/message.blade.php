@@ -1,0 +1,1 @@
+<p style="white-space: break-spaces">{{ $reply_message }}</p>

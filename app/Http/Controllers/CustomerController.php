@@ -51,10 +51,6 @@ class CustomerController extends Controller
     {
         $order = Order::where('id',$order_id)->where('user_id',auth()->user()->id)->with('order_items')->firstOrFail();
 
-
-        // return view('frontend.customer.order.invoice', compact('order'));
-
-
         // $data = [
         //     'order'=>$order,
         // ];
@@ -70,8 +66,6 @@ class CustomerController extends Controller
         // $pdf = Pdf::loadView('frontend.customer.order.invoice', $data)->setPaper('a4','portrait')->save(public_path().'/uploads/invoice/order/invoice.pdf');
 
         return $pdf->stream('invoice.pdf');
-
-        // return $order;
     }
 
 

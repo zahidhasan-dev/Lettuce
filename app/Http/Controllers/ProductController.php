@@ -176,8 +176,6 @@ class ProductController extends Controller
 
         }
 
-
-
     }
 
     /**
@@ -640,17 +638,11 @@ class ProductController extends Controller
 
     public function products_by_category(Request $request)
     {   
-
-        $products = '';
-        $ids = collect();
         $product_result = '';
 
         if($request->category_id == null){
-
             return response()->json(['null_category'=>'null']);
-
         }
-
 
         $category = Category::where('id',$request->category_id)->with('sub_category' , function($query){
             $query->where('status',1);
@@ -673,6 +665,5 @@ class ProductController extends Controller
         }
 
         return response()->json($product_result);
-
     }
 }

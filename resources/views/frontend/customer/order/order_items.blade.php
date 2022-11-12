@@ -1,11 +1,12 @@
 <a href="{{ route('customer.order.invoice',$order->id) }}" target="_blank" class="btn text-white mb-4" style="background-color:#80B500;padding: 10px 30px;">Invoice</a>
+<p class="mb-2">Date: <span class="">{{ $order->created_at->format('d M, Y h:i:s A') }}</span></p>
 <p class="mb-2">Order Id: <span class="text-success">#{{ $order->id }}</span></p>
 <p class="mb-2">Billing Name: <span class="text-success">{{ $order->billing_name }}</span></p>
 <p class="mb-2">Billing Email: <span class="text-success">{{ $order->billing_email }}</span></p>
 <p class="mb-2">Billing Phone: <span class="text-success">{{ $order->billing_phone }}</span></p>
 <p class="mb-2">Billing Address: <span class="text-success">{{ $order->billing_address.', '.get_city_name($order->billing_city).', '.get_country_name($order->billing_country) }}</span></p>
 <p class="mb-2">Payment Method: <span class="text-success text-capitalize">{{ $order->payment_method }}</span></p>
-<p class="mb-2">Payment Status: <span class="text-white {{ $order->payment_status === 'paid' ? 'bg-success' : 'bg-warning' }}" style="border-radius: 5px;padding:2px 4px;font-size:14px;font-weight:500;">{{ $order->payment_status }}</span></p>
+<p class="mb-2">Payment Status: <span class="text-white {{ $order->payment_status === 'paid' ? 'bg-success' : 'bg-danger' }}" style="border-radius: 5px;padding:2px 4px;font-size:14px;font-weight:500;">{{ $order->payment_status }}</span></p>
 <p class="mb-4">Order Status: <span class="text-white {{ $order->order_status === 'completed' ? 'bg-success' : 'bg-warning' }}" style="border-radius: 5px;padding:2px 4px;font-size:14px;font-weight:500;">{{ $order->order_status }}</span></p>
 
 

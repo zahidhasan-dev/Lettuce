@@ -83,7 +83,6 @@ class CategoryController extends Controller
             }
 
             return redirect()->back()->with(['extnsn_err'=>'Invalid file type.']);
-
             
         }
 

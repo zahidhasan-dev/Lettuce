@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class OrderPlaced extends Mailable
+class OrderPlaced extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -34,7 +34,7 @@ class OrderPlaced extends Mailable
     public function build()
     {
         return $this->from('info@lettuce.com')
-                    ->subject('Order Placed')
+                    ->subject('Order Confirmation')
                     ->view('emails.order.order_placed')
                     ->with([
                         'order'=>$this->order

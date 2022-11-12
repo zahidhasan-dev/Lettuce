@@ -239,7 +239,9 @@
                         location.reload();
                     },
                     error:function(){
-                        alert('Something went wrong!');
+                        if(confirm('Something went wrong! Try reloading the page.')){
+                            window.location.reload();
+                        }
                     }
                 });
 
@@ -263,10 +265,12 @@
                     type:'GET',
                     url:url,
                     success:function(){
-                        location.reload();
+                        window.location.reload();
                     },
                     error:function(){
-                        alert('Something went wrong!');
+                        if(confirm('Something went wrong! Try reloading the page.')){
+                            window.location.reload();
+                        }
                     }
                 });
             });
@@ -302,7 +306,9 @@
                         location.reload();
                     },
                     error:function(){
-                        alert('Something went wrong!');
+                        if(confirm('Something went wrong! Try reloading the page.')){
+                            window.location.reload();
+                        }
                     }
                 });
             });

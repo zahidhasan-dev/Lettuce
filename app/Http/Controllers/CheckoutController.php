@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\OrderPlaced;
+use Carbon\Carbon;
 use App\Models\Cart;
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\Product;
-use Carbon\Carbon;
+use App\Mail\OrderPlaced;
+use App\Models\OrderItem;
+use App\Jobs\OrderPlacedJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 
+use Illuminate\Support\Facades\Mail;
 use function PHPUnit\Framework\isNull;
 use Illuminate\Support\Facades\Validator;
 
@@ -74,7 +75,9 @@ class CheckoutController extends Controller
             # Handle post-payment fulfillment
             $this->destroyCart();
 
-            Mail::to($order->billing_email)->send(new OrderPlaced($order));
+            $delay = DB::table('jobs')->count()*10;
+
+            dispatch(new OrderPlacedJob($order))->delay($delay);
 
             echo json_encode([
                 "success" => true
@@ -138,7 +141,9 @@ class CheckoutController extends Controller
             if($request_data['payment_method'] === 'cod'){
                 $this->destroyCart();
 
-                Mail::to($order->billing_email)->send(new OrderPlaced($order));
+                $delay = DB::table('jobs')->count()*10;
+
+                dispatch(new OrderPlacedJob($order))->delay($delay);    
 
                 return response()->json(['success'=>'order success!']);
             }

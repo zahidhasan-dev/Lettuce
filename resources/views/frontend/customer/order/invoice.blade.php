@@ -81,7 +81,7 @@
             padding-top: .75rem!important;
         }
         .bgc-default-tp1 {
-            background-color: rgba(121,169,197,.92)!important;
+            background-color: #80B500 !important;
         }
         .bgc-default-l4, .bgc-h-default-l4:hover {
             background-color: #f3f8fa!important;
@@ -198,11 +198,7 @@
                         </div>
 
                         <div class="my-2">
-                            <i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Payment Status:</span> <span class="text-white {{ $order->payment_status === 'paid' ? 'bg-success' : 'bg-warning' }}" style="border-radius: 5px;padding:2px 4px;font-size:14px;font-weight:500;">{{ $order->payment_status }}</span>
-                        </div>
-
-                        <div class="my-2">
-                            <i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Status:</span> <span class="text-white {{ $order->order_status === 'completed' ? 'bg-success' : 'bg-warning' }}" style="border-radius: 5px;padding:2px 4px;font-size:14px;font-weight:500;">{{ $order->order_status }}</span>
+                            <i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Payment Status:</span> <span class="text-white {{ $order->payment_status === 'paid' ? 'bg-success' : 'bg-danger' }}" style="border-radius: 5px;padding:2px 4px;font-size:14px;font-weight:500;">{{ $order->payment_status }}</span>
                         </div>
                     </div>
                 </div>

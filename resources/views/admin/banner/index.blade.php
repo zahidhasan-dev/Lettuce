@@ -12,6 +12,7 @@
 
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="{{ route('admin.home') }}">Home</a></li>
                             <li class="breadcrumb-item"><a href="javascript: void(0);">Frontend</a></li>
                             <li class="breadcrumb-item active">Banner</li>
                         </ol>
@@ -60,7 +61,6 @@
                                         <th class="align-middle">Banner Image</th>
                                         <th class="align-middle">Banner Type</th>
                                         <th class="align-middle">Banner Title</th>
-                                        <th class="align-middle">Banner Button</th>
                                         <th class="align-middle">Category</th>
                                         <th class="align-middle">Discount</th>
                                         <th class="align-middle">Banner Slug</th>
@@ -130,28 +130,6 @@
 
 
 
-
-
-
-
-            
-
-
-
-            function generateBannerSlug(){
-
-            }
-
-
-
-
-
-
-
-
-
-
-
             $(document).on('click','.banner_delete', function (event){
                 event.preventDefault();
                 $('.banner_delete_modal').data('id',$(this).data('id'));
@@ -174,7 +152,9 @@
                         }, 400);
                     },
                     error:function(){
-                        alert('Something went wrong!');
+                        if(confirm('Something went wrong! Try reloading the page.')){
+                            window.location.reload();
+                        }
                     }
                 });
             });
@@ -206,7 +186,9 @@
 
                     },
                     error:function(){
-                        alert('Something went wrong!');
+                        if(confirm('Something went wrong! Try reloading the page.')){
+                            window.location.reload();
+                        }
                     }
                 });
 

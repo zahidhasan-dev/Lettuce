@@ -18,7 +18,6 @@ class UserController extends Controller
         $this->middleware(['auth','admin','verified']);
     }
 
-
     
     public function addUser()
     {
@@ -38,6 +37,7 @@ class UserController extends Controller
                 'email'=>$request->email,
                 'password'=>Hash::make($request->password),
                 'is_admin'=>$request->user_role,
+                'created_at'=>Carbon::now(),
             ]);
 
             UserDetails::create([
@@ -70,14 +70,13 @@ class UserController extends Controller
     }
 
 
+
     public function user_customer()
     {
         $customers = User::where('is_admin', false)->orderBy('name','asc')->get();
 
         return view('admin.users.customer', compact('customers'));
-        
     }
-
 
 
 
@@ -94,8 +93,9 @@ class UserController extends Controller
             return response()->json($data_array);
         }
 
-        return response()->json(['error'=>'Something wet wrong!']);
+        return response()->json(['error'=>'Something went wrong!']);
     }
+    
 
 
     public function deleteUser($user_id)
@@ -109,7 +109,6 @@ class UserController extends Controller
         }
 
         return response()->json(['error'=>'Something went wrong!']);
-
     }
 
 

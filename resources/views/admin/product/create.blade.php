@@ -230,7 +230,7 @@
         let discount_select_box = document.getElementById('discount_select_wrapper');
         let discount_checkbox = document.getElementById('hasDiscountCheck');
 
-        if(discount_checkbox.checked == true ){
+        if(discount_checkbox.checked === true ){
             discount_select_box.style.display = 'block';
         }
         else{
@@ -244,8 +244,7 @@
     });
 
 
-        $(document).ready(function()
-        {   
+        $(document).ready(function(){   
 
 
             $.ajaxSetup({
@@ -279,6 +278,7 @@
 
             });
             
+            
             $(document).on('click','#remove_product_thumbnail', function(event){
                 event.preventDefault();
                 removeInputPhoto('#product_thumbnail','#product_thumbnail_wrapper','#remove_product_thumbnail','#product_thumbnail_label');
@@ -286,12 +286,12 @@
 
 
             $(function() {
-                let imagesPreview = function(input, placeToInsertImagePreview) {
-                    if (input.files) {
+                let imagesPreview = function(input, placeToInsertImagePreview){
+                    if (input.files){
                         let filesAmount = input.files.length;
-                        for (i = 0; i < filesAmount; i++) {
+                        for (i = 0; i < filesAmount; i++){
                             let reader = new FileReader();
-                            reader.onload = function(event) {
+                            reader.onload = function(event){
                                 $($.parseHTML('<img>')).attr('src', event.target.result).appendTo(placeToInsertImagePreview);
                             }
                             reader.readAsDataURL(input.files[i]);
@@ -318,9 +318,6 @@
             });
 
 
-
-
-
             function removeInputPhoto(input,preview_wrapper,remove_btn,remove_overlay){
                 $(input).val('');
                 $(preview_wrapper).find('img').remove();
@@ -331,12 +328,10 @@
 
 
             function addPreviewOverlay(preview_wrapper,input_label){
-
                 if($(preview_wrapper).children('.has_preview').length == 0){
                     $(input_label).addClass('has_preview');
                     $(preview_wrapper).find('.has_preview').prepend('<span class="preview_overlay"></span>');
                 }
-
             }
 
 

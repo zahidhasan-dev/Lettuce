@@ -36,6 +36,7 @@
                 position: relative;
             }
 
+            .edit_user_details_loading .modal_preloader,
             .permission_edit_loading .modal_preloader,
             .role_edit_loading .modal_preloader{
                 display: flex;
@@ -199,6 +200,9 @@
                 height: 30px;
                 width:calc(100% - 60px);
                 font-size: 0;
+            }
+            .user_details_loading .edit_user_details_btn{
+                display: none;
             }
             .user_details_loading .card-title{
                 background-color: #f2f2f2;
@@ -835,6 +839,17 @@
                                     <li><a href="{{ route('admin.user.register') }}" key="t-compact-sidebar">Add User</a></li>
                                     <li id="dash_menu_inbox_btn"><a href="{{ route('admin.role.index') }}">Role</a></li>
                                     <li><a href="{{ route('admin.permission.index') }}">Permission</a></li>
+                                </ul>
+                            </li>
+
+
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                    <i class="bx bx-cog"></i>
+                                    <span key="t-layouts">Settings</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="{{ route('admin.settings.mail') }}" key="t-light-sidebar">Mail</a></li>
                                 </ul>
                             </li>
 

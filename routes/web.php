@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\AdminController;
@@ -21,17 +22,16 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\FrontendController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\ProductSizeController;
 use App\Http\Controllers\ContactEmailController;
 use App\Http\Controllers\ContactPhoneController;
 use App\Http\Controllers\ProductReviewController;
 use App\Http\Controllers\ContactAddressController;
-use App\Http\Controllers\PermissionController;
-use App\Http\Controllers\RoleController;
-
 
 Auth::routes(['verify'=> true]);
 
@@ -133,6 +133,8 @@ Route::middleware(['auth','verified','prevent-back-history'])->group(function(){
             Route::get('user/{user_id}/details', [UserController::class, 'viewUserDetails'])->name('user.details');
             Route::get('user/register', [UserController::class, 'addUser'])->name('admin.user.register');
             Route::post('user/register', [UserController::class, 'createUser'])->name('admin.user.create');
+            Route::get('user/{user}/edit', [UserController::class, 'editUserDetails'])->name('admin.user.edit');
+            Route::match(['put','patch'],'user/{user}/edit', [UserController::class, 'updateUserDetails'])->name('admin.user.update');
             Route::delete('user/{user_id}/delete', [UserController::class, 'deleteUser'])->name('admin.user.delete');
             
             Route::get('/profile', [AdminController::class, 'admin_profile'])->name('admin.profile');
@@ -206,6 +208,10 @@ Route::middleware(['auth','verified','prevent-back-history'])->group(function(){
                 Route::resource('permission', PermissionController::class);
                 
             });
+
+
+            Route::get('settings/mail', [SettingsController::class, 'mailSettings'])->name('admin.settings.mail');
+            Route::post('settings/mail/update', [SettingsController::class, 'createOrUpdateMailSettings'])->name('admin.settings.mail.update');
     
         
         });

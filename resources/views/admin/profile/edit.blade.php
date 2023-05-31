@@ -35,7 +35,6 @@
                             </div>
                             <h5 class="mb-3 card-title">Profile Photo :</h5>
                             <div class="avatar_container rounded-circle" id="avatar_container" style="width:150px;height:150px;">
-                                
                                 <img class="rounded-circle {{ (auth()->user()->userDetails->avatar == null)?'hide':'' }}" id="profile_img" width="100%" height="100%" src="{{ asset('uploads/users') }}/{{ auth()->user()->userDetails->avatar }}" alt="">
                                 
                                 <span class="avatar-title rounded-circle bg-primary bg-soft text-primary text-uppercase {{ (auth()->user()->userDetails->avatar != null)?'hide':'' }}" style="font-size:40px;">

@@ -22,7 +22,7 @@
 
     @endphp
 
-    <a href="{{ route('customer.order.invoice',$order->id) }}" target="_blank" class="btn text-white mb-4" style="background-color:#80B500;padding: 10px 30px;">Invoice</a>
+    <a href="{{ route('admin.order.invoice',$order->id) }}" target="_blank" class="btn text-white mb-4" style="background-color:#80B500;padding: 10px 30px;">Invoice</a>
     <p class="mb-2">Date: <span class="">{{ $order->created_at->format('d M, Y h:i:s A') }}</span></p>
     <p class="mb-2">Order Id: <span class="text-primary">#{{ $order->id }}</span></p>
     <p class="mb-2">Billing Name: <span class="text-primary">{{ $order->billing_name }}</span></p>

@@ -28,7 +28,10 @@ class FrontendController extends Controller
                                     $q->where('status',1);
                                 }])->get();
         
-        $parent_categories = Category::whereNull('parent_category')->where('status',1)->limit(5)->get();
+        $parent_categories = Category::whereNull('parent_category')
+                                ->where('status',1)
+                                ->limit(5)
+                                ->get();
 
         $top_categories = Category::where('status',1)->withCount(['products' => function($query){
                                         $query->where('status',1);
@@ -45,19 +48,33 @@ class FrontendController extends Controller
         // })->inRandomOrder()->limit(12)->get();
 
         $discounted_products = Product::whereHas('product_discount.discount', function($q){
-                                            $q->where('status',1)->where('discount_validity','>=',Carbon::now());
-                                        })
-                                        ->with('product_discount.discount')
-                                        ->where('status',1)
-                                        ->inRandomOrder()
-                                        ->limit(12)
-                                        ->get();
+                                        $q->where('status',1)->where('discount_validity','>=',Carbon::now());
+                                    })
+                                    ->with('product_discount.discount')
+                                    ->where('status',1)
+                                    ->inRandomOrder()
+                                    ->limit(12)
+                                    ->get();
 
-        $featured_products = Product::where('is_featured',1)->where('status',1)->inRandomOrder()->limit(12)->get();
+        $featured_products = Product::where('is_featured',1)
+                                ->where('status',1)
+                                ->inRandomOrder()
+                                ->limit(12)
+                                ->get();
 
-        $most_viewed_products = Product::where('status',1)->wherehas('product_views')->withCount('product_views')->orderBy('product_views_count','desc')->limit(12)->get();
+        $most_viewed_products = Product::where('status',1)
+                                    ->wherehas('product_views')
+                                    ->withCount('product_views')
+                                    ->orderBy('product_views_count','desc')
+                                    ->limit(12)
+                                    ->get();
 
-        $best_seller_products = Product::where('status',1)->whereHas('product_orders')->withCount('product_orders')->orderBy('product_orders_count','desc')->limit(12)->get();
+        $best_seller_products = Product::where('status',1)
+                                    ->whereHas('product_orders')
+                                    ->withCount('product_orders')
+                                    ->orderBy('product_orders_count','desc')
+                                    ->limit(12)
+                                    ->get();
 
         return view('frontend.home', compact(
             'banners',

@@ -9,7 +9,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0 font-size-18">Admins</h4>
+                        <h4 class="mb-sm-0 font-size-18">Admin</h4>
 
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
@@ -27,7 +27,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card" id="user_table_main">
-                        <div class="alert alert-success user_delete_success" style="display:none">
+                        <div class="alert alert-success user_edit_alert user_delete_success" style="display:none">
 
                         </div>
                         <div class="card-body">
@@ -38,6 +38,7 @@
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Phone</th>
+                                    <th>Role</th>
                                     <th>View Details</th>
                                     <th>Action</th>
                                 </tr>
@@ -66,12 +67,20 @@
                                             @endif
                                         </td>
                                         <td>
+                                            @forelse ($admin->roles as $role)
+                                                <span class="badge bg-success">{{ $role->name }}</span>
+                                            @empty
+                                                N/A
+                                            @endforelse
+                                        </td>
+                                        <td>
                                             <button type="button" class="btn btn-primary btn-sm btn-rounded view_user_details" data-id="{{ $admin->id }}" data-bs-toggle="modal" data-bs-target="#viewUserDetails">
                                                 View Details
                                             </button>
                                         </td>
                                         <td>
                                             <div class="d-flex gap-3">
+                                                <a href="javascript:void(0);" class="text-success edit_user_details_btn" data-id="{{ $admin->id }}" data-bs-toggle="modal" data-bs-target="#editUserDetails"><i class="mdi mdi-pencil font-size-18"></i></a>
                                                 <a href="javascript:void(0);" class="text-danger user_delete" data-id="{{ $admin->id }}" data-bs-toggle="modal" data-bs-target="#deleteUser"><i class="mdi mdi-delete font-size-18"></i></a>
                                             </div>
                                         </td>
@@ -93,11 +102,13 @@
 
 
     <!-- view user details modal -->
-    <div class="modal fade" id="viewUserDetails" tabindex="-1" role="dialog" aria-labelledby=viewUserDetailsLabel" aria-hidden="true">
+    <div class="modal fade" id="viewUserDetails" tabindex="-1" role="dialog" aria-labelledby="viewUserDetailsLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id=viewUserDetailsLabel">User Details</h4>
+                    <h4 class="modal-title" id="viewUserDetailsLabel">User Details
+                        <button type="button" class="btn btn-primary edit_user_details_btn mx-2" data-id="{{ $admin->id }}" data-bs-toggle="modal" data-bs-target="#editUserDetails">Edit</button>
+                    </h4>
                     <button type="button" class="btn-close close_user_view" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -107,7 +118,7 @@
                     </div>
                     <h4 class="card-title mb-4">Personal Information</h4>
                     <div class="table-responsive">
-                        <table class="table table-borderless user_details_table table-nowrap mb-0">
+                        <table class="table table-borderless user_details_table mb-0">
                             <tbody>
                                 <tr class="user_details_name">
                                     <th scope="row">Name :</th>
@@ -119,6 +130,14 @@
                                 </tr>
                                 <tr class="user_details_phone">
                                     <th scope="row">Phone :</th>
+                                    <td></td>
+                                </tr>
+                                <tr class="user_details_role">
+                                    <th scope="row">Role :</th>
+                                    <td></td>
+                                </tr>
+                                <tr class="user_details_permission">
+                                    <th scope="row">Permissions :</th>
                                     <td></td>
                                 </tr>
                                 <tr class="user_details_location">
@@ -135,6 +154,62 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary close_user_view" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- edit user details modal -->
+    <div class="modal fade" id="editUserDetails" tabindex="-1" role="dialog" aria-labelledby="editUserDetailsLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal_preloader">
+                    <h4 class="text-center m-0">loading...</h4>
+                </div>
+                <div class="modal-header">
+                    <h4 class="modal-title" id="editUserDetailsLabel">Edit User Details
+                    </h4>
+                    <button type="button" class="btn-close close_edit_user_details_form" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div id="edit_user_details_form_wrapper">
+                    <form id="edit_user_details_form" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="col-form-label modal_input_label">Role :</label>
+                                <select name="user_role" class="form-control text-capitalize edit_user_input" id="user_role">
+                                </select>
+                                <small class="user_role_error user_error_msg text-danger"></small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label modal_input_label">Permissions : </label>
+                                @if ($permissions->count() > 0)
+                                    <input type="checkbox" class="form-check-input" id="modal_checkAllPermission">
+                                @endif
+                                <div class="edit_user_permission_input_wrapper d-flex flex-wrap" id="edit_user_permission_input_wrapper">
+                                    
+                                </div>
+                                <small class="user_permission_error user_error_msg text-danger"></small>
+                            </div>
+                            <div class="mt-4">
+                                <h4>Change Password</h4>
+                                <div class="mb-3">
+                                    <label for="">New Password :</label>
+                                    <input id="password" type="password" placeholder="Password" class="form-control edit_user_input" name="password">
+                                    <small class="password_error user_error_msg text-danger"></small>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="">Confirm Password :</label>
+                                    <input id="password-confirm" type="password" placeholder="Confirm Password" class="form-control edit_user_input" name="password_confirmation">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer edit_user_details_modal_footer">
+                            <button type="button" class="btn btn-secondary close_edit_user_details_form" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" data-id="" id="editUserDetailsPost">Update</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -161,7 +236,6 @@
     </div>
     <!-- end modal -->
 
-
 @endsection
 
 
@@ -187,6 +261,11 @@
         });
 
 
+        resetModalForm('#editUserDetails');
+
+        checkAllInput('#modal_checkAllPermission', '.edit_user_permission');       
+
+
         $(document).on('click','.view_user_details', function(){
 
             let user_id = $(this).data('id');
@@ -208,8 +287,6 @@
                         let base_url = "{{ asset('uploads/users/') }}";
                         let avatar_url = base_url+'/'+data.user.user_details.avatar;
                         
-                        
-
                         setTimeout(() => {
 
                             $('#viewUserDetails').removeClass('user_details_loading');
@@ -221,6 +298,7 @@
                                 $('.profile_avatar').append('<span class="avatar-title rounded-circle bg-primary bg-soft text-primary text-uppercase" style="font-size:40px;">'+data.user.name.charAt(0)+'</span>');
                             }
 
+                            $('#viewUserDetails').find('.edit_user_details_btn').data('id',data.user.id);
                             $('.user_details_table').find('.user_details_name td').text(data.user.name);
                             $('.user_details_table').find('.user_details_email td').text(data.user.email);
 
@@ -229,6 +307,24 @@
                             }
                             else{
                                 $('.user_details_table').find('.user_details_phone td').text("N/A");
+                            }
+
+                            if(data.user.roles.length !== 0){
+                                $(data.user.roles).each(function(key,role){
+                                    $('.user_details_table').find('.user_details_role td').append('<span class="badge bg-success" style="margin-right:3px">'+role.name+'</span>');
+                                });
+                            }
+                            else{
+                                $('.user_details_table').find('.user_details_role td').text("N/A");
+                            }
+
+                            if(data.user.permissions.length !== 0){
+                                $(data.user.permissions).each(function(key,permission){
+                                    $('.user_details_table').find('.user_details_permission td').append('<span class="badge bg-primary" style="margin-right:3px">'+permission.name+'</span>');
+                                });
+                            }
+                            else{
+                                $('.user_details_table').find('.user_details_permission td').text("N/A");
                             }
 
                             if(data.user.user_details.getcity != null){
@@ -252,13 +348,113 @@
 
                 },
                 error:function(){
-
-                    alert("Something went wrong!");
-                    
+                    if(confirm('Something went wrong! Try reloading the page.')){
+                        window.location.reload();
+                    }
                 }
             });
             
         });
+
+
+        $(document).on('click','.edit_user_details_btn', function(e){
+            e.preventDefault();
+
+            let id = $(this).data('id');
+            let url = "{{ route('admin.user.edit',':user') }}";
+                url = url.replace(':user',id);
+
+            $.ajax({
+                type:'GET',
+                url:url,
+                beforeSend:function(){
+                    $('#editUserDetails').addClass('edit_user_details_loading');
+                    $('.close_edit_user_details_form').attr('disabled',true);
+                    $('#editUserDetailsPost').attr('disabled',true);
+                },
+                success:function(response){
+                    if(response.status === 'success'){
+                        $('#editUserDetails').find('#modal_checkAllPermission').prop('checked',response.data.is_checked);
+                        $('#editUserDetails').find('#user_role').html(response.data.role_elems);
+                        $('#editUserDetails').find('#edit_user_permission_input_wrapper').html(response.data.permission_elems);
+                        $('#editUserDetails').find('#editUserDetailsPost').data('id',response.data.user_id);
+
+                        setTimeout(() => {
+                            $('#editUserDetails').removeClass('edit_user_details_loading');
+                            $('.close_edit_user_details_form').attr('disabled',false);
+                            $('#editUserDetailsPost').attr('disabled',false);
+                        }, 150);
+                    }
+                },
+                error:function(){
+                    $('#editUserDetails').modal('hide');
+
+                    if(confirm('Something went wrong! Try reloading the page.')){
+                        window.location.reload();
+                    }
+                }
+            });
+        });
+
+
+
+        $(document).on('click','#editUserDetailsPost', function(e){
+            e.preventDefault();
+            $('#edit_user_details_form').submit();
+        });
+
+        $(document).on('submit','#edit_user_details_form', function(e){
+            e.preventDefault();
+
+            $('#edit_user_details_form').find('.user_error_msg').text('');
+            $('#edit_user_details_form').find('.edit_user_input').removeClass('is-invalid');
+
+            let formData = $(this).serializeArray();
+            let id = $('#editUserDetailsPost').data('id');
+            let url = "{{ route('admin.user.update', ':user') }}";
+                url = url.replace(':user',id);
+
+            $.ajax({
+                type:'PUT',
+                url:url,
+                data:formData,
+                beforeSend:function(){
+                    $('.close_edit_user_details_form').attr('disabled',true);
+                    $('#editUserDetailsPost').attr('disabled',true);
+                },
+                success:function(response){
+                    if(response.status === 'success'){
+                        $('#editUserDetails').modal('hide');
+                        $('#user_row_'+response.data.user_id).load(' #user_row_'+response.data.user_id+' >* ');
+
+                        $('.user_edit_alert').text('Updated successfully!').fadeIn().delay(1500).fadeOut();
+
+                        setTimeout(() => {
+                            $('.user_edit_alert').text('');
+                        }, 2000);
+                    }
+                },
+                error:function(response){
+                    $('.close_edit_user_details_form').attr('disabled',false);
+                    $('#editUserDetailsPost').attr('disabled',false);
+
+                    if(response.status === 422){
+                        let errors = response.responseJSON.errors;
+                        $.each(errors,function(key,error){
+                            $('#edit_user_details_form').find("."+key+"_error").text(error);
+                            $('#edit_user_details_form').find('#'+key).addClass('is-invalid');
+                        });
+                    }
+                    else{
+                        if(confirm('Something went wrong! Try reloading the page.')){
+                            window.location.reload();
+                        }
+                    }
+                }
+            });
+
+        })
+
 
 
         $(document).on('click','.close_user_view', function(){
@@ -314,7 +510,9 @@
                     }, 3000);
                 },
                 error:function(){
-                    alert("Something went wrong!");
+                    if(confirm('Something went wrong! Try reloading the page.')){
+                        window.location.reload();
+                    }
                 }
             });
 

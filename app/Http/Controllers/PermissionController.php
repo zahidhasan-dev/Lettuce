@@ -58,7 +58,7 @@ class PermissionController extends Controller
                 ]);
 
                 if(!is_null($request->permission_role)){
-                    $permission->roles()->sync($request->permission_role);
+                    $permission->assignRole($request->permission_role);
                 }
 
                 DB::commit();
@@ -154,7 +154,7 @@ class PermissionController extends Controller
                 $permission->name = $permission_name;
                 $permission->save();
 
-                $permission->roles()->sync($request->permission_role);
+                $permission->syncRoles($request->permission_role);
 
                 DB::commit();
                 return response()->json(['status'=>'success']);

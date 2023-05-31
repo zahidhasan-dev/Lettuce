@@ -59,7 +59,7 @@ class RoleController extends Controller
                 ]);
                 
                 if(!is_null($request->role_permission)){
-                    $role->permissions()->sync($request->role_permission);
+                    $role->givePermissionTo($request->role_permission);
                 }
 
                 DB::commit();
@@ -155,7 +155,7 @@ class RoleController extends Controller
                 $role->name = $role_name;
                 $role->save();
                 
-                $role->permissions()->sync($request->role_permission);
+                $role->syncPermissions($request->role_permission);
 
                 DB::commit();
 
@@ -183,11 +183,9 @@ class RoleController extends Controller
     public function destroy(Role $role)
     {
         if(request()->ajax()){
-
             $role->delete();
             
             return response()->json(['status'=>'success']);
-            
         }
 
         return redirect()->back();

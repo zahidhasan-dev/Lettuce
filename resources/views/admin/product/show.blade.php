@@ -100,15 +100,13 @@ mm-active
                                             @endforeach
                                         </a>
                                         <h4 class="mt-1 mb-3">{{ $product->product_name }}</h4>
-            
-                                        <p class="text-muted float-start me-3">
-                                            <span class="bx bxs-star text-warning"></span>
-                                            <span class="bx bxs-star text-warning"></span>
-                                            <span class="bx bxs-star text-warning"></span>
-                                            <span class="bx bxs-star text-warning"></span>
-                                            <span class="bx bxs-star"></span>
-                                        </p>
-                                        <p class="text-muted mb-4">( 152 Customers Review )</p>
+                                        <div class="product_rating">
+                                            <ul class="list-style-none">
+                                                {{ getAvgRating($product->id) }}
+                                            </ul>
+                                        </div>
+                                        
+                                        <p class="text-muted mb-4">( {{ $product->reviews->count() }} Customers Review )</p>
             
                                         @if($product->has_discount == 1 && getProductDiscount($product->id) != null)
                                             @if (validateDiscount(getProductDiscount($product->id)->id) == true)
@@ -147,26 +145,38 @@ mm-active
                                             
                                         </div>
                                     </div>
-                                    <div class="mt-3">
-                                        <a href="{{ route('product.edit',$product->id) }}" class="btn btn-primary waves-effect waves-light mt-2 me-1">Edit Product</a>
-                                    </div>
+                                    @can('update', $product)                                        
+                                        <div class="mt-3">
+                                            <a href="{{ route('product.edit',$product->id) }}" class="btn btn-primary waves-effect waves-light mt-2 me-1">Edit Product</a>
+                                        </div>
+                                    @endcan
                                 </div>
                                 <div class="col-12">
                                     <div class="mt-5">
                                         <h5>Reviews :</h5>
+                                        @if ($product->reviews->count() > 0)
+                                            @foreach ($product->reviews as $review)
 
                                         <div class="d-flex py-3 border-bottom">
                                             <div class="flex-shrink-0 me-3">
-                                                <img src="#" class="avatar-xs rounded-circle" alt="img">
+
+                                                @if ($review->author->userDetails->avatar != null)
+                                                    <img src="{{ asset('uploads/users/').$review->author->userDetails->avatar }}" class="avatar-xs rounded-circle" alt="avatar">
+                                                @else
+                                                    <h2 class="text-uppercase user_text_avatar">{{ substr($review->author->name,0,1) }}</h2>
+                                                @endif
+
                                             </div>
-                                            
                                             <div class="flex-grow-1">
-                                                <h5 class="mb-1 font-size-15">Brian</h5>
-                                                <p class="text-muted">If several languages coalesce, the grammar of the resulting language.</p>
-                                                
-                                                <div class="text-muted font-size-12"><i class="far fa-calendar-alt text-primary me-1"></i> 5 hrs ago</div>
+                                                <h5 class="mb-1 font-size-15">{{ $review->author->name }}</h5>
+                                                <p class="text-muted">{{ $review->review_feedback }}</p>
+                                                <div class="text-muted font-size-12"><i class="far fa-calendar-alt text-primary me-1"></i> {{ $review->created_at->format('F d, Y h:i:s A') }}</div>
                                             </div>
                                         </div>
+                                                @endforeach
+                                            @else
+                                                N/A
+                                            @endif
                                     </div>
                                 </div>
                             </div>

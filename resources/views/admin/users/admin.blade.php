@@ -38,9 +38,11 @@
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Phone</th>
-                                    <th>Role</th>
+                                    <th>Role</th>                                      
                                     <th>View Details</th>
-                                    <th>Action</th>
+                                    @if (auth()->user()->hasAnyPermission(['update-user','delete-user']) || auth()->user()->isSuperAdmin())                                        
+                                        <th>Action</th>
+                                    @endif
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -78,12 +80,23 @@
                                                 View Details
                                             </button>
                                         </td>
-                                        <td>
-                                            <div class="d-flex gap-3">
-                                                <a href="javascript:void(0);" class="text-success edit_user_details_btn" data-id="{{ $admin->id }}" data-bs-toggle="modal" data-bs-target="#editUserDetails"><i class="mdi mdi-pencil font-size-18"></i></a>
-                                                <a href="javascript:void(0);" class="text-danger user_delete" data-id="{{ $admin->id }}" data-bs-toggle="modal" data-bs-target="#deleteUser"><i class="mdi mdi-delete font-size-18"></i></a>
-                                            </div>
-                                        </td>
+                                        @canany(['update','delete'], $admin)
+                                            <td>
+                                                <div class="d-flex gap-3">
+                                                    @can('update', $admin)                                                        
+                                                        <a href="javascript:void(0);" class="text-success edit_user_details_btn" data-id="{{ $admin->id }}" data-bs-toggle="modal" data-bs-target="#editUserDetails">
+                                                            <i class="mdi mdi-pencil font-size-18"></i>
+                                                        </a>
+                                                    @endcan
+
+                                                    @can('delete', $admin)                                                        
+                                                        <a href="javascript:void(0);" class="text-danger user_delete" data-id="{{ $admin->id }}" data-bs-toggle="modal" data-bs-target="#deleteUser">
+                                                            <i class="mdi mdi-delete font-size-18"></i>
+                                                        </a>
+                                                    @endcan
+                                                </div>
+                                            </td>
+                                        @endcanany
                                     </tr>
                                     @endforeach
                                 
@@ -107,7 +120,9 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="viewUserDetailsLabel">User Details
-                        <button type="button" class="btn btn-primary edit_user_details_btn mx-2" data-id="{{ $admin->id }}" data-bs-toggle="modal" data-bs-target="#editUserDetails">Edit</button>
+                        @if (auth()->user()->hasPermissionTo('update-user') || auth()->user()->isSuperAdmin())
+                            <button type="button" class="btn btn-primary edit_user_details_btn mx-2" data-id="{{ $admin->id }}" data-bs-toggle="modal" data-bs-target="#editUserDetails">Edit</button>
+                        @endif
                     </h4>
                     <button type="button" class="btn-close close_user_view" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -159,82 +174,84 @@
         </div>
     </div>
 
-    <!-- edit user details modal -->
-    <div class="modal fade" id="editUserDetails" tabindex="-1" role="dialog" aria-labelledby="editUserDetailsLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal_preloader">
-                    <h4 class="text-center m-0">loading...</h4>
-                </div>
-                <div class="modal-header">
-                    <h4 class="modal-title" id="editUserDetailsLabel">Edit User Details
-                    </h4>
-                    <button type="button" class="btn-close close_edit_user_details_form" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div id="edit_user_details_form_wrapper">
-                    <form id="edit_user_details_form" method="POST">
-                        @csrf
-                        @method('PUT')
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <label class="col-form-label modal_input_label">Role :</label>
-                                <select name="user_role" class="form-control text-capitalize edit_user_input" id="user_role">
-                                </select>
-                                <small class="user_role_error user_error_msg text-danger"></small>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label modal_input_label">Permissions : </label>
-                                @if ($permissions->count() > 0)
-                                    <input type="checkbox" class="form-check-input" id="modal_checkAllPermission">
-                                @endif
-                                <div class="edit_user_permission_input_wrapper d-flex flex-wrap" id="edit_user_permission_input_wrapper">
-                                    
-                                </div>
-                                <small class="user_permission_error user_error_msg text-danger"></small>
-                            </div>
-                            <div class="mt-4">
-                                <h4>Change Password</h4>
+    @if (auth()->user()->hasPermissionTo('update-user') || auth()->user()->isSuperAdmin())
+        <!-- edit user details modal -->
+        <div class="modal fade" id="editUserDetails" tabindex="-1" role="dialog" aria-labelledby="editUserDetailsLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal_preloader">
+                        <h4 class="text-center m-0">loading...</h4>
+                    </div>
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="editUserDetailsLabel">Edit User Details
+                        </h4>
+                        <button type="button" class="btn-close close_edit_user_details_form" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div id="edit_user_details_form_wrapper">
+                        <form id="edit_user_details_form" method="POST">
+                            @csrf
+                            @method('PUT')
+                            <div class="modal-body">
                                 <div class="mb-3">
-                                    <label for="">New Password :</label>
-                                    <input id="password" type="password" placeholder="Password" class="form-control edit_user_input" name="password">
-                                    <small class="password_error user_error_msg text-danger"></small>
+                                    <label class="col-form-label modal_input_label">Role :</label>
+                                    <select name="user_role" class="form-control text-capitalize edit_user_input" id="user_role">
+                                    </select>
+                                    <small class="user_role_error user_error_msg text-danger"></small>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="">Confirm Password :</label>
-                                    <input id="password-confirm" type="password" placeholder="Confirm Password" class="form-control edit_user_input" name="password_confirmation">
+                                    <label class="form-label modal_input_label">Permissions : </label>
+                                    @if ($permissions->count() > 0)
+                                        <input type="checkbox" class="form-check-input" id="modal_checkAllPermission">
+                                    @endif
+                                    <div class="edit_user_permission_input_wrapper d-flex flex-wrap" id="edit_user_permission_input_wrapper">
+                                        
+                                    </div>
+                                    <small class="user_permission_error user_error_msg text-danger"></small>
+                                </div>
+                                <div class="mt-4">
+                                    <h4>Change Password</h4>
+                                    <div class="mb-3">
+                                        <label for="">New Password :</label>
+                                        <input id="password" type="password" placeholder="Password" class="form-control edit_user_input" name="password">
+                                        <small class="password_error user_error_msg text-danger"></small>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="">Confirm Password :</label>
+                                        <input id="password-confirm" type="password" placeholder="Confirm Password" class="form-control edit_user_input" name="password_confirmation">
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="modal-footer edit_user_details_modal_footer">
-                            <button type="button" class="btn btn-secondary close_edit_user_details_form" data-bs-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-primary" data-id="" id="editUserDetailsPost">Update</button>
-                        </div>
-                    </form>
+                            <div class="modal-footer edit_user_details_modal_footer">
+                                <button type="button" class="btn btn-secondary close_edit_user_details_form" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" data-id="" id="editUserDetailsPost">Update</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
 
-    <!-- delete user modal -->
-
-    <div class="modal fade" id="deleteUser" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteUserLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="deleteUserLabel">Delete User</h3>
-                    <button type="button" class="btn-close close_user_delete_modal" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5>Are you sure?</h5>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light close_user_delete_modal" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger user_delete_modal" data-id="">Delete</button>
+    @if (auth()->user()->hasPermissionTo('delete-user') || auth()->user()->isSuperAdmin())
+        <!-- delete user modal -->
+        <div class="modal fade" id="deleteUser" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteUserLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="deleteUserLabel">Delete User</h3>
+                        <button type="button" class="btn-close close_user_delete_modal" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Are you sure?</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light close_user_delete_modal" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger user_delete_modal" data-id="">Delete</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- end modal -->
+    @endif
 
 @endsection
 

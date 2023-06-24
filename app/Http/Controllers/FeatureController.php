@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Feature;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Intervention\Image\Facades\Image;
 use App\Http\Requests\FeatureFormRequest;
 
@@ -18,6 +19,8 @@ class FeatureController extends Controller
      */
     public function index()
     {   
+        Gate::authorize('view-any', Feature::class);
+
         $features = Feature::orderBy('created_at','desc')->paginate(20);
         
         return view('admin.feature.index', compact('features'));
@@ -30,6 +33,8 @@ class FeatureController extends Controller
      */
     public function create()
     {
+        Gate::authorize('create', Feature::class);
+
         return view('admin.feature.create');
     }
 
@@ -41,6 +46,9 @@ class FeatureController extends Controller
      */
     public function store(FeatureFormRequest $request)
     {
+
+        Gate::authorize('create', Feature::class);
+
         DB::beginTransaction();
 
         try {
@@ -80,6 +88,8 @@ class FeatureController extends Controller
      */
     public function show(Feature $feature)
     {
+        Gate::authorize('view', $feature);
+
         return view('admin.feature.show', compact('feature'));
     }
 
@@ -91,6 +101,8 @@ class FeatureController extends Controller
      */
     public function edit(Feature $feature)
     {
+        Gate::authorize('update', $feature);
+
         return view('admin.feature.edit',compact('feature'));
     }
 
@@ -103,6 +115,8 @@ class FeatureController extends Controller
      */
     public function update(Request $request, Feature $feature)
     {
+        Gate::authorize('update', $feature);
+
         $img_rule = '';
 
         if($feature->feature_image == null){
@@ -156,6 +170,8 @@ class FeatureController extends Controller
      */
     public function destroy(Feature $feature)
     {   
+        Gate::authorize('delete', $feature);
+
         if($feature->feature_image != null){
             $delete_img = base_path('public/uploads/feature/'.$feature->feature_image);
             unlink($delete_img);
@@ -169,7 +185,10 @@ class FeatureController extends Controller
 
     public function updateFeatureStatus($feature_id)
     {   
+        
         $feature = Feature::where('id',$feature_id)->firstOrFail();
+
+        Gate::authorize('update-feature-status', $feature);
         
         if($feature->is_active){
             $feature->is_active = 0;

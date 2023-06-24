@@ -151,11 +151,11 @@ Route::middleware(['auth','verified','prevent-back-history'])->group(function(){
             Route::post('category/update/{category}',[CategoryController::class, 'update'])->name('category.update');
 
             Route::get('product/trash', [ProductController::class, 'product_trash'])->name('product.trash');
-            Route::get('product/{id}/restore', [ProductController::class, 'product_restore'])->name('product.restore');
+            Route::get('product/{id}/restore', [ProductController::class, 'restore'])->name('product.restore');
             Route::post('product/restoreall', [ProductController::class, 'product_restore_all'])->name('product.restoreall');
             Route::resource('product', ProductController::class);
             Route::post('product/deleteall',[ProductController::class, 'productMassDestroy'])->name('product.deleteall');
-            Route::delete('product/{id}/forcedelete',[ProductController::class, 'productForceDelete'])->name('product.forcedelete');
+            Route::delete('product/{id}/forcedelete',[ProductController::class, 'forceDelete'])->name('product.forcedelete');
             Route::post('product/forcedeleteall',[ProductController::class, 'productForceDeleteAll'])->name('product.forcedeleteall');
             Route::post('product/photo/delete',[ProductController::class, 'deleteProductPhoto'])->name('product.photo.delete');
             Route::get('product/{id}/feature/update', [ProductController::class, 'updateProductFeature'])->name('product.feature.update');
@@ -175,7 +175,7 @@ Route::middleware(['auth','verified','prevent-back-history'])->group(function(){
             Route::get('order/{order}/invoice', [OrderController::class, 'orderInvoice'])->name('admin.order.invoice');
 
             Route::post('newsletter/subscribers', [SubscriberController::class, 'querySubscriber'])->name('subscriber.search');
-            Route::get('newsletter/subscribers', [SubscriberController::class, 'subscribers'])->name('newsletter.subscriber');
+            Route::get('newsletter/subscribers', [SubscriberController::class, 'index'])->name('newsletter.subscriber');
             Route::get('newsletter/subscriber/{subscriber_id}', [SubscriberController::class, 'show'])->name('newsletter.subscriber.show');
             Route::delete('newsletter/subscriber/{subscriber_id}/delete', [SubscriberController::class, 'destroy'])->name('newsletter.subscriber.delete');
 

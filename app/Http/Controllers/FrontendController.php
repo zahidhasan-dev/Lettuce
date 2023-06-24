@@ -174,9 +174,7 @@ class FrontendController extends Controller
     
             $query = Product::whereHas('product_discount.discount', function($q) use($sale_banner){
                                 $q->where('id',$sale_banner->discount_id)->where('status',0)->where('discount_validity','>=',Carbon::now());
-                            })
-                            ->with('product_discount.discount')
-                            ->inRandomOrder();                                
+                            })->with('product_discount.discount');                                
     
             if($sale_banner->category_id != null){
 
@@ -196,9 +194,7 @@ class FrontendController extends Controller
                                 })
                                 ->whereHas('product_discount.discount', function($q) use($sale_banner){
                                     $q->where('id',$sale_banner->discount_id)->where('status',1)->where('discount_validity','>=',Carbon::now());
-                                })
-                                ->with('product_discount.discount')
-                                ->inRandomOrder();    
+                                })->with('product_discount.discount');    
                                 
                 $banner_query = $banner_query->where('id','!=',$sale_banner->id);
     
@@ -207,9 +203,7 @@ class FrontendController extends Controller
         else{
             $query = Product::whereHas('product_discount.discount', function($q){
                                 $q->where('status',1)->where('discount_validity','>=',Carbon::now());
-                            })
-                            ->with('product_discount.discount')
-                            ->inRandomOrder();                                
+                            })->with('product_discount.discount');                                
         }
 
         if(request()->sort_by == 'popular'){

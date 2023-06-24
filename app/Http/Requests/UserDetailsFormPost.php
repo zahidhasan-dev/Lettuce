@@ -25,9 +25,9 @@ class UserDetailsFormPost extends FormRequest
     {
         return [
             'user_name'=>'required',
-            'phone'=>'required|numeric|digits_between:4,16',
-            'country'=>'required',
-            'city'=>'required',
+            'phone'=>'nullable|numeric|digits_between:4,16',
+            'country'=>'exists:countries,id',
+            'city'=>'required_unless:country,null|exists:cities,id',
         ];
     }
 

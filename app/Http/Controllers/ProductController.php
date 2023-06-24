@@ -2,23 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProductDiscountFormRequest;
 use Exception;
 use Throwable;
 use Carbon\Carbon;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Discount;
 use App\Models\ProductSize;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\ProductDiscount;
 use Illuminate\Support\Facades\DB;
 use App\Models\ProductMultiplePhoto;
+use Illuminate\Support\Facades\Gate;
 use Intervention\Image\Facades\Image;
 use App\Http\Requests\ProductFormPost;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\ProductUpdateFormRequest;
-use App\Models\Discount;
-use App\Models\ProductDiscount;
+use App\Http\Requests\ProductDiscountFormRequest;
 
 class ProductController extends Controller
 {
@@ -31,13 +32,20 @@ class ProductController extends Controller
      */
     public function index()
     {   
+        Gate::authorize('view-any', Product::class);
+        
         $products = Product::all();
+
+        $products->load('categories','size','product_discount');
+
         return view('admin.product.index',compact('products'));
     }
 
 
     public function product_trash()
     {
+        Gate::authorize('view-any', Product::class);
+
         $trashed_products = Product::onlyTrashed()->get();
         return view('admin.product.trash',compact('trashed_products'));
     }
@@ -50,6 +58,7 @@ class ProductController extends Controller
      */
     public function create()
     {
+        Gate::authorize('create', Product::class);
 
         $categories = Category::whereNull('parent_category')->where('status',1)->with('sub_category', function($query){
             $query->select('id','parent_category','category_name')->where('status',1);
@@ -71,6 +80,7 @@ class ProductController extends Controller
      */
     public function store(ProductFormPost $request)
     {   
+        Gate::authorize('create', Product::class);
 
         if (isset($request->validator) && $request->validator->fails()) {
             // return response()->json($request->validator->messages(), 422);    // for ajax request
@@ -186,8 +196,9 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {         
+        Gate::authorize('view', $product);
 
-        $product->load('categories','size','multiple_photos');
+        $product->load('categories','size','multiple_photos','reviews.author.userDetails');
 
         return view('admin.product.show',compact('product'));
 
@@ -201,6 +212,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {   
+        Gate::authorize('update', $product);
 
         $categories = Category::whereNull('parent_category')->where('status',1)->with('sub_category', function($query){
             $query->select('id','parent_category','category_name')->where('status',1);
@@ -225,10 +237,7 @@ class ProductController extends Controller
      */
     public function update(ProductUpdateFormRequest $request, Product $product)
     {
-
-        // return $request->all();
-
-        // die();
+        Gate::authorize('update', $product);
 
         DB::beginTransaction();
 
@@ -367,6 +376,8 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
+        Gate::authorize('delete', $product);
+
         $product->delete();
 
         return redirect()->back()->with(['success'=>'Product Deleted!']);
@@ -375,6 +386,8 @@ class ProductController extends Controller
 
     public function productMassDestroy(Request $request)
     {
+        Gate::authorize('product-mass-destroy', Product::class);
+
         Product::whereIn('id',$request->ids)->delete();
 
         session()->flash('success','Products Deleted!');
@@ -384,9 +397,11 @@ class ProductController extends Controller
 
 
 
-    public function productForceDelete($id)
+    public function forceDelete($id)
     {
         $product = Product::withTrashed()->where('id',$id)->firstOrFail();
+
+        Gate::authorize('delete', $product);
 
         if($product->thumbnail != null){
             $delete_thumbnail = base_path('public/uploads/product/'.$product->thumbnail);
@@ -412,6 +427,9 @@ class ProductController extends Controller
 
     public function productForceDeleteAll(Request $request)
     {
+
+        Gate::authorize('product-force-delete-all', Product::class);
+
         $products = Product::withTrashed()->whereIn('id',$request->ids)->get();
 
         foreach($products as $product){
@@ -442,9 +460,13 @@ class ProductController extends Controller
 
 
 
-    public function product_restore($id)
+    public function restore($id)
     {   
-        Product::withTrashed()->where('id',$id)->restore();
+        $product = Product::withTrashed()->where('id',$id)->first();
+
+        Gate::authorize('delete', $product);
+
+        $product->restore();
 
         session()->flash('success','Product Restored!');
 
@@ -453,6 +475,9 @@ class ProductController extends Controller
 
     public function product_restore_all(Request $request)
     {
+
+        Gate::authorize('product-restore-all', Product::class);
+
         Product::withTrashed()->whereIn('id',$request->ids)->restore();
 
         session()->flash('success','Products Restored!');
@@ -464,6 +489,9 @@ class ProductController extends Controller
 
     public function deleteProductPhoto(Request $request)
     {
+
+        Gate::authorize('delete-product-photo', Product::class);
+
         $photo = ProductMultiplePhoto::where('id',$request->photo_id)->where('product_id',$request->product_id)->firstOrFail();
 
 
@@ -484,6 +512,8 @@ class ProductController extends Controller
     {
         $product = Product::where('id',$id)->firstOrFail();
 
+        Gate::authorize('update', $product);
+
         if($product->is_featured == 0){
             $product->is_featured = 1;
         }
@@ -501,18 +531,21 @@ class ProductController extends Controller
 
     public function updateProductStatus($id)
     {
+        
         $product = Product::where('id',$id)->firstOrFail();
 
-       if($product->status == 0){
-           $product->status = 1;
-       }
-       else{
-           $product->status = 0;
-       }
+        Gate::authorize('update', $product);
 
-       $product->save();
+        if($product->status == 0){
+            $product->status = 1;
+        }
+        else{
+            $product->status = 0;
+        }
 
-       return response()->json(['success'=>'Product Status Updated!']);
+        $product->save();
+
+        return response()->json(['success'=>'Product Status Updated!']);
        
     }
 
@@ -520,6 +553,9 @@ class ProductController extends Controller
 
     public function create_product_discount()
     {
+
+        Gate::authorize('create-product-discount', Product::class);
+
         $products = Product::where('has_discount',0)->where('status',1)->get();
 
         $categories = Category::whereNull('parent_category')->where('status',1)->with('sub_category', function($query){
@@ -542,6 +578,8 @@ class ProductController extends Controller
 
     public function store_product_discount(ProductDiscountFormRequest $request)
     {
+
+        Gate::authorize('create-product-discount', Product::class);
         
         $product_ids = $request->product_id;
 
@@ -578,7 +616,10 @@ class ProductController extends Controller
 
 
     public function edit_product_discount($discount_id)
-    {
+    {   
+
+        Gate::authorize('update-product-discount', Product::class);
+
         $discount_results = '';
         $discounts = Discount::where('status',1)->where('discount_validity','>=',Carbon::now())->get();
 
@@ -592,7 +633,10 @@ class ProductController extends Controller
 
 
     public function update_product_discount($product_id,Request $request)
-    {
+    {   
+
+        Gate::authorize('update-product-discount', Product::class);
+
         ProductDiscount::where('product_id',$product_id)->update([
             'discount_id'=>$request->discount_id,
         ]);

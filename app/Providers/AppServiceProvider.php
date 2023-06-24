@@ -31,9 +31,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {      
 
-        $this->registerModelBindings();
-
-
         if (\Schema::hasTable('mail_settings')) {
             $mail_settings = \App\Models\MailSetting::first();
             if($mail_settings){
@@ -65,22 +62,19 @@ class AppServiceProvider extends ServiceProvider
         });
 
 
-        View::composer(['admin.authorization.*','admin.users.admin'], function($view){
+        View::composer(['admin.authorization.role.*','admin.users.admin'], function($view){
             $view->with([
                 'roles' => Role::all(),
                 'permissions' => Permission::all(),
             ]);
         });
         
+        View::composer('admin.authorization.permission.*', function($view){
+            $view->with([
+                'roles' => Role::all(),
+            ]);
+        });
+        
     }
-
-
-
-    protected function registerModelBindings()
-    {
-        $this->app->bind(PermissionContract::class, Permission::class);
-        $this->app->bind(RoleContract::class, Role::class);
-    }
-
 
 }

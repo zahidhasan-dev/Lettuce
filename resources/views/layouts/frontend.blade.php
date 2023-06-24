@@ -493,7 +493,7 @@
                                 <div class="top-bar-right text-right">
                                     <div class="ltn__top-bar-menu">
                                         <ul>
-                                            <li>
+                                            {{-- <li>
                                                 <div class="ltn__drop-menu ltn__currency-menu ltn__language-menu">
                                                     <ul>
                                                         <li><a href="javascript:void(0);" class="dropdown-toggle"><span class="active-currency">English</span></a>
@@ -504,7 +504,7 @@
                                                         </li>
                                                     </ul>
                                                 </div>
-                                            </li>
+                                            </li> --}}
                                             <li>
                                                 <div class="ltn__social-media">
                                                     <ul>

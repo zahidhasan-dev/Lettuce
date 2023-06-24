@@ -11,13 +11,6 @@ class AboutPolicy
     use HandlesAuthorization;
 
 
-    public function before(User $user, $ability)
-    {
-        if($user->is_admin){
-            return true;
-        }
-    }
-
     /**
      * Determine whether the user can view any models.
      *
@@ -26,7 +19,7 @@ class AboutPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return $user->hasPermissionTo('view-about') === true;
     }
 
     /**
@@ -38,7 +31,7 @@ class AboutPolicy
      */
     public function view(User $user, About $about)
     {
-        //
+        return $user->hasPermissionTo('view-about') === true;
     }
 
     /**
@@ -49,7 +42,7 @@ class AboutPolicy
      */
     public function create(User $user)
     {
-        //
+        return $user->hasPermissionTo('create-about') === true;
     }
 
     /**
@@ -61,7 +54,7 @@ class AboutPolicy
      */
     public function update(User $user, About $about)
     {
-        //
+        return $user->hasPermissionTo('update-about') === true;
     }
 
     /**
@@ -73,39 +66,12 @@ class AboutPolicy
      */
     public function delete(User $user, About $about)
     {
-        //
+        return $user->hasPermissionTo('delete-about') === true;
     }
-
-    /**
-     * Determine whether the user can restore the model.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\About  $about
-     * @return \Illuminate\Auth\Access\Response|bool
-     */
-    public function restore(User $user, About $about)
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\About  $about
-     * @return \Illuminate\Auth\Access\Response|bool
-     */
-    public function forceDelete(User $user, About $about)
-    {
-        //
-    }
-
-
+    
 
     public function updateAboutStatus(User $user, About $about)
     {
-        // if($user->is_admin){
-        //     return true;
-        // }
+        return $user->hasPermissionTo('update-about');
     }
 }

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CityFormPost;
 use App\Models\City;
 use App\Models\Country;
 use Illuminate\Http\Request;
+use App\Http\Requests\CityFormPost;
+use Illuminate\Support\Facades\Gate;
 
 class CityController extends Controller
 {
@@ -16,19 +17,13 @@ class CityController extends Controller
      */
     public function index()
     {
-        $cities = City::orderBy('city_name')->paginate(10);
-        $countries = Country::orderBy('country_name')->get();
-        return view('admin.region.city.index', compact('cities','countries'));
-    }
+        Gate::authorize('view-any', City::class);
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        
+        $cities = City::orderBy('city_name')->paginate(10);
+
+        $countries = Country::orderBy('country_name')->get();
+
+        return view('admin.region.city.index', compact('cities','countries'));
     }
 
     /**
@@ -39,6 +34,7 @@ class CityController extends Controller
      */
     public function store(CityFormPost $request)
     {
+        Gate::authorize('create', City::class);
 
         $cityExists = City::where('country_id',$request->country_id)->where('city_name',$request->city_name)->exists();
 
@@ -60,16 +56,6 @@ class CityController extends Controller
         
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\City  $city
-     * @return \Illuminate\Http\Response
-     */
-    public function show(City $city)
-    {
-        // 
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -79,6 +65,7 @@ class CityController extends Controller
      */
     public function edit(City $city)
     {
+        Gate::authorize('update', $city);
 
         $countries = Country::orderBy('country_name')->get();
 
@@ -105,6 +92,8 @@ class CityController extends Controller
      */
     public function update(Request $request, City $city)
     {
+        Gate::authorize('update', $city);
+
        $city_exists = City::where('id','!=',$city->id)->where('country_id',$request->country_id)->where('city_name',$request->city_name)->exists();
 
        if($city_exists != true){
@@ -135,6 +124,8 @@ class CityController extends Controller
      */
     public function destroy(City $city)
     {
+        Gate::authorize('delete', $city);
+
         $delete = $city->delete();
 
         if($delete)

@@ -23,7 +23,7 @@
             <!-- end page title -->
 
             <div class="row">
-                <div class="col-md-8 order-md-1 order-2 col-12">
+                <div class="{{ auth()->user()->can('create', \App\Models\ProductSize::class) ? 'col-md-8' : 'col-md-12' }} order-md-1 order-2 col-12">
                     <div class="card">
                         <div class="alert alert-success size_alert" style="display: none" role="alert">
                                     
@@ -46,7 +46,10 @@
                                     <tr class="align-top">
                                         <th>SL NO.</th>
                                         <th>Scale Name</th>
-                                        <th>Action</th>
+                                        
+                                        @if (auth()->user()->hasAnyPermission(['update-size','delete-size']) || auth()->user()->isSuperAdmin())
+                                            <th>Action</th>
+                                        @endif
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -54,14 +57,25 @@
                                         <tr>
                                             <td>{{ $loop->index+1 }}</td>
                                             <td>{{ $size->scale_name }}</td>
-                                            <td>
-                                                <a href="javascript:void(0);" class="text-success edit_size" data-id="{{ $size->id }}" data-bs-toggle="modal" data-bs-target="#editSize"><i class="mdi mdi-pencil font-size-18"></i></a>
-                                                <a href="javascript:void(0);" class="text-danger size_delete" data-id="{{ $size->id }}" data-bs-toggle="modal" data-bs-target="#deleteSize"><i class="mdi mdi-delete font-size-18"></i></a>   
-                                                <form action="{{ route('size.destroy',$size->id) }}" method="post" id="size_delete_form_{{ $size->id }}">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                </form>
-                                            </td>
+                                            @canany(['update','delete'], $size)
+                                                <td>
+                                                    @can('update', $size)                                                        
+                                                        <a href="javascript:void(0);" class="text-success edit_size" data-id="{{ $size->id }}" data-bs-toggle="modal" data-bs-target="#editSize">
+                                                            <i class="mdi mdi-pencil font-size-18"></i>
+                                                        </a>
+                                                    @endcan
+
+                                                    @can('delete', $size)                                                        
+                                                        <a href="javascript:void(0);" class="text-danger size_delete" data-id="{{ $size->id }}" data-bs-toggle="modal" data-bs-target="#deleteSize">
+                                                            <i class="mdi mdi-delete font-size-18"></i>
+                                                        </a>
+                                                        <form action="{{ route('size.destroy',$size->id) }}" method="post" id="size_delete_form_{{ $size->id }}">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                        </form>
+                                                    @endcan
+                                                </td>
+                                            @endcanany
                                         </tr>
                                         @empty
                                             <tr>
@@ -74,94 +88,100 @@
                         </div>
                     </div>
                 </div> <!-- end col -->
-                <div class="col-md-4 order-md-2 order-1 col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title mb-2">Add Scale</h4>
-                            @if (session('success'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    {{ session('success') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
-                            @endif
-                            @if (session('error'))
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    {{ session('error') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
-                            @endif
-                            <div class="info_form">
-                                <form action="{{ route('size.store') }}" method="POST">
-                                    @csrf
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="mt-4">
-                                                <label for="scale-name-input" class="form-label">Scale Name :</label>
-                                                <input type="text" class="form-control" id="scale-name-input" name="scale_name" placeholder="Enter Scale Name" value="{{ old('scale_name') }}">
-                                            </div>
-                                            @error('scale_name')
-                                            <small class="text-danger">{{$message}}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="mt-4">
-                                            <button type="submit" class="btn btn-primary w-md">Add</button>
-                                        </div>
+
+                @can('create', \App\Models\ProductSize::class)
+                    <div class="col-md-4 order-md-2 order-1 col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title mb-2">Add Scale</h4>
+                                @if (session('success'))
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        {{ session('success') }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                     </div>
-                                </form>
+                                @endif
+                                @if (session('error'))
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        {{ session('error') }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                @endif
+                                <div class="info_form">
+                                    <form action="{{ route('size.store') }}" method="POST">
+                                        @csrf
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="mt-4">
+                                                    <label for="scale-name-input" class="form-label">Scale Name :</label>
+                                                    <input type="text" class="form-control" id="scale-name-input" name="scale_name" placeholder="Enter Scale Name" value="{{ old('scale_name') }}">
+                                                </div>
+                                                @error('scale_name')
+                                                <small class="text-danger">{{$message}}</small>
+                                                @enderror
+                                            </div>
+                                            <div class="mt-4">
+                                                <button type="submit" class="btn btn-primary w-md">Add</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div> <!-- end col -->
+                    </div> <!-- end col -->
+                @endcan
             </div> <!-- end row -->
         </div> <!-- container-fluid -->
     </div>
     <!-- End Page-content -->
 
 
-    <!-- edit size modal -->
-    <div class="modal fade" id="editSize" tabindex="-1" aria-labelledby="editSizeLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addSizeLabel">Edit Scale</h5>
-                    <button type="button" class="btn-close close_size_form" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form class="size_edit_form">
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="recipient-name" class="col-form-label">Scale Name:</label>
-                            <input type="text" class="form-control scale_name" name="scale_name">
+    @if (auth()->user()->hasPermissionTo('update-size') || auth()->user()->isSuperAdmin())
+        <!-- edit size modal -->
+        <div class="modal fade" id="editSize" tabindex="-1" aria-labelledby="editSizeLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addSizeLabel">Edit Scale</h5>
+                        <button type="button" class="btn-close close_size_form" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form class="size_edit_form">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Scale Name:</label>
+                                <input type="text" class="form-control scale_name" name="scale_name">
+                            </div>
                         </div>
-                    </div>
-                    <div class="modal-footer size_modal_footer">
-                        <button type="button" class="btn btn-secondary close_size_form" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary size_update_btn" data-id="" id="editSizePost">Update</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- delete size modal -->
-
-    <div class="modal fade" id="deleteSize" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteSizeLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="deleteSizeLabel">Delete Scale</h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5>Are you sure?</h5>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger size_delete_modal" id="deleteSizePost" data-id="">Delete</button>
+                        <div class="modal-footer size_modal_footer">
+                            <button type="button" class="btn btn-secondary close_size_form" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary size_update_btn" data-id="" id="editSizePost">Update</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
+
+
+    @if (auth()->user()->hasPermissionTo('delete-size') || auth()->user()->isSuperAdmin())
+        <!-- delete size modal -->
+        <div class="modal fade" id="deleteSize" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteSizeLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="deleteSizeLabel">Delete Scale</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Are you sure?</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger size_delete_modal" id="deleteSizePost" data-id="">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 
 @endsection
 

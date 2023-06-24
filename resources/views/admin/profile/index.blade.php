@@ -27,10 +27,11 @@
                 <div class="col-xl-8 col-12 m-auto">
                     <div class="card">
                         <div class="card-body">
-                            @if( session('updatesuccess') )
-                            <div class="alert alert-success" role="alert">
-                                {{ session('updatesuccess') }}
-                            </div>
+                            @if (session('updatesuccess'))
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    {{ session('updatesuccess') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
                             @endif
                             <div class="profile_edit_btn mb-4">
                                 <a href="{{ route('admin.profile.edit') }}" class="btn btn-primary">Edit Profile</a>
@@ -47,7 +48,7 @@
                             </div>
                             <h4 class="card-title mb-4">Personal Information</h4>
                             <div class="table-responsive">
-                                <table class="table table-nowrap mb-0">
+                                <table class="table nowrap mb-0">
                                     <tbody>
                                         <tr>
                                             <th scope="row">Name :</th>
@@ -65,6 +66,26 @@
                                                 @else 
                                                     N/A
                                                 @endif
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Role :</th>
+                                            <td>
+                                                @forelse (auth()->user()->getAllRoles() as $role)
+                                                    <span class="badge bg-success">{{ $role->name }}</span>
+                                                @empty
+                                                    N/A
+                                                @endforelse
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Permissions :</th>
+                                            <td>
+                                                @forelse (auth()->user()->getDirectPermissions() as $permission)
+                                                    <span class="badge bg-primary">{{ $permission->name }}</span>
+                                                @empty
+                                                    N/A
+                                                @endforelse
                                             </td>
                                         </tr>
                                         <tr>

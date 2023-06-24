@@ -166,42 +166,44 @@
                                         @endif
                                     </div>
                                     <hr>
-                                    <!-- comment-area -->
-                                    <div class="ltn__comment-area mb-30">
-                                        <div class="ltn__comment-inner">
-                                            <ul>
-                                                @foreach ($product->reviews as $review)
-                                                    <li>
-                                                        <div class="ltn__comment-item clearfix">
-                                                            <div class="ltn__commenter-img">
-                                                                @if(getUser($review->user_id)->userDetails->avatar !== null)
-                                                                <img src="{{ asset('uploads/users/'.getUser($review->user_id)->userDetails->avatar) }}" alt="Image">
-                                                                @else
-                                                                <h2 class="text-uppercase user_text_avatar">{{ substr($review->user_name,0,1) }}</h2>
-                                                                @endif
-                                                            </div>
-                                                            <div class="ltn__commenter-comment">
-                                                                <h6>{{ $review->user_name }}</h6>
-                                                                <div class="product-ratting">
-                                                                    <ul>
-                                                                        @for ($i=1;$i<=5;$i++)
-                                                                           @if($review->review_rating >= $i)
-                                                                            <li style="margin:8px 0.5px 0px;"><i class="fas fa-star"></i></li>
-                                                                           @else
-                                                                            <li style="margin:8px 0.5px 0px;"><i class="far fa-star"></i></li>
-                                                                           @endif
-                                                                        @endfor
-                                                                    </ul>
+                                    @if ($product->reviews->count() > 0)    
+                                        <!-- comment-area -->
+                                        <div class="ltn__comment-area mb-30">
+                                            <div class="ltn__comment-inner">
+                                                <ul>
+                                                    @foreach ($product->reviews as $review)
+                                                        <li>
+                                                            <div class="ltn__comment-item clearfix">
+                                                                <div class="ltn__commenter-img">
+                                                                    @if(getUser($review->user_id)->userDetails->avatar !== null)
+                                                                        <img src="{{ asset('uploads/users/'.getUser($review->user_id)->userDetails->avatar) }}" alt="Image">
+                                                                    @else
+                                                                        <h2 class="text-uppercase user_text_avatar">{{ substr($review->user_name,0,1) }}</h2>
+                                                                    @endif
                                                                 </div>
-                                                                <p>{{ $review->review_feedback }}</p>
-                                                                <span class="ltn__comment-reply-btn">{{ $review->created_at->format('F d, Y') }}</span>
+                                                                <div class="ltn__commenter-comment">
+                                                                    <h6>{{ $review->user_name }}</h6>
+                                                                    <div class="product-ratting">
+                                                                        <ul>
+                                                                            @for ($i=1;$i<=5;$i++)
+                                                                            @if($review->review_rating >= $i)
+                                                                                <li style="margin:8px 0.5px 0px;"><i class="fas fa-star"></i></li>
+                                                                            @else
+                                                                                <li style="margin:8px 0.5px 0px;"><i class="far fa-star"></i></li>
+                                                                            @endif
+                                                                            @endfor
+                                                                        </ul>
+                                                                    </div>
+                                                                    <p>{{ $review->review_feedback }}</p>
+                                                                    <span class="ltn__comment-reply-btn">{{ $review->created_at->format('F d, Y') }}</span>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                     <!-- comment-reply -->
                                     <div class="ltn__comment-reply-area ltn__form-box mb-30">
                                         @if (session('error'))

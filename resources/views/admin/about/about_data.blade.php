@@ -27,57 +27,28 @@
             @endif
         </td>
         <td>
-            @if (!is_null($about->about_desc_1))
-                @if(strlen($about->about_desc_1)>30)
-                    {{ substr($about->about_desc_1,0,30).'...more' }}
-                @else
-                    {{ $about->about_desc_1 }}
-                @endif
-                
-            @else
-                N/A
-            @endif
-        </td>
-        <td>
-            @if (!is_null($about->about_desc_2))
-                @if(strlen($about->about_desc_2)>30)
-                    {{ substr($about->about_desc_2,0,30).'...more' }}
-                @else
-                    {{ $about->about_desc_2 }}
-                @endif
-                
-            @else
-                N/A
-            @endif
-        </td>
-        <td>
-            @if ($about->about_author_name != null)
-                {{ $about->about_author_name }}
-            @else
-                N/A
-            @endif
-        </td>
-        <td>
-            @if ($about->about_author_title != null)
-                {{ $about->about_author_title }}
-            @else
-                N/A
-            @endif
-        </td>
-        <td>
             <div class="form-check form-switch form-switch-md mb-3" dir="ltr">
                 <input class="form-check-input switchAboutStatus" type="checkbox" data-id="{{ $about->id }}" id="switchAboutStatus_{{ $about->id }}" {{ ($about->is_active == 1) ? 'checked' : ''}}>
             </div>
         </td>
-        <td>
-            <a href="{{ route('about.show',$about->id) }}" class="btn btn-primary btn-sm btn-rounded">View Details</a>
-        </td>
-        <td>
-            <div class="d-flex gap-3">
-                <a href="{{ route('about.edit',$about->id) }}" class="text-success" ><i class="mdi mdi-pencil font-size-18"></i></a>
-                <a href="javascript:void(0);" class="text-danger about_delete" data-id="{{ $about->id }}" data-bs-toggle="modal" data-bs-target="#deleteAbout"><i class="mdi mdi-delete font-size-18"></i></a>
-            </div>
-        </td>
+        @can('view', $about) 
+            <td>
+                <a href="{{ route('about.show',$about->id) }}" class="btn btn-primary btn-sm btn-rounded">View Details</a>
+            </td>
+        @endcan
+        @canany(['update','delete'], $about)
+            <td>
+                <div class="d-flex gap-3">
+                    @can('update', $about)
+                        <a href="{{ route('about.edit',$about->id) }}" class="text-success" ><i class="mdi mdi-pencil font-size-18"></i></a>
+                    @endcan
+                    @can('delete', $about)
+                        <a href="javascript:void(0);" class="text-danger about_delete" data-id="{{ $about->id }}" data-bs-toggle="modal" data-bs-target="#deleteAbout"><i class="mdi mdi-delete font-size-18"></i></a>
+                    @endcan
+                </div>
+            </td>
+        @endcanany
+
     </tr>
 @empty
     <tr>

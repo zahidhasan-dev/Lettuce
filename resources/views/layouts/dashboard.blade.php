@@ -31,6 +31,30 @@
 
         <style>
 
+            .product_rating ul{
+                padding:0;
+            }
+            .product_rating li{
+                list-style: none;
+                display: inline-block;
+                color:#FFB800;
+            }
+
+
+            .user_text_avatar {
+                margin: 0;
+                height: 2rem;
+                width: 2rem;
+                max-width: 100%;
+                display: grid;
+                align-content: center;
+                justify-content: center;
+                background-color: #F7F5EB;
+                border-radius: 50%;
+                color: #80B500;
+            }
+
+
             #editPermission .modal-content,
             #editRole .modal-content{
                 position: relative;
@@ -657,6 +681,7 @@
 
                     <div class="d-flex">
                         <div class="dropdown d-inline-block">
+                            
                             <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 @if(auth()->user()->userDetails->avatar != null)
                                 <img class="rounded-circle header-profile-user" src="{{ asset('uploads/users') }}/{{ auth()->user()->userDetails->avatar }}" alt="Header Avatar">
@@ -702,156 +727,248 @@
                                     <span key="t-dashboards">Dashboard</span>
                                 </a>
                             </li>
+
+                            @if (auth()->user()->hasAnyPermission(['view-about','create-about','view-feature','create-feature','view-banner','create-banner','view-contact','view-faq']) || auth()->user()->isSuperAdmin())
+                                <li class="@yield('about_parent_active')">
+                                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                        <i class="bx bx-layout"></i>
+                                        <span key="t-multi-level">Frontend</span>
+                                    </a>
+                                    <ul class="sub-menu mm-collapse" aria-expanded="true">
+                                        @canany (['view-any','create'], \App\Models\About::class)
+                                            <li class="@yield('about_parent_active')">
+                                                <a href="javascript: void(0);" class="has-arrow" key="t-level-1-2">About</a>
+                                                <ul class="sub-menu mm-collapse" aria-expanded="true">
+                                                    @can('view-any', \App\Models\About::class)
+                                                        <li><a href="{{ route('about.index') }}" key="t-level-2-1" class="@yield('about_active')">Abouts</a></li>
+                                                    @endcan
+                                                    @can('create', \App\Models\About::class)
+                                                        <li><a href="{{ route('about.create') }}" key="t-level-2-2">Add New About</a></li>
+                                                    @endcan
+                                                </ul>
+                                            </li>
+                                        @endcanany
+                                        @canany(['view-any','create'], \App\Models\Feature::class)
+                                            <li class="@yield('feature_parent_active')">
+                                                <a href="javascript: void(0);" class="has-arrow" key="t-level-1-2">Feature</a>
+                                                <ul class="sub-menu mm-collapse" aria-expanded="true">
+                                                    @can('view-any', \App\Models\Feature::class)
+                                                        <li><a href="{{ route('feature.index') }}" key="t-level-2-1" class="@yield('feature_active')">Features</a></li>
+                                                    @endcan
+                                                    @can('create', \App\Models\Feature::class)
+                                                        <li><a href="{{ route('feature.create') }}" key="t-level-2-2">Add New Feature</a></li>
+                                                    @endcan
+                                                </ul>
+                                            </li>
+                                        @endcanany
+                                        @canany(['view-any','create'], \App\Models\Banner::class)    
+                                            <li class="@yield('banner_parent_active')">
+                                                <a href="javascript: void(0);" class="has-arrow" key="t-level-1-2">Banner</a>
+                                                <ul class="sub-menu mm-collapse" aria-expanded="true">
+                                                    @can('view-any', \App\Models\Banner::class)
+                                                        <li><a href="{{ route('banner.index') }}" key="t-level-2-1" class="@yield('banner_active')">Banners</a></li>
+                                                    @endcan
+                                                    @can('create', \App\Models\Banner::class)
+                                                        <li><a href="{{ route('banner.create') }}" key="t-level-2-2">Add New Banner</a></li>
+                                                    @endcan
+                                                </ul>
+                                            </li>
+                                        @endcanany
+                                        @if (auth()->user()->hasPermissionTo('view-contact') || auth()->user()->isSuperAdmin())
+                                            <li>
+                                                <a href="javascript: void(0);" class="has-arrow" key="t-level-1-2">Contact</a>
+                                                <ul class="sub-menu mm-collapse" aria-expanded="true">
+
+                                                    @can('view-any', \App\Models\ContactEmail::class)
+                                                        <li><a href="{{ route('email.index') }}" key="t-level-2-1">Email</a></li>
+                                                    @endcan
+
+                                                    @can('view-any', \App\Models\ContactPhone::class)
+                                                        <li><a href="{{ route('phone.index') }}" key="t-level-2-1">Phone</a></li>
+                                                    @endcan
+
+                                                    @can('view-any', \App\Models\ContactAddress::class)
+                                                        <li><a href="{{ route('address.index') }}" key="t-level-2-1">Address</a></li>
+                                                    @endcan
+                                                </ul>
+                                            </li>
+                                        @endif
+                                        @can('view-any', \App\Models\Faq::class)
+                                            <li><a href="{{ route('faq.index') }}" key="t-compact-sidebar">FAQ</a></li>
+                                        @endcan
+                                    </ul>
+                                </li>
+                            @endif
+
+                            @can('view-any', \App\Models\Category::class)
+                                <li>
+                                    <a href="{{ route('category.index') }}" class="waves-effect">
+                                        <i class="bx bx-list-ul"></i>
+                                        <span key="t-layouts">Category</span>
+                                    </a>
+                                </li>
+                            @endcan
+
+                            @if (auth()->user()->hasAnyPermission(['view-product','create-product','update-product','view-size']) || auth()->user()->isSuperAdmin())                                
+                                <li class="@yield('parent_active')">
+                                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                        <i class="bx bxl-product-hunt"></i>
+                                        <span key="t-maps">Product</span>
+                                    </a>
+                                    <ul class="sub-menu mm-collapse" aria-expanded="false">
+                                        @can('view-any', \App\Models\Product::class)
+                                            <li><a href="{{ route('product.index') }}" class="@yield('active')">Products</a></li>
+                                        @endcan
+
+                                        @can('create', \App\Models\Product::class)
+                                            <li><a href="{{ route('product.create') }}">Add Product</a></li>
+                                        @endcan
+
+                                        @if (auth()->user()->hasPermissionTo('update-product') || auth()->user()->isSuperAdmin())
+                                            <li><a href="{{ route('product.discount.create') }}">Product Discount</a></li>
+                                        @endif
+
+                                        @can('view-any', \App\Models\ProductSize::class)
+                                            <li><a href="{{ route('size.index') }}">Size</a></li>                                        
+                                        @endcan
+                                        @can('view-any', \App\Models\Product::class)                                        
+                                            <li><a href="{{ route('product.trash') }}">Trash</a></li>
+                                        @endcan
+                                    </ul>
+                                </li>
+                            @endif
+
+                            @if(auth()->user()->hasAnyPermission(['view-coupon','view-discount']) || auth()->user()->isSuperAdmin())
+                                <li>
+                                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                        <i class="bx bxs-discount"></i>
+                                        <span key="t-maps">Offer</span>
+                                    </a>
+                                    <ul class="sub-menu mm-collapse" aria-expanded="false">
+                                        @can('view-any', \App\Models\Coupon::class)
+                                            <li><a href="{{ route('coupon.index') }}">Coupon</a></li>
+                                        @endcan
+
+                                        @can('view-any', \App\Models\Discount::class)
+                                            <li><a href="{{ route('discount.index') }}">Discount</a></li>
+                                        @endcan
+                                    </ul>
+                                </li>
+                            @endif
+
+                            @can('view-any', \App\Models\Order::class)
+                                <li>
+                                    <a href="{{ route('order.index') }}" class="waves-effect" id="dash_menu_order_btn">
+                                        <i class="mdi mdi-cart-arrow-down"></i>
+                                        @if (pending_orders_count() > 0)
+                                            <span class="badge rounded-pill bg-danger float-end" id="dash_menu_order_count">{{ pending_orders_count() }}</span>                                        
+                                        @endif
+                                        <span key="t-maps">Order</span>
+                                    </a>
+                                </li>
+                            @endcan
+
+                            @if (auth()->user()->hasAnyPermission(['view-country','view-city']) || auth()->user()->isSuperAdmin())
+                                <li>
+                                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                        <i class="bx bx-map"></i>
+                                        <span key="t-maps">Region</span>
+                                    </a>
+                                    <ul class="sub-menu mm-collapse" aria-expanded="false">
+                                        @can('view-any', \App\Models\Country::class)
+                                            <li><a href="{{ route('country.index') }}">Country</a></li>
+                                        @endcan
+                                        @can('view-any', \App\Models\City::class)
+                                            <li><a href="{{ route('city.index') }}">City</a></li>
+                                        @endcan
+                                    </ul>
+                                </li>
+                            @endif
+
+                            @if (auth()->user()->hasAnyPermission(['view-subscriber','view-newsletter','create-newsletter']) || auth()->user()->isSuperAdmin())
+                                <li>
+                                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                        <i class="mdi mdi-email-newsletter"></i>
+                                        <span key="t-maps">Newsletter</span>
+                                    </a>
+                                    <ul class="sub-menu mm-collapse" aria-expanded="false">
+                                        @can('view-any', \App\Models\Subscriber::class)
+                                            <li><a href="{{ route('newsletter.subscriber') }}">Subscribers</a></li>
+                                        @endcan
+
+                                        @can('view-any', \App\Models\Newsletter::class)
+                                            <li><a href="{{ route('newsletter.index') }}">Newsletters</a></li>
+                                        @endcan
+
+                                        @can('create', \App\Models\Newsletter::class)
+                                            <li><a href="{{ route('newsletter.create') }}">Create Newsletter</a></li>
+                                        @endcan
+                                    </ul>
+                                </li>
+                            @endif
                             
-                            <li class="@yield('about_parent_active')">
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="bx bx-layout"></i>
-                                    <span key="t-multi-level">Frontend</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="true">
-                                    <li class="@yield('about_parent_active')">
-                                        <a href="javascript: void(0);" class="has-arrow" key="t-level-1-2">About</a>
-                                        <ul class="sub-menu" aria-expanded="true">
-                                            <li><a href="{{ route('about.index') }}" key="t-level-2-1" class="@yield('about_active')">Abouts</a></li>
-                                            <li><a href="{{ route('about.create') }}" key="t-level-2-2">Add New About</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="@yield('feature_parent_active')">
-                                        <a href="javascript: void(0);" class="has-arrow" key="t-level-1-2">Feature</a>
-                                        <ul class="sub-menu" aria-expanded="true">
-                                            <li><a href="{{ route('feature.index') }}" key="t-level-2-1" class="@yield('feature_active')">Features</a></li>
-                                            <li><a href="{{ route('feature.create') }}" key="t-level-2-2">Add New Feature</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="@yield('banner_parent_active')">
-                                        <a href="javascript: void(0);" class="has-arrow" key="t-level-1-2">Banner</a>
-                                        <ul class="sub-menu" aria-expanded="true">
-                                            <li><a href="{{ route('banner.index') }}" key="t-level-2-1" class="@yield('banner_active')">Banners</a></li>
-                                            <li><a href="{{ route('banner.create') }}" key="t-level-2-2">Add New Banner</a></li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a href="javascript: void(0);" class="has-arrow" key="t-level-1-2">Contact</a>
-                                        <ul class="sub-menu" aria-expanded="true">
-                                            <li><a href="{{ route('email.index') }}" key="t-level-2-1">Email</a></li>
-                                            <li><a href="{{ route('phone.index') }}" key="t-level-2-1">Phone</a></li>
-                                            <li><a href="{{ route('address.index') }}" key="t-level-2-1">Address</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="{{ route('faq.index') }}" key="t-compact-sidebar">FAQ</a></li>
-                                </ul>
-                            </li>
-
-                            <li>
-                                <a href="{{ route('category.index') }}" class="waves-effect">
-                                    <i class="bx bx-list-ul"></i>
-                                    <span key="t-layouts">Category</span>
-                                </a>
-                            </li>
-
-                            <li class="@yield('parent_active')">
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="bx bxl-product-hunt"></i>
-                                    <span key="t-maps">Product</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="{{ route('product.index') }}" class="@yield('active')">Products</a></li>
-                                    <li><a href="{{ route('product.create') }}">Add Product</a></li>
-                                    <li><a href="{{ route('product.discount.create') }}">Product Discount</a></li>
-                                    <li><a href="{{ route('size.index') }}">Size</a></li>
-                                    <li><a href="{{ route('product.trash') }}">Trash</a></li>
-                                </ul>
-                            </li>
-
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="bx bxs-discount"></i>
-                                    <span key="t-maps">Offer</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="{{ route('coupon.index') }}">Coupon</a></li>
-                                    <li><a href="{{ route('discount.index') }}">Discount</a></li>
-                                </ul>
-                            </li>
-
-
-                            <li>
-                                <a href="{{ route('order.index') }}" class="waves-effect" id="dash_menu_order_btn">
-                                    <i class="mdi mdi-cart-arrow-down"></i>
-                                    @if (pending_orders_count() > 0)
-                                        <span class="badge rounded-pill bg-danger float-end" id="dash_menu_order_count">{{ pending_orders_count() }}</span>                                        
-                                    @endif
-                                    <span key="t-maps">Order</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="bx bx-map"></i>
-                                    <span key="t-maps">Region</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="{{ route('country.index') }}">Country</a></li>
-                                    <li><a href="{{ route('city.index') }}">City</a></li>
-                                </ul>
-                            </li>
-
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="mdi mdi-email-newsletter"></i>
-                                    <span key="t-maps">Newsletter</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="{{ route('newsletter.subscriber') }}">Subscribers</a></li>
-                                    <li><a href="{{ route('newsletter.index') }}">Newsletters</a></li>
-                                    <li><a href="{{ route('newsletter.create') }}">Create Newsletter</a></li>
-                                </ul>
-                            </li>
                             
-                            
-                            <li class="@yield('message_parent_active')">
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="mdi mdi-email"></i>
-                                    <span key="t-maps">Message</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li id="dash_menu_inbox_btn">
-                                        <a href="{{ route('admin.message.index') }}" class="@yield('message_inbox_active')">Inbox
-                                            @if (total_unread_message() > 0)
-                                                <span class="badge rounded-pill bg-danger float-end" id="dash_menu_order_count">{{ total_unread_message() }}</span>
-                                            @endif
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('admin.message.trash') }}">Trash</a>
-                                    </li>
-                                </ul>
-                            </li>
+                            @can('view-any', \App\Models\Message::class)
+                                <li class="@yield('message_parent_active')">
+                                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                        <i class="mdi mdi-email"></i>
+                                        <span key="t-maps">Message</span>
+                                    </a>
+                                    <ul class="sub-menu mm-collapse" aria-expanded="false">
+                                        <li id="dash_menu_inbox_btn">
+                                            <a href="{{ route('admin.message.index') }}" class="@yield('message_inbox_active')">Inbox
+                                                @if (total_unread_message() > 0)
+                                                    <span class="badge rounded-pill bg-danger float-end" id="dash_menu_order_count">{{ total_unread_message() }}</span>
+                                                @endif
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('admin.message.trash') }}">Trash</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            @endcan
 
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="bx bx-user-circle"></i>
-                                    <span key="t-layouts">User Management</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="{{ route('user.admin') }}" key="t-light-sidebar">Admin</a></li>
-                                    <li><a href="{{ route('user.customer') }}" key="t-compact-sidebar">Customer</a></li>
-                                    <li><a href="{{ route('admin.user.register') }}" key="t-compact-sidebar">Add User</a></li>
-                                    <li id="dash_menu_inbox_btn"><a href="{{ route('admin.role.index') }}">Role</a></li>
-                                    <li><a href="{{ route('admin.permission.index') }}">Permission</a></li>
-                                </ul>
-                            </li>
+                            @if (auth()->user()->hasAnyPermission('view-user','create-user','view-role','view-permission') || auth()->user()->isSuperAdmin())
+                                <li>
+                                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                        <i class="bx bx-user-circle"></i>
+                                        <span key="t-layouts">User Management</span>
+                                    </a>
+                                    <ul class="sub-menu mm-collapse" aria-expanded="false">
+                                        @can('view-any', \App\Models\User::class)                                    
+                                            <li><a href="{{ route('user.admin') }}" key="t-light-sidebar">Admin</a></li>
+                                            <li><a href="{{ route('user.customer') }}" key="t-compact-sidebar">Customer</a></li>
+                                        @endcan
 
+                                        @can('create', \App\Models\User::class)
+                                            <li><a href="{{ route('admin.user.register') }}" key="t-compact-sidebar">Add User</a></li>                                        
+                                        @endcan
 
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="bx bx-cog"></i>
-                                    <span key="t-layouts">Settings</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="{{ route('admin.settings.mail') }}" key="t-light-sidebar">Mail</a></li>
-                                </ul>
-                            </li>
+                                        @can('view-any', \App\Models\Role::class)                                        
+                                            <li id="dash_menu_inbox_btn"><a href="{{ route('admin.role.index') }}">Role</a></li>
+                                        @endcan
+                                        
+                                        @can('view-any', \App\Models\Permission::class)                                        
+                                            <li><a href="{{ route('admin.permission.index') }}">Permission</a></li>
+                                        @endcan
+                                    </ul>
+                                </li>
+                            @endif
+
+                            @if (auth()->user()->hasAnyPermission(['view-mail-settings','update-mail-settings']) || auth()->user()->isSuperAdmin())
+                                <li>
+                                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                        <i class="bx bx-cog"></i>
+                                        <span key="t-layouts">Settings</span>
+                                    </a>
+                                    <ul class="sub-menu mm-collapse" aria-expanded="false">
+                                        @canany(['view-any', 'create-or-update',], \App\Models\MailSetting::class)
+                                            <li><a href="{{ route('admin.settings.mail') }}" key="t-light-sidebar">Mail</a></li>
+                                        @endcanany
+                                    </ul>
+                                </li>
+                            @endif
 
                         </ul>
                     </div>

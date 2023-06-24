@@ -8,10 +8,11 @@ use App\Models\User;
 use App\Models\Permission;
 use App\Models\UserDetails;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\addUserFormPost;
-use function PHPUnit\Framework\isNull;
 
+use function PHPUnit\Framework\isNull;
 use App\Http\Requests\editUserDetailsFormRequest;
 
 class UserController extends Controller
@@ -24,6 +25,8 @@ class UserController extends Controller
     
     public function addUser()
     {
+        Gate::authorize('create', User::class);
+
         $roles = Role::where('name','!=','super-admin')->get();
         $permissions = Permission::all();
 
@@ -33,6 +36,8 @@ class UserController extends Controller
 
     public function createUser(addUserFormPost $request)
     {
+        Gate::authorize('create', User::class);
+
         DB::beginTransaction();
 
         try {
@@ -77,6 +82,8 @@ class UserController extends Controller
 
     public function user_admin()
     {
+        Gate::authorize('view-any', User::class);
+
         $admins = User::where('is_admin',true)->where('id','!=',auth()->user()->id)->orderBy('name','asc')->get();
 
         $admins->load('roles','userDetails');
@@ -88,6 +95,8 @@ class UserController extends Controller
 
     public function user_customer()
     { 
+        Gate::authorize('view-any', User::class);
+
         $customers = User::where('is_admin', false)->orderBy('name','asc')->get();
 
         $customers->load('userDetails');
@@ -100,6 +109,8 @@ class UserController extends Controller
     public function viewUserDetails($user_id)
     {
         $user = User::with('userDetails.getcity.country')->where('id',$user_id)->first();
+        
+        Gate::authorize('view', $user);
 
         if($user->is_admin){
            $user->load('roles','permissions');
@@ -120,9 +131,13 @@ class UserController extends Controller
 
 
     public function editUserDetails($user_id)
-    {   
+    {
         $user = User::where('id',$user_id)->where('is_admin',1)->firstOrFail();
+        
+        Gate::authorize('update', $user);   
+
         $roles = Role::whereNot('name','super-admin')->get();
+
         $permissions  = Permission::all();
 
         $is_checked = true;
@@ -170,8 +185,10 @@ class UserController extends Controller
         DB::beginTransaction();
         
         try {
-
+            
             $user = User::where('id',$user_id)->where('is_admin',1)->firstOrFail();
+            
+            Gate::authorize('update', $user);
 
             if(!is_null($request->password)){
                 $user->password = Hash::make($request->password);
@@ -202,6 +219,8 @@ class UserController extends Controller
     public function deleteUser($user_id)
     {
         $user = User::where('id',$user_id)->first();
+
+        Gate::authorize('delete', $user);
 
         $user_delete = $user->delete();
 

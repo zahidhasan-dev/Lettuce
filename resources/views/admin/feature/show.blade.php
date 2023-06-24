@@ -37,7 +37,9 @@ active
                                 <div class="col-12">
                                     <div class="mb-4">
                                         <a href="{{ route('feature.index') }}" class="btn btn-dark"><i class="bx bx-arrow-back"></i> Back</a>
-                                        <a href="{{ route('feature.edit',$feature->id) }}" class="btn btn-primary" style="margin-left:15px;">Edit Feature</a>
+                                        @can('update', $feature)
+                                            <a href="{{ route('feature.edit',$feature->id) }}" class="btn btn-primary" style="margin-left:15px;">Edit Feature</a>
+                                        @endcan
                                     </div>
                                 </div>
                                 <div class="col-xl-6 mt-3">

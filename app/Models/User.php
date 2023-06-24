@@ -46,6 +46,13 @@ class User extends Authenticatable implements MustVerifyEmail
 
 
 
+    public function isSuperAdmin()
+    {
+        return $this->hasRole('super-admin') === true;
+    }
+
+
+
     function userDetails()
     {
         return $this->hasOne(UserDetails::class,'user_id');
@@ -63,6 +70,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasManyThrough(OrderItem::class,Order::class,'user_id','order_id');
     }
+
 
 
     // public function roles()

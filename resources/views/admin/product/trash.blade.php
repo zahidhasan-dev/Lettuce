@@ -42,8 +42,12 @@
                                 </div>
                                 <div class="col-xs-12 col-sm-6">
                                     <div class="product_table_btn_wrapper">
-                                        <button type="button" class="btn btn-danger waves-effect waves-light me-2 product_force_delete_all" >Delete All</button>
-                                        <button type="button" class="btn btn-success waves-effect waves-light me-2 product_restore_all" >Restore All</button>
+                                        @can('product-force-delete-all', \App\Models\Product::class)                                            
+                                            <button type="button" class="btn btn-danger waves-effect waves-light me-2 product_force_delete_all" >Delete All</button>
+                                        @endcan
+                                        @can('product-restore-all', \App\Models\Product::class)                                            
+                                            <button type="button" class="btn btn-success waves-effect waves-light me-2 product_restore_all" >Restore All</button>
+                                        @endcan
                                     </div>
                                 </div>
                             </div>
@@ -51,12 +55,14 @@
                                 <table id="products_trash_table" class="table nowrap w-100">
                                     <thead>
                                         <tr class="align-top">
-                                            <th>
-                                                <div class="form-check font-size-16">
-                                                    <input class="form-check-input" type="checkbox" id="checkAllProduct">
-                                                    <label class="form-check-label" for="checkAllProduct"></label>
-                                                </div>
-                                            </th>
+                                            @canany(['product-force-delete-all','product-restore-all'], \App\Models\Product::class)
+                                                <th>
+                                                    <div class="form-check font-size-16">
+                                                        <input class="form-check-input" type="checkbox" id="checkAllProduct">
+                                                        <label class="form-check-label" for="checkAllProduct"></label>
+                                                    </div>
+                                                </th>
+                                            @endcanany
                                             <th>Thumbnail</th>
                                             <th>Name</th>
                                             <th>Category</th>
@@ -65,7 +71,9 @@
                                             <th>Price</th>
                                             <th>In Stock</th>
                                             <th>Discount</th>
-                                            <th>Action</th>
+                                            @if (auth()->user()->hasAnyPermission('delete-product')  || auth()->user()->isSuperAdmin())
+                                                <th>Action</th>
+                                            @endif
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -82,82 +90,89 @@
     <!-- End Page-content -->
 
 
-    <!-- delete product modal -->
-
-    <div class="modal fade" id="forceDeleteProduct" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="forceDeleteProductLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="forceDeleteProductLabel">Delete Product</h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5>Are you sure?</h5>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger product_force_delete_modal" data-id="">Delete</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="forceDeleteAllProduct" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteProductLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="deleteProductLabel">Delete Product</h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5>Are you sure?</h5>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger product_force_delete_all_modal" data-id="">Delete All</button>
+    @if(auth()->user()->hasPermissionTo('delete-product') || auth()->user()->isSuperAdmin())
+        <!-- delete product modal -->
+        <div class="modal fade" id="forceDeleteProduct" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="forceDeleteProductLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="forceDeleteProductLabel">Delete Product</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Are you sure?</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">ifcel</button>
+                        <button type="button" class="btn btn-danger product_force_delete_modal" data-id="">Delete</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
 
-    <!--  product restore modal -->
-
-    <div class="modal fade" id="restoreProduct" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="restoreProductLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="restoreProductLabel">Restore Product</h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5>Are you sure?</h5>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success product_restore_modal" data-id="">Restore</button>
+    @can('product-force-delete-all', \App\Models\Product::class)
+        <!-- delete all product modal-->
+        <div class="modal fade" id="forceDeleteAllProduct" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteProductLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="deleteProductLabel">Delete Product</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Are you sure?</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger product_force_delete_all_modal" data-id="">Delete All</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endcan
 
-    <div class="modal fade" id="restoreAllProduct" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="restoreAllProductLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="restoreAllProductLabel">Restore All Product</h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5>Are you sure?</h5>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success product_restore_all_modal" data-id="">Restore</button>
+    @if(auth()->user()->hasPermissionTo('delete-product') || auth()->user()->isSuperAdmin())
+        <!--  product restore modal -->
+        <div class="modal fade" id="restoreProduct" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="restoreProductLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="restoreProductLabel">Restore Product</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Are you sure?</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-success product_restore_modal" data-id="">Restore</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
+    @endif
+    
+    @can('product-restore-all', \App\Models\Product::class)
+        <!-- restore all product modal-->
+        <div class="modal fade" id="restoreAllProduct" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="restoreAllProductLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="restoreAllProductLabel">Restore All Product</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Are you sure?</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-success product_restore_all_modal" data-id="">Restore</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endcan
     
 
 @endsection
@@ -172,11 +187,19 @@
         {   
 
             $("#products_trash_table").DataTable({
-                columnDefs: [
-                    { orderable: false, targets: [0,1,4,5,7,8,9] }
-                ],
-                order: [[2, 'asc']]
+                @if (auth()->user()->hasPermissionTo('delete-product')  || auth()->user()->isSuperAdmin())
+                    columnDefs: [
+                        { orderable: false, targets: [0,1,4,5,7,8,9] }
+                    ],
+                    order: [[2, 'asc']]
+                @else
+                    columnDefs: [
+                        { orderable: false, targets: [0,3,4,6,7] }
+                    ],
+                    order: [[1, 'asc']]
+                @endif
             });
+
 
             $.ajaxSetup({
                 headers: {

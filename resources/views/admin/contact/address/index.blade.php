@@ -41,15 +41,17 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="row mb-2">
-                            <div class="col-12">
-                                <div class="text-center text-sm-start text-md-start text-lg-start text-xl-start">
-                                    <a href="javascript:void(0);" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target="#addContactAddress" >
-                                        <i class="mdi mdi-plus me-1"></i> Add New Address
-                                    </a>
-                                </div>
-                            </div><!-- end col-->
-                        </div>
+                        @can('create', \App\Models\ContactAddress::class)
+                            <div class="row mb-2">
+                                <div class="col-12">
+                                    <div class="text-center text-sm-start text-md-start text-lg-start text-xl-start">
+                                        <a href="javascript:void(0);" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target="#addContactAddress" >
+                                            <i class="mdi mdi-plus me-1"></i> Add New Address
+                                        </a>
+                                    </div>
+                                </div><!-- end col-->
+                            </div>
+                        @endcan
 
                         <div class="table-responsive" id="contact_address_table_wrapper">
                             <table id="contact_address_table" class="table align-middle table-nowrap table-check" >
@@ -58,7 +60,9 @@
                                         <th class="align-middle">SL NO.</th>
                                         <th class="align-middle">Address</th>
                                         <th class="align-middle">Status</th>
-                                        <th class="align-middle">Action</th>
+                                        @if (auth()->user()->hasAnyPermission(['update-contact','delete-contact']) || auth()->user()->isSuperAdmin())
+                                            <th class="align-middle">Action</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -82,85 +86,87 @@
 
 <!-- Modal -->
 
-<!-- add Address modal -->
-<div class="modal fade" id="addContactAddress" tabindex="-1" aria-labelledby="addContactAddressLabel" aria-modal="true" role="dialog">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addContactAddressLabel">Add Address</h5>
-                <button type="button" class="btn-close close_contact_address_form" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="contact_address_form_wrapper" id="addContactAddressForm_wrapper">
-                <form id="addContactAddressForm" method="POST">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="contact_address" class="col-form-label">Address:</label>
-                            <input type="text" class="form-control contact_address" id="contact_address" name="contact_address">
-                            <small class="text-danger" id="contact_address_error"></small>
+@if (auth()->user()->hasPermissionTo('create-contact') || auth()->user()->isSuperAdmin())
+    <!-- add Address modal -->
+    <div class="modal fade" id="addContactAddress" tabindex="-1" aria-labelledby="addContactAddressLabel" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addContactAddressLabel">Add Address</h5>
+                    <button type="button" class="btn-close close_contact_address_form" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="contact_address_form_wrapper" id="addContactAddressForm_wrapper">
+                    <form id="addContactAddressForm" method="POST">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="contact_address" class="col-form-label">Address:</label>
+                                <input type="text" class="form-control contact_address" id="contact_address" name="contact_address">
+                                <small class="text-danger" id="contact_address_error"></small>
+                            </div>
                         </div>
-                    </div>
-                    <div class="modal-footer faq_modal_footer">
-                        <button type="button" class="btn btn-secondary close_contact_address_form" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="addContactAddressBtn">Add</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<!-- edit Address modal -->
-<div class="modal fade" id="editContactAddress" tabindex="-1" aria-labelledby="editContactAddressLabel" aria-modal="true" role="dialog">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editContactAddressLabel">Edit Address</h5>
-                <button type="button" class="btn-close close_contact_address_edit_form" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="contact_address_form_wrapper" id="editContactAddressForm_wrapper">
-                <form id="editContactAddressForm" method="POST">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="edit_contact_address" class="col-form-label">Address:</label>
-                            <input type="text" class="form-control contact_address" name="contact_address" id="edit_contact_address">
-                            <small class="text-danger" id="edit_contact_address_error"></small>
+                        <div class="modal-footer faq_modal_footer">
+                            <button type="button" class="btn btn-secondary close_contact_address_form" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="addContactAddressBtn">Add</button>
                         </div>
-                    </div>
-                    <div class="modal-footer faq_modal_footer">
-                        <button type="button" class="btn btn-secondary close_contact_address_edit_form" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="editContactAddressBtn" data-id="">Update</button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+@endif
 
-
-
-<!-- delete faq modal -->
-
-<div class="modal fade" id="deleteContactAddress" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteContactAddressLabel" aria-modal="true" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="deleteContactAddressLabel">Delete Address</h3>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <h5>Are you sure?</h5>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger contact_address_delete_modal" data-id="">Delete</button>
+@if (auth()->user()->hasPermissionTo('update-contact') || auth()->user()->isSuperAdmin())
+    <!-- edit Address modal -->
+    <div class="modal fade" id="editContactAddress" tabindex="-1" aria-labelledby="editContactAddressLabel" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editContactAddressLabel">Edit Address</h5>
+                    <button type="button" class="btn-close close_contact_address_edit_form" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="contact_address_form_wrapper" id="editContactAddressForm_wrapper">
+                    <form id="editContactAddressForm" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="edit_contact_address" class="col-form-label">Address:</label>
+                                <input type="text" class="form-control contact_address" name="contact_address" id="edit_contact_address">
+                                <small class="text-danger" id="edit_contact_address_error"></small>
+                            </div>
+                        </div>
+                        <div class="modal-footer faq_modal_footer">
+                            <button type="button" class="btn btn-secondary close_contact_address_edit_form" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="editContactAddressBtn" data-id="">Update</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+@endif
+
+@if (auth()->user()->hasPermissionTo('delete-contact') || auth()->user()->isSuperAdmin())    
+    <!-- delete faq modal -->
+    <div class="modal fade" id="deleteContactAddress" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteContactAddressLabel" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="deleteContactAddressLabel">Delete Address</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5>Are you sure?</h5>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger contact_address_delete_modal" data-id="">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
 
 
 @endsection
@@ -224,7 +230,6 @@
                 });
 
             });
-
 
             $(document).on('click', '.contact_address_edit', function(e){
                 e.preventDefault();
@@ -370,7 +375,13 @@
                         }, 200);
 
                     },
-                    error:function(){
+                    error:function(response){
+                        if(response.status === 403){
+                            alert(response.responseJSON.message);
+
+                            return;
+                        }
+
                         if(confirm('Something went wrong! Try reloading the page.')){
                             window.location.reload();
                         }

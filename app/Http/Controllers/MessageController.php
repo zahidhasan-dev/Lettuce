@@ -11,13 +11,15 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\MessageFormRequest;
 use App\Http\Requests\ReplyMessageFormRequest;
-
+use Illuminate\Support\Facades\Gate;
 
 class MessageController extends Controller
 {
     
     public function index()
     {
+        Gate::authorize('view-any', Message::class);
+
        $messages = Message::whereNull('message_id')->orderBy('created_at','desc')->paginate(20);
 
        return view('admin.message.index', compact('messages'));
@@ -27,6 +29,8 @@ class MessageController extends Controller
 
     public function message_trash()
     {
+        Gate::authorize('view-any', Message::class);
+
         $messages = Message::whereNull('message_id')->onlyTrashed()->orderBy('created_at','desc')->paginate(20);
 
         return view('admin.message.trash', compact('messages'));
@@ -35,6 +39,8 @@ class MessageController extends Controller
 
     public function show(Message $message)
     {
+        Gate::authorize('view', $message);
+
         if(!$message->is_read){
             $message->is_read = 1;
             $message->save();
@@ -63,6 +69,8 @@ class MessageController extends Controller
 
     public function destroy(Message $message)
     {
+        Gate::authorize('delete', $message);
+
         $message->delete();
 
         return response()->json(['status'=>'success']);
@@ -72,6 +80,8 @@ class MessageController extends Controller
 
     public function massDestroy(Request $request)
     {   
+        Gate::authorize('mass-destroy', Message::class);
+
         Message::whereIn('id',$request->ids)->delete();
 
         return response()->json(['status'=>'success']);
@@ -82,6 +92,9 @@ class MessageController extends Controller
     public function forceDelete($message_id)
     {
         $message = Message::where('id',$message_id)->withTrashed()->firstOrFail();
+
+        Gate::authorize('force-delete', $message);
+
         $message->forceDelete();
 
         return response()->json(['status'=>'success']);
@@ -90,6 +103,8 @@ class MessageController extends Controller
 
     public function massForceDelete(Request $request)
     {
+        Gate::authorize('mass-force-destroy', Message::class);    
+
         Message::whereIn('id',$request->ids)->withTrashed()->forceDelete();
 
         return response()->json(['status'=>'success']);
@@ -100,6 +115,9 @@ class MessageController extends Controller
     public function restore($message_id)
     {
         $message = Message::where('id',$message_id)->withTrashed()->firstOrFail();
+
+        Gate::authorize('restore', $message);
+
         $message->restore();
 
         return response()->json(['status'=>'success']);
@@ -108,6 +126,8 @@ class MessageController extends Controller
 
     public function massRestore(Request $request)
     {
+        Gate::authorize('mass-restore', Message::class);
+
         Message::whereIn('id',$request->ids)->withTrashed()->restore();
 
         return response()->json(['status'=>'success']);
@@ -117,6 +137,7 @@ class MessageController extends Controller
 
     public function queryMessage(Request $request)
     {
+        Gate::authorize('view-any', Message::class);
 
         $query = Message::where('name','LIKE','%'.$request->message_query.'%')
                         ->whereNull('message_id')
@@ -171,6 +192,8 @@ class MessageController extends Controller
     public function replyMessage(ReplyMessageFormRequest $request)
     {
         $message = Message::findOrFail($request->message_id);
+        
+        Gate::authorize('reply-message', $message);
         
         $delay = DB::table('jobs')->count()*10;
         

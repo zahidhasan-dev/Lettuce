@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Faq;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class FaqController extends Controller
 {
@@ -15,6 +16,8 @@ class FaqController extends Controller
      */
     public function index()
     {
+        Gate::authorize('view-any', Faq::class);
+        
         $faqs = Faq::orderByDesc('id')->paginate(15);
 
         return view('admin.faq.index', compact('faqs'));
@@ -37,7 +40,9 @@ class FaqController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
+    {   
+        Gate::authorize('create', Faq::class);
+
         if($request->ajax())
         {
             $create_faq = Faq::create($request->all());
@@ -58,7 +63,9 @@ class FaqController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Faq $faq)
-    {
+    {   
+        Gate::authorize('view', $faq);
+
         return response()->json($faq);
     }
 
@@ -69,7 +76,9 @@ class FaqController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit(Faq $faq)
-    {
+    {   
+        Gate::authorize('update', $faq);
+
         return response()->json($faq);
     }
 
@@ -82,6 +91,8 @@ class FaqController extends Controller
      */
     public function update(Request $request, Faq $faq)
     {
+        Gate::authorize('update', $faq);
+
         $faq->faq_ques = $request->faq_ques;
         $faq->faq_ans = $request->faq_ans;
 
@@ -100,8 +111,9 @@ class FaqController extends Controller
     {
         $faq = Faq::where('id',$id)->first();
 
-        if($faq->is_active == 0)
-        {
+        Gate::authorize('update', $faq);
+
+        if($faq->is_active == 0){
             $faq->is_active = 1;
             $update_faq_status = $faq->save();
         }
@@ -110,8 +122,7 @@ class FaqController extends Controller
             $update_faq_status = $faq->save();
         }
 
-        if($update_faq_status)
-        {
+        if($update_faq_status){
             return response()->json(['success'=>'Status updated!']);
         }
 
@@ -125,7 +136,9 @@ class FaqController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy(Faq $faq)
-    {
+    {   
+        Gate::authorize('delete', $faq);
+
         $faq_delete = $faq->delete();
 
         if($faq_delete)
@@ -139,7 +152,9 @@ class FaqController extends Controller
 
 
     public function delete_all_faq($ids)
-    {
+    {   
+        Gate::authorize('faq-mass-destroy', Faq::class);
+
         $faq_delete_all = Faq::whereIn('id',explode(',',$ids))->delete();
 
         if($faq_delete_all)

@@ -19,15 +19,26 @@
         </td>
         <td>
             <div class="form-check form-switch form-switch-sm mb-3" dir="ltr">
-                <input class="form-check-input switchCategoriestatus" type="checkbox" data-id="{{ $category->id }}" id="switchCategoriestatus" {{ ($category->status == 1)?'checked':'' }}>
+                <input class="form-check-input switchCategoriestatus" type="checkbox" data-id="{{ $category->id }}" id="switchCategoriesStatus_{{ $category->id }}" {{ ($category->status == 1)?'checked':'' }}>
             </div>
         </td>
-        <td>
-            <div class="d-flex gap-3">
-                <a href="javascript:void(0);" class="text-success edit_category" data-id="{{ $category->id }}" data-bs-toggle="modal" data-bs-target="#editCategory"><i class="mdi mdi-pencil font-size-18"></i></a>
-                <a href="javascript:void(0);" class="text-danger category_delete" data-id="{{ $category->id }}" data-bs-toggle="modal" data-bs-target="#deleteCategory"><i class="mdi mdi-delete font-size-18"></i></a>
-            </div>
-        </td>
+        @canany(['update','delete'], $category)
+            <td>
+                <div class="d-flex gap-3">
+                    @can('update', $category)
+                        <a href="javascript:void(0);" class="text-success edit_category" data-id="{{ $category->id }}" data-bs-toggle="modal" data-bs-target="#editCategory">
+                            <i class="mdi mdi-pencil font-size-18"></i>
+                        </a>
+                    @endcan
+                        
+                    @can('delete', $category)
+                        <a href="javascript:void(0);" class="text-danger category_delete" data-id="{{ $category->id }}" data-bs-toggle="modal" data-bs-target="#deleteCategory">
+                            <i class="mdi mdi-delete font-size-18"></i>
+                        </a>
+                    @endcan
+                </div>
+            </td>
+        @endcanany
     </tr>
 @empty
     <tr>

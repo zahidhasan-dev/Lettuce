@@ -41,15 +41,24 @@
                 <input class="form-check-input switchBannerStatus" type="checkbox" data-id="{{ $banner->id }}" id="switchBannerStatus_{{ $banner->id }}" {{ ($banner->status == 1) ? 'checked' : ''}}>
             </div>
         </td>
-        <td>
-            <a href="{{ route('banner.show',$banner->id) }}" class="btn btn-primary btn-sm btn-rounded">View Details</a>
-        </td>
-        <td>
-            <div class="d-flex gap-3">
-                <a href="{{ route('banner.edit',$banner->id) }}" class="text-success" ><i class="mdi mdi-pencil font-size-18"></i></a>
-                <a href="javascript:void(0);" class="text-danger banner_delete" data-id="{{ $banner->id }}" data-bs-toggle="modal" data-bs-target="#deleteBanner"><i class="mdi mdi-delete font-size-18"></i></a>
-            </div>
-        </td>
+
+        @can('view', $banner)
+            <td>
+                <a href="{{ route('banner.show',$banner->id) }}" class="btn btn-primary btn-sm btn-rounded">View Details</a>
+            </td>
+        @endcan
+        @canany(['update','delete'], $banner)
+            <td>
+                <div class="d-flex gap-3">
+                    @can('update', $banner)
+                        <a href="{{ route('banner.edit',$banner->id) }}" class="text-success" ><i class="mdi mdi-pencil font-size-18"></i></a>
+                    @endcan
+                    @can('delete', $banner)
+                        <a href="javascript:void(0);" class="text-danger banner_delete" data-id="{{ $banner->id }}" data-bs-toggle="modal" data-bs-target="#deleteBanner"><i class="mdi mdi-delete font-size-18"></i></a>
+                    @endcan
+                </div>
+            </td>    
+        @endcanany
     </tr>
 @empty
     <tr>

@@ -34,44 +34,59 @@
                                   </div>
                             </div>
                             <div class="col-sm-12 text-right">
-                                <div class="text-sm-start float-start">
-                                    <button type="button" class="btn btn-danger btn-rounded waves-effect waves-light mb-2 me-2 faq_delete_all" >Delete All</button>
-                                </div>
-                                <div class="text-sm-end">
-                                    <button type="button" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target="#addFaq"><i class="mdi mdi-plus me-1"></i> Add New FAQ</button>
-                                </div>
+                                @can('faq-mass-destroy', \App\Models\Faq::class)
+                                    <div class="text-sm-start float-start">
+                                        <button type="button" class="btn btn-danger btn-rounded waves-effect waves-light mb-2 me-2 faq_delete_all" >Delete All</button>
+                                    </div>
+                                @endcan 
+
+                                @can('create', \App\Models\Faq::class)
+                                    <div class="text-sm-end">
+                                        <button type="button" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target="#addFaq">
+                                            <i class="mdi mdi-plus me-1"></i> Add New FAQ
+                                        </button>
+                                    </div>
+                                @endcan
                             </div><!-- end col-->
                         </div>
 
                         <div class="table-responsive" id="faq_table">
                             <table class="table align-middle table-nowrap table-check" >
                                 <thead class="table-light">
-                                    <tr>
-                                        <th style="width: 20px;" class="align-middle">
-                                            <div class="form-check font-size-16">
-                                                <input class="form-check-input" type="checkbox" id="faqCheckAll">
-                                                <label class="form-check-label" for="faqCheckAll"></label>
-                                            </div>
-                                        </th>
+                                    <tr> 
+                                        @can('faq-mass-destroy', \App\Models\Faq::class)
+                                            <th style="width: 20px;" class="align-middle">
+                                                <div class="form-check font-size-16">
+                                                    <input class="form-check-input" type="checkbox" id="faqCheckAll">
+                                                    <label class="form-check-label" for="faqCheckAll"></label>
+                                                </div>
+                                            </th>
+                                        @endcan
                                         <th class="align-middle">SL NO.</th>
                                         <th class="align-middle">Faq Question</th>
                                         <th class="align-middle">Faq Answer</th>
                                         <th class="align-middle">Status</th>
-                                        <th class="align-middle">View Details</th>
-                                        <th class="align-middle">Action</th>
+                                            
+                                        @if (auth()->user()->hasPermissionTo('view-faq') || auth()->user()->isSuperAdmin())
+                                            <th class="align-middle">View Details</th>
+                                        @endif
+
+                                        @if (auth()->user()->hasAnyPermission(['update-faq','delete-faq']) || auth()->user()->isSuperAdmin())
+                                            <th class="align-middle">Action</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse ( $faqs as $index => $faq )
-                                        
-                                    
                                     <tr id="faq_row_{{ $faq->id }}">
-                                        <td>
-                                            <div class="form-check font-size-16">
-                                                <input class="form-check-input faqCheck" type="checkbox" id="faqCheck" name="faqCheck[]" data-id="{{ $faq->id }}">
-                                                <label class="form-check-label" for="orderidcheck01"></label>
-                                            </div>
-                                        </td>
+                                        @can('faq-mass-destroy', \App\Models\Faq::class)
+                                            <td>
+                                                <div class="form-check font-size-16">
+                                                    <input class="form-check-input faqCheck" type="checkbox" id="faqCheck" name="faqCheck[]" data-id="{{ $faq->id }}">
+                                                    <label class="form-check-label" for="orderidcheck01"></label>
+                                                </div>
+                                            </td>
+                                        @endcan
                                         <td>{{ $faqs->firstitem()+$index }}</td>
                                         <td>
                                             @if(strlen($faq->faq_ques) > 30)
@@ -89,21 +104,30 @@
                                         </td>
                                         <td>
                                             <div class="form-check form-switch form-switch-md mb-3" dir="ltr">
-                                                <input class="form-check-input SwitchFaqStatus" type="checkbox" data-id="{{ $faq->id }}" id="SwitchFaqStatus" {{ ($faq->is_active == 1)?'checked':'' }}>
+                                                <input class="form-check-input SwitchFaqStatus" type="checkbox" data-id="{{ $faq->id }}" id="switchFaqStatus_{{ $faq->id }}" {{ ($faq->is_active == 1)?'checked':'' }}>
                                             </div>
                                         </td>
-                                        <td>
-                                            <!-- Button trigger modal -->
-                                            <button type="button" class="btn btn-primary btn-sm btn-rounded view_faq" data-id="{{ $faq->id }}" data-bs-toggle="modal" data-bs-target="#viewFaq">
-                                                View Details
-                                            </button>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex gap-3">
-                                                <a href="javascript:void(0);" class="text-success edit_faq" data-id="{{ $faq->id }}" data-bs-toggle="modal" data-bs-target="#editFaq"><i class="mdi mdi-pencil font-size-18"></i></a>
-                                                <a href="javascript:void(0);" class="text-danger faq_delete" data-id="{{ $faq->id }}" data-bs-toggle="modal" data-bs-target="#deleteFaq"><i class="mdi mdi-delete font-size-18"></i></a>
-                                            </div>
-                                        </td>
+                                        @can('view', $faq)    
+                                            <td>
+                                                <!-- Button trigger modal -->
+                                                <button type="button" class="btn btn-primary btn-sm btn-rounded view_faq" data-id="{{ $faq->id }}" data-bs-toggle="modal" data-bs-target="#viewFaq">
+                                                    View Details
+                                                </button>
+                                            </td>
+                                        @endcan
+                                        @canany(['update','delete'], $faq)
+                                            <td>
+                                                <div class="d-flex gap-3">
+                                                    @can('update', $faq)
+                                                        <a href="javascript:void(0);" class="text-success edit_faq" data-id="{{ $faq->id }}" data-bs-toggle="modal" data-bs-target="#editFaq"><i class="mdi mdi-pencil font-size-18"></i></a>
+                                                    @endcan
+
+                                                    @can('delete', $faq)
+                                                        <a href="javascript:void(0);" class="text-danger faq_delete" data-id="{{ $faq->id }}" data-bs-toggle="modal" data-bs-target="#deleteFaq"><i class="mdi mdi-delete font-size-18"></i></a>
+                                                    @endcan
+                                                </div>
+                                            </td>
+                                        @endcanany
                                     </tr>
                                     @empty
                                         <tr><td colspan="7"><h4 class="text-center">No data found!</h4></td></tr>
@@ -131,131 +155,135 @@
 <!-- Modal -->
 
 
-<!-- add faq modal -->
-<div class="modal fade" id="addFaq" tabindex="-1" aria-labelledby="addFaqLabel" aria-modal="true" role="dialog">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addFaqLabel">Add Faq</h5>
-                <button type="button" class="btn-close close_faq_form" data-bs-dismiss="modal" aria-label="Close"></button>
+@can('create', \App\Models\Faq::class)    
+    <!-- add faq modal -->
+    <div class="modal fade" id="addFaq" tabindex="-1" aria-labelledby="addFaqLabel" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addFaqLabel">Add Faq</h5>
+                    <button type="button" class="btn-close close_faq_form" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form class="faq_form">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">Faq Question:</label>
+                            <input type="text" class="form-control faq_ques" name="faq_ques">
+                        </div>
+                        <div class="mb-3">
+                            <label for="message-text" class="col-form-label">Faq Answer:</label>
+                            <textarea class="form-control faq_ans" name="faq_ans"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer faq_modal_footer">
+                        <button type="button" class="btn btn-secondary close_faq_form" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="addFaqBtn">Add</button>
+                    </div>
+                </form>
             </div>
-            <form class="faq_form">
+        </div>
+    </div>
+@endcan
+
+@if (auth()->user()->hasPermissionTo('update-faq') || auth()->user()->isSuperAdmin())
+    <!-- edit faq modal -->
+    <div class="modal fade" id="editFaq" tabindex="-1" aria-labelledby="editFaqLabel" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addFaqLabel">Edit Faq</h5>
+                    <button type="button" class="btn-close close_faq_form" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form class="faq_edit_form">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">Faq Question:</label>
+                            <input type="text" class="form-control faq_ques" name="faq_ques" >
+                        </div>
+                        <div class="mb-3">
+                            <label for="message-text" class="col-form-label">Faq Answer:</label>
+                            <textarea class="form-control faq_ans" name="faq_ans" ></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer faq_modal_footer">
+                        <button type="button" class="btn btn-secondary close_faq_form" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" data-id="" id="editFaqPost">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+@endif
+
+@if (auth()->user()->hasPermissionTo('delete-faq') || auth()->user()->isSuperAdmin())
+    <!-- delete faq modal -->
+    <div class="modal fade" id="deleteFaq" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteFaqLabel" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="deleteFaqLabel">Delete FAQ</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="recipient-name" class="col-form-label">Faq Question:</label>
-                        <input type="text" class="form-control faq_ques" name="faq_ques">
-                    </div>
-                    <div class="mb-3">
-                        <label for="message-text" class="col-form-label">Faq Answer:</label>
-                        <textarea class="form-control faq_ans" name="faq_ans"></textarea>
-                    </div>
+                    <h5>Are you sure?</h5>
                 </div>
-                <div class="modal-footer faq_modal_footer">
-                    <button type="button" class="btn btn-secondary close_faq_form" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="addFaqBtn">Add</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger faq_delete_modal" data-id="">Delete</button>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
-</div>
+@endif
 
-
-<!-- edit faq modal -->
-<div class="modal fade" id="editFaq" tabindex="-1" aria-labelledby="editFaqLabel" aria-modal="true" role="dialog">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addFaqLabel">Edit Faq</h5>
-                <button type="button" class="btn-close close_faq_form" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form class="faq_edit_form">
+@can('faq-mass-destroy', \App\Models\Faq::class)    
+    <!-- delete all faq modal -->
+    <div class="modal fade" id="deleteAllFaq" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteFaqLabel" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="deleteFaqLabel">Delete FAQ</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="recipient-name" class="col-form-label">Faq Question:</label>
-                        <input type="text" class="form-control faq_ques" name="faq_ques" >
+                    <h5>Are you sure?</h5>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger faq_delete_all_modal" data-id="">Delete All</button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endcan
+
+@if (auth()->user()->hasPermissionTo('view-faq') || auth()->user()->isSuperAdmin())
+    <!-- view faq modal -->
+    <div class="modal fade" id="viewFaq" tabindex="-1" role="dialog" aria-labelledby=viewFaqLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id=viewFaqLabel">Faq Details</h4>
+                    <button type="button" class="btn-close close_faq_view" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="faq_ques_view">
+                        <h5>Faq Question:</h5>
+                        <p></p>
                     </div>
-                    <div class="mb-3">
-                        <label for="message-text" class="col-form-label">Faq Answer:</label>
-                        <textarea class="form-control faq_ans" name="faq_ans" ></textarea>
+                    <div class="faq_ans_view">
+                        <h5>Faq Answer:</h5>
+                        <p></p>
                     </div>
                 </div>
-                <div class="modal-footer faq_modal_footer">
-                    <button type="button" class="btn btn-secondary close_faq_form" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" data-id="" id="editFaqPost">Update</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-
-
-<!-- delete faq modal -->
-
-<div class="modal fade" id="deleteFaq" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteFaqLabel" aria-modal="true" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="deleteFaqLabel">Delete FAQ</h3>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <h5>Are you sure?</h5>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger faq_delete_modal" data-id="">Delete</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- delete all faq modal -->
-
-<div class="modal fade" id="deleteAllFaq" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteFaqLabel" aria-modal="true" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="deleteFaqLabel">Delete FAQ</h3>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <h5>Are you sure?</h5>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger faq_delete_all_modal" data-id="">Delete All</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-<!-- view faq modal -->
-<div class="modal fade" id="viewFaq" tabindex="-1" role="dialog" aria-labelledby=viewFaqLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id=viewFaqLabel">Faq Details</h4>
-                <button type="button" class="btn-close close_faq_view" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="faq_ques_view">
-                    <h5>Faq Question:</h5>
-                    <p></p>
-                </div>
-                <div class="faq_ans_view">
-                    <h5>Faq Answer:</h5>
-                    <p></p>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary close_faq_view" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary close_faq_view" data-bs-dismiss="modal">Close</button>
-            </div>
         </div>
     </div>
-</div>
+@endif
+
 <!-- end modal -->
 @endsection
 
@@ -516,7 +544,21 @@
                             alert(data.error);
                         }
                     },
-                    error:function(){
+                    error:function(response){
+
+                        if($('#switchFaqStatus_'+id).prop('checked') === true){
+                            $('#switchFaqStatus_'+id).prop('checked', false);
+                        }
+                        else{
+                            $('#switchFaqStatus_'+id).prop('checked', true);
+                        }
+
+                        if(response.status === 403){
+                            alert(response.responseJSON.message);
+
+                            return;
+                        }
+
                         if(confirm('Something went wrong! Try reloading the page.')){
                             window.location.reload();
                         };

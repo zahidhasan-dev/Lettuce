@@ -37,7 +37,9 @@ active
                                 <div class="col-12">
                                     <div class="mb-4">
                                         <a href="{{ route('banner.index') }}" class="btn btn-dark"><i class="bx bx-arrow-back"></i> Back</a>
-                                        <a href="{{ route('banner.edit',$banner->id) }}" class="btn btn-primary" style="margin-left:15px;">Edit Banner</a>
+                                        @can('update', $banner)
+                                            <a href="{{ route('banner.edit',$banner->id) }}" class="btn btn-primary" style="margin-left:15px;">Edit Banner</a>
+                                        @endcan
                                     </div>
                                 </div>
                                 <div class="col-xl-6">

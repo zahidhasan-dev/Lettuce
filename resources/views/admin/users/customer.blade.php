@@ -38,7 +38,9 @@
                                     <th>Email</th>
                                     <th>Phone</th>
                                     <th>View Details</th>
-                                    <th>Action</th>
+                                    @if (auth()->user()->hasPermissionTo('delete-user') || auth()->user()->isSuperAdmin())
+                                        <th>Action</th>
+                                    @endif
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -69,11 +71,13 @@
                                                 View Details
                                             </button>
                                         </td>
-                                        <td>
-                                            <div class="d-flex gap-3">
-                                                <a href="javascript:void(0);" class="text-danger user_delete" data-id="{{ $customer->id }}" data-bs-toggle="modal" data-bs-target="#deleteUser"><i class="mdi mdi-delete font-size-18"></i></a>
-                                            </div>
-                                        </td>
+                                        @can('delete', $customer)
+                                            <td>
+                                                <div class="d-flex gap-3">
+                                                    <a href="javascript:void(0);" class="text-danger user_delete" data-id="{{ $customer->id }}" data-bs-toggle="modal" data-bs-target="#deleteUser"><i class="mdi mdi-delete font-size-18"></i></a>
+                                                </div>
+                                            </td>
+                                        @endcan
                                     </tr>
                                     @empty
                                         <tr>
@@ -143,26 +147,27 @@
         </div>
     </div>
 
-    <!-- delete user modal -->
-
-    <div class="modal fade" id="deleteUser" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteUserLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="deleteUserLabel">Delete User</h3>
-                    <button type="button" class="btn-close close_user_delete_modal" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5>Are you sure?</h5>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light close_user_delete_modal" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger user_delete_modal" data-id="">Delete</button>
+    @if (auth()->user()->hasPermissionTo('delete-user') || auth()->user()->isSuperAdmin())
+        <!-- delete user modal -->
+        <div class="modal fade" id="deleteUser" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteUserLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="deleteUserLabel">Delete User</h3>
+                        <button type="button" class="btn-close close_user_delete_modal" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Are you sure?</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light close_user_delete_modal" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger user_delete_modal" data-id="">Delete</button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <!-- end modal -->
+        </div>        
+    @endif
+
 @endsection
 
 @section('footer_script')
@@ -172,7 +177,7 @@
 
             $("#customer_table").DataTable({
                 columnDefs: [
-                    { orderable: false, targets: [0,3,4,5] }
+                    { orderable: false, targets: [0,3,4] }
                 ],
                 order: [[1, 'asc']]
             });

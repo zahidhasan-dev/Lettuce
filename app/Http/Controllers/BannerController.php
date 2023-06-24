@@ -10,6 +10,7 @@ use App\Models\Discount;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Validator;
 
@@ -22,7 +23,8 @@ class BannerController extends Controller
      */
 
     public function index()
-    {
+    {   
+        Gate::authorize('view-any', Banner::class);
         
         $banners = Banner::orderBy('id','desc')->paginate(20);
 
@@ -37,6 +39,7 @@ class BannerController extends Controller
      */
     public function create()
     {   
+        Gate::authorize('create', Banner::class);
 
         $discounts = Discount::where('status',1)->where('discount_validity','>=',Carbon::now())->get();
 
@@ -56,6 +59,8 @@ class BannerController extends Controller
      */
     public function store(Request $request)
     {   
+        Gate::authorize('create', Banner::class);
+
         $validator = $this->validateBanner($request->all());
 
         if($validator->fails()){
@@ -129,6 +134,8 @@ class BannerController extends Controller
      */
     public function show(Banner $banner)
     {
+        Gate::authorize('view', $banner);
+
         return view('admin.banner.show', compact('banner'));
     }
 
@@ -140,6 +147,8 @@ class BannerController extends Controller
      */
     public function edit(Banner $banner)
     {   
+        Gate::authorize('update', $banner);
+        
         $categories =Category::whereNull('parent_category')->with('sub_category', function($query){
             $query->select('id','parent_category','category_name')->where('status',1);
         })->where('status',1)->orderBy('category_name','asc')->get();
@@ -158,6 +167,8 @@ class BannerController extends Controller
      */
     public function update(Request $request, Banner $banner)
     {   
+        Gate::authorize('update', $banner);
+
         $request['except_id'] = $banner->id;
 
         $validator = $this->validateBanner($request->all());
@@ -239,6 +250,8 @@ class BannerController extends Controller
      */
     public function destroy(Banner $banner)
     {   
+        Gate::authorize('delete', $banner);
+
         if($banner->banner_image != null){
             $delete_photo = base_path('public/uploads/banner/'.$banner->banner_image);
             unlink($delete_photo);
@@ -254,6 +267,8 @@ class BannerController extends Controller
     public function updateBannerStatus($banner_id)
     {
         $banner = Banner::findOrFail($banner_id);
+        
+        Gate::authorize('update-banner-status', $banner);
 
         if($banner->status == 0){
             $banner->status = 1;
@@ -272,6 +287,7 @@ class BannerController extends Controller
 
     public function bannerQuery(Request $request)
     {
+        Gate::authorize('view-any', Banner::class);
 
         $banners = Banner::orderBy('id','desc')->paginate(20);
 

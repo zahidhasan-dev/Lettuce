@@ -24,7 +24,7 @@
             <!-- end page title -->
 
             <div class="row">
-                <div class="col-xl-9 order-xl-1 order-2 col-12">
+                <div class="{{ auth()->user()->can('create', \App\Models\Coupon::class) ? 'col-xl-9' : 'col-xl-12' }} order-xl-1 order-2 col-12">
                     <div class="card">
                         <div class="alert alert-success coupon_alert" style="display: none" role="alert">
                                     
@@ -48,7 +48,9 @@
                                         <th>Type</th>
                                         <th>Validity</th>
                                         <th>Status</th>
-                                        <th>Action</th>
+                                        @if (auth()->user()->hasAnyPermission(['update-coupon', 'delete-coupon']) || auth()->user()->isSuperAdmin())
+                                            <th>Action</th>
+                                        @endif
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -60,140 +62,148 @@
                         </div>
                     </div>
                 </div> <!-- end col -->
-                <div class="col-xl-3 order-xl-2 order-1 col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title mb-2">Add Coupon</h4>
-                           
-                            @if (session('success'))
-                                <div class="alert alert-success">
-                                    {{ session('success') }}
-                                </div>
-                            @endif
-                            @if (session('error'))
-                                <div class="alert alert-danger">
-                                    {{ session('error') }}
-                                </div>
-                            @endif
 
-                            <div class="info_form">
-                                <form action="{{ route('coupon.store') }}" method="POST">
-                                    @csrf
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="mt-4">
-                                                <label for="coupon-type-input" class="form-label">Coupon Type :</label>
-                                                <select class="form-control" id="coupon-type-input" name="coupon_type" >
-                                                    <option value=""selected disabled>-- Select Type --</option>
-                                                    <option value="fixed">Fixed</option>
-                                                    <option value="percent">Percent</option>
-                                                </select>
-                                            </div>
-                                            @error('coupon_type')
-                                            <small class="text-danger">{{$message}}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="mt-4">
-                                                <label for="coupon-code-input" class="form-label">Coupon Code :</label>
-                                                <input type="text" class="form-control" id="coupon-code-input" name="coupon_code" placeholder="Enter Coupon Code" value="{{ old('coupon_code') }}">
-                                            </div>
-                                            @error('coupon_code')
-                                            <small class="text-danger">{{$message}}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="mt-4">
-                                                <label for="coupon-value-input" class="form-label">Coupon Value :</label>
-                                                <input type="number" class="form-control" id="coupon-value-input" name="coupon_value" placeholder="Enter Coupon Value" value="{{ old('coupon_value') }}">
-                                            </div>
-                                            @error('coupon_value')
-                                            <small class="text-danger">{{$message}}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="mt-4">
-                                                <label for="coupon-validity-input" class="form-label">Coupon Validity :</label>
-                                                <input type="datetime-local" class="form-control" id="coupon-validity-input" name="coupon_validity" value="{{ old('coupon_validity') }}">
-                                            </div>
-                                            @error('coupon_validity')
-                                            <small class="text-danger">{{$message}}</small>
-                                            @enderror
-                                        </div>
-
-                                        <div class="mt-4">
-                                            <button type="submit" class="btn btn-primary w-md">Add</button>
-                                        </div>
+                @can('create', \App\Models\Coupon::class)
+                    <div class="col-xl-3 order-xl-2 order-1 col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title mb-2">Add Coupon</h4>
+                            
+                                @if (session('success'))
+                                    <div class="alert alert-success">
+                                        {{ session('success') }}
                                     </div>
-                                </form>
+                                @endif
+                                @if (session('error'))
+                                    <div class="alert alert-danger">
+                                        {{ session('error') }}
+                                    </div>
+                                @endif
+
+                                <div class="info_form">
+                                    <form action="{{ route('coupon.store') }}" method="POST">
+                                        @csrf
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="mt-4">
+                                                    <label for="coupon-type-input" class="form-label">Coupon Type :</label>
+                                                    <select class="form-control" id="coupon-type-input" name="coupon_type" >
+                                                        <option value=""selected disabled>-- Select Type --</option>
+                                                        <option value="fixed">Fixed</option>
+                                                        <option value="percent">Percent</option>
+                                                    </select>
+                                                </div>
+                                                @error('coupon_type')
+                                                <small class="text-danger">{{$message}}</small>
+                                                @enderror
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="mt-4">
+                                                    <label for="coupon-code-input" class="form-label">Coupon Code :</label>
+                                                    <input type="text" class="form-control" id="coupon-code-input" name="coupon_code" placeholder="Enter Coupon Code" value="{{ old('coupon_code') }}">
+                                                </div>
+                                                @error('coupon_code')
+                                                <small class="text-danger">{{$message}}</small>
+                                                @enderror
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="mt-4">
+                                                    <label for="coupon-value-input" class="form-label">Coupon Value :</label>
+                                                    <input type="number" class="form-control" id="coupon-value-input" name="coupon_value" placeholder="Enter Coupon Value" value="{{ old('coupon_value') }}">
+                                                </div>
+                                                @error('coupon_value')
+                                                <small class="text-danger">{{$message}}</small>
+                                                @enderror
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="mt-4">
+                                                    <label for="coupon-validity-input" class="form-label">Coupon Validity :</label>
+                                                    <input type="datetime-local" class="form-control" id="coupon-validity-input" name="coupon_validity" value="{{ old('coupon_validity') }}">
+                                                </div>
+                                                @error('coupon_validity')
+                                                <small class="text-danger">{{$message}}</small>
+                                                @enderror
+                                            </div>
+
+                                            <div class="mt-4">
+                                                <button type="submit" class="btn btn-primary w-md">Add</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div> <!-- end col -->
+                    </div> <!-- end col -->
+                @endcan
+
             </div> <!-- end row -->
         </div> <!-- container-fluid -->
     </div>
     <!-- End Page-content -->
 
 
-    <!-- edit coupon modal -->
-    <div class="modal fade" id="editCoupon" tabindex="-1" aria-labelledby="editCouponLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addCouponLabel">Edit Coupon</h5>
-                    <button type="button" class="btn-close close_coupon_form" data-bs-dismiss="modal" aria-label="Close"></button>
+    @if (auth()->user()->hasPermissionTo('update-coupon') || auth()->user()->isSuperAdmin())
+        <!-- edit coupon modal -->
+        <div class="modal fade" id="editCoupon" tabindex="-1" aria-labelledby="editCouponLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addCouponLabel">Edit Coupon</h5>
+                        <button type="button" class="btn-close close_coupon_form" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form class="coupon_edit_form">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Coupon Type:</label>
+                                <select class="form-control coupon_type" id="coupon-type-input" name="coupon_type" >
+                                    
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Coupon Code:</label>
+                                <input type="text" class="form-control coupon_code" name="coupon_code">
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Coupon Value:</label>
+                                <input type="number" class="form-control coupon_value" name="coupon_value">
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Coupon Validity:</label>
+                                <input type="datetime-local" class="form-control coupon_validity" name="coupon_validity">
+                            </div>
+                        </div>
+                        <div class="modal-footer coupon_modal_footer">
+                            <button type="button" class="btn btn-secondary close_coupon_form" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary coupon_update_btn" data-id="" id="editCouponPost">Update</button>
+                        </div>
+                    </form>
                 </div>
-                <form class="coupon_edit_form">
+            </div>
+        </div>
+    @endif
+
+
+    @if (auth()->user()->hasPermissionTo('delete-coupon') || auth()->user()->isSuperAdmin())
+        <!-- delete coupon modal -->
+        <div class="modal fade" id="deleteCoupon" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteCouponLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="deleteCouponLabel">Delete Coupon</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
                     <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="recipient-name" class="col-form-label">Coupon Type:</label>
-                            <select class="form-control coupon_type" id="coupon-type-input" name="coupon_type" >
-                                
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="recipient-name" class="col-form-label">Coupon Code:</label>
-                            <input type="text" class="form-control coupon_code" name="coupon_code">
-                        </div>
-                        <div class="mb-3">
-                            <label for="recipient-name" class="col-form-label">Coupon Value:</label>
-                            <input type="number" class="form-control coupon_value" name="coupon_value">
-                        </div>
-                        <div class="mb-3">
-                            <label for="recipient-name" class="col-form-label">Coupon Validity:</label>
-                            <input type="datetime-local" class="form-control coupon_validity" name="coupon_validity">
-                        </div>
+                        <h5>Are you sure?</h5>
                     </div>
-                    <div class="modal-footer coupon_modal_footer">
-                        <button type="button" class="btn btn-secondary close_coupon_form" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary coupon_update_btn" data-id="" id="editCouponPost">Update</button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger coupon_delete_modal" data-id="">Delete</button>
                     </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- delete coupon modal -->
-
-    <div class="modal fade" id="deleteCoupon" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteCouponLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="deleteCouponLabel">Delete Coupon</h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5>Are you sure?</h5>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger coupon_delete_modal" data-id="">Delete</button>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
+
 
 @endsection
 
@@ -354,8 +364,24 @@
                             alert(data.error);
                         }
                     },
-                    error:function(){
-                        alert("Something went wrong!");
+                    error:function(response){
+                        
+                        if($("#switchCouponStatus_"+id).prop('checked') === true){
+                            $("#switchCouponStatus_"+id).prop('checked', false); 
+                        }
+                        else{
+                            $("#switchCouponStatus_"+id).prop('checked', true);
+                        }
+
+                        if(response.status === 403){
+                            alert(response.responseJSON.message);
+
+                            return;
+                        }
+                        
+                        if(confirm("Something went wrong! Try reloading the page.")){
+                            window.location.reload();
+                        }
                     }
                 });
             });

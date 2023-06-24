@@ -23,7 +23,7 @@
             <!-- end page title -->
 
             <div class="row">
-                <div class="col-md-8 order-md-1 order-sm-2 col-12">
+                <div class="{{ auth()->user()->can('create', \App\Models\Permission::class) ? 'col-md-8' : 'col-md-12' }} order-md-1 order-sm-2 col-12">
                     <div class="card">
                         <div class="alert alert-success permission_alert" style="display: none" role="alert">
                                     
@@ -36,7 +36,9 @@
                                     <th>#Id</th>
                                     <th>Name</th>
                                     <th>Role</th>
-                                    <th>Action</th>
+                                    @if (auth()->user()->hasAnyPermission(['update-permission','delete-permission']) || auth()->user()->isSuperAdmin())
+                                        <th>Action</th>                                            
+                                    @endif
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -51,154 +53,175 @@
                                                 N/A
                                             @endforelse
                                         </td>
-                                        <td>
-                                            <div class="d-flex gap-3">
-                                                <a href="javascript:void(0);" class="text-success edit_permission" data-id="{{ $permission->id }}" data-bs-toggle="modal" data-bs-target="#editPermission"><i class="mdi mdi-pencil font-size-18"></i></a>
-                                                <a href="javascript:void(0);" class="text-danger permission_delete" data-id="{{ $permission->id }}" data-bs-toggle="modal" data-bs-target="#deletePermission"><i class="mdi mdi-delete font-size-18"></i></a>
-                                            </div>
-                                        </td>
+                                        @canany(['update','delete'], $permission)
+                                            <td>
+                                                <div class="d-flex gap-3">
+                                                    @can('update', $permission)
+                                                        <a href="javascript:void(0);" class="text-success edit_permission" data-id="{{ $permission->id }}" data-bs-toggle="modal" data-bs-target="#editPermission">
+                                                            <i class="mdi mdi-pencil font-size-18"></i>
+                                                        </a>
+                                                    @endcan
+                                                    @can('delete', $permission)
+                                                        <a href="javascript:void(0);" class="text-danger permission_delete" data-id="{{ $permission->id }}" data-bs-toggle="modal" data-bs-target="#deletePermission">
+                                                            <i class="mdi mdi-delete font-size-18"></i>
+                                                        </a>
+                                                    @endcan
+                                                </div>
+                                            </td>
+                                        @endcanany
                                     </tr>
+                                    
                                     @empty
                                         <tr>
                                             <td colspan="4" class="text-center">No data found!</td>
                                         </tr>
                                     @endforelse
-                                
+                                    <tr>
+                                        <td colspan="4">{{ $permissions->links() }}</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div> <!-- end col -->
-                <div class="col-md-4 order-md-2 order-sm-1 col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title mb-2">Create Permission</h4>
-                            @if (session('success'))
-                                <div class="alert alert-success">
-                                    {{ session('success') }}
-                                </div>
-                            @endif
-                            @if (session('error'))
-                                <div class="alert alert-danger">
-                                    {{ session('error') }}
-                                </div>
-                            @endif
-                            <div id="create_permission_form_wrapper">
-                                <form action="{{ route('admin.permission.store') }}" method="POST" id="create_permission_form">
-                                    @csrf
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="mt-4">
-                                                <label for="permission_name" class="form-label">Permission Name :</label>
-                                                <input type="text" class="form-control permission_input" id="permission_name" name="permission_name" placeholder="Enter Permission Name" value="">
-                                                <small class="permission_name_error permission_error_msg text-danger"></small>
-                                            </div>
-                                            <div class="mt-4">
-                                                <label class="form-label">Assign Roles : </label>
-                                                @if ($roles->count() > 0)
-                                                    <input class="form-check-input" type="checkbox" id="checkAllRole">
-                                                @endif
-                                                <div class="permission_role_input_wrapper d-flex flex-wrap">
-                                                    @forelse ($roles as $role)
-                                                        <label for="permission_role_{{ $role->id }}" style="margin-right:10px;cursor:pointer;">
-                                                            <input type="checkbox" class="form-check-input permission_input permission_role" id="permission_role_{{ $role->id }}" name="permission_role[]" value="{{ $role->id }}">
-                                                            <span>{{ $role->name }}</span>
-                                                        </label>
-                                                    @empty
-                                                        <span class="d-block">N/A</span>                                               
-                                                    @endforelse
-                                                </div>
-                                                <small class="permission_role_error permission_error_msg text-danger"></small>
-                                            </div>
-                                        </div>
 
-                                        <div class="mt-4">
-                                            <button type="button" class="btn btn-primary w-md" id="create_permission_form_btn" onclick="$('#create_permission_form').submit()">Create</button>
-                                        </div>
+                @can('create', \App\Models\Permission::class)
+                    <div class="col-md-4 order-md-2 order-sm-1 col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title mb-2">Create Permission</h4>
+                                @if (session('success'))
+                                    <div class="alert alert-success">
+                                        {{ session('success') }}
                                     </div>
-                                </form>
+                                @endif
+                                @if (session('error'))
+                                    <div class="alert alert-danger">
+                                        {{ session('error') }}
+                                    </div>
+                                @endif
+                                <div id="create_permission_form_wrapper">
+                                    <form action="{{ route('admin.permission.store') }}" method="POST" id="create_permission_form">
+                                        @csrf
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="mt-4">
+                                                    <label for="permission_name" class="form-label">Permission Name :</label>
+                                                    <input type="text" class="form-control permission_input" id="permission_name" name="permission_name" placeholder="Enter Permission Name" value="">
+                                                    <small class="permission_name_error permission_error_msg text-danger"></small>
+                                                </div>
+                                                <div class="mt-4">
+                                                    <label class="form-label">Assign Roles : </label>
+                                                    @if ($roles->count() > 0)
+                                                        <input class="form-check-input" type="checkbox" id="checkAllRole">
+                                                    @endif
+                                                    <div class="permission_role_input_wrapper d-flex flex-wrap">
+                                                        @forelse ($roles as $role)
+                                                            <label for="permission_role_{{ $role->id }}" style="margin-right:10px;cursor:pointer;">
+                                                                <input type="checkbox" class="form-check-input permission_input permission_role" id="permission_role_{{ $role->id }}" name="permission_role[]" value="{{ $role->id }}">
+                                                                <span>{{ $role->name }}</span>
+                                                            </label>
+                                                        @empty
+                                                            <span class="d-block">N/A</span>                                               
+                                                        @endforelse
+                                                    </div>
+                                                    <small class="permission_role_error permission_error_msg text-danger"></small>
+                                                </div>
+                                            </div>
+
+                                            <div class="mt-4">
+                                                <button type="button" class="btn btn-primary w-md" id="create_permission_form_btn" onclick="$('#create_permission_form').submit()">Create</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div> <!-- end col -->
+                    </div> <!-- end col -->
+                @endcan
+
             </div> <!-- end row -->
         </div> <!-- container-fluid -->
     </div>
     <!-- End Page-content -->
 
 
-    <!-- edit Permission modal -->
-    <div class="modal fade" id="editPermission" tabindex="-1" aria-labelledby="editPermissionLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal_preloader">
-                    <h4 class="text-center m-0">loading...</h4>
-                </div>
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addPermissionLabel">Edit Permission</h5>
-                    <button type="button" class="btn-close close_permission_form" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div id="permission_edit_form_wrapper">
-                    <form id="permission_edit_form" method="POST">
-                        @csrf
-                        @method('PUT')
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <label class="col-form-label modal_input_label">Permission Name:</label>
-                                <input type="text" class="form-control permission_name" name="permission_name" value="">
-                                <small class="permission_name_error permission_error_msg text-danger"></small>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label modal_input_label">Assign Roles : </label>
-                                @if ($roles->count() > 0)
-                                    <input type="checkbox" class="form-check-input" id="modal_checkAllRole">
-                                @endif
-                                <div class="permission_role_input_wrapper d-flex flex-wrap" id="edit_permission_role_input_wrapper">
-                                    @forelse ($roles as $role)
-                                        <label for="edit_permission_role_{{ $role->id }}" style="margin-right:10px;cursor:pointer;">
-                                            <input type="checkbox" class="form-check-input permission_input edit_permission_role" id="edit_permission_role_{{ $role->id }}" name="permission_role[]" value="{{ $role->id }}">
-                                            <span>{{ $role->name }}</span>
-                                        </label>
-                                    @empty
-                                        <span class="d-block">N/A</span>                                               
-                                    @endforelse
+    @if (auth()->user()->hasPermissionTo('update-permission') || auth()->user()->isSuperAdmin())
+        <!-- edit Permission modal -->
+        <div class="modal fade" id="editPermission" tabindex="-1" aria-labelledby="editPermissionLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal_preloader">
+                        <h4 class="text-center m-0">loading...</h4>
+                    </div>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addPermissionLabel">Edit Permission</h5>
+                        <button type="button" class="btn-close close_permission_form" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div id="permission_edit_form_wrapper">
+                        <form id="permission_edit_form" method="POST">
+                            @csrf
+                            @method('PUT')
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label class="col-form-label modal_input_label">Permission Name:</label>
+                                    <input type="text" class="form-control permission_name" name="permission_name" value="">
+                                    <small class="permission_name_error permission_error_msg text-danger"></small>
                                 </div>
-                                <small class="permission_role_error permission_error_msg text-danger"></small>
+                                <div class="mb-3">
+                                    <label class="form-label modal_input_label">Assign Roles : </label>
+                                    @if ($roles->count() > 0)
+                                        <input type="checkbox" class="form-check-input" id="modal_checkAllRole">
+                                    @endif
+                                    <div class="permission_role_input_wrapper d-flex flex-wrap" id="edit_permission_role_input_wrapper">
+                                        @forelse ($roles as $role)
+                                            <label for="edit_permission_role_{{ $role->id }}" style="margin-right:10px;cursor:pointer;">
+                                                <input type="checkbox" class="form-check-input permission_input edit_permission_role" id="edit_permission_role_{{ $role->id }}" name="permission_role[]" value="{{ $role->id }}">
+                                                <span>{{ $role->name }}</span>
+                                            </label>
+                                        @empty
+                                            <span class="d-block">N/A</span>                                               
+                                        @endforelse
+                                    </div>
+                                    <small class="permission_role_error permission_error_msg text-danger"></small>
+                                </div>
                             </div>
-                        </div>
-                        <div class="modal-footer permission_modal_footer">
-                            <button type="button" class="btn btn-secondary close_permission_form" data-bs-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-primary" data-id="" id="editPermissionPost">Update</button>
-                        </div>
-                    </form>
+                            <div class="modal-footer permission_modal_footer">
+                                <button type="button" class="btn btn-secondary close_permission_form" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" data-id="" id="editPermissionPost">Update</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
 
 
-    <!-- delete Permission modal -->
-    <div class="modal fade" id="deletePermission" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deletePermissionLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="deletePermissionLabel">Delete Permission</h3>
-                    <button type="button" class="btn-close close_permission_delete_modal" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5>Are you sure?</h5>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light close_permission_delete_modal" data-bs-dismiss="modal">Cancel</button>
-                    <form id="permission_delete_form" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button type="button" class="btn btn-danger permission_delete_modal" data-id="">Delete</button>
-                    </form>
+    @if (auth()->user()->hasPermissionTo('delete-permission') || auth()->user()->isSuperAdmin())
+        <!-- delete Permission modal -->
+        <div class="modal fade" id="deletePermission" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deletePermissionLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="deletePermissionLabel">Delete Permission</h3>
+                        <button type="button" class="btn-close close_permission_delete_modal" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Are you sure?</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light close_permission_delete_modal" data-bs-dismiss="modal">Cancel</button>
+                        <form id="permission_delete_form" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="button" class="btn btn-danger permission_delete_modal" data-id="">Delete</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
 
 @endsection
 

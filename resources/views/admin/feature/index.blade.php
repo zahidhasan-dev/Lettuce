@@ -40,13 +40,15 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="row mb-2">
-                            <div class="col-12">
-                                <div class="text-center text-sm-start text-md-start text-lg-start text-xl-start">
-                                    <a href="{{ route('feature.create') }}" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2"><i class="mdi mdi-plus me-1"></i> Add New Feature</a>
-                                </div>
-                            </div><!-- end col-->
-                        </div>
+                        @can('create', \App\Models\Feature::class)
+                            <div class="row mb-2">
+                                <div class="col-12">
+                                    <div class="text-center text-sm-start text-md-start text-lg-start text-xl-start">
+                                        <a href="{{ route('feature.create') }}" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2"><i class="mdi mdi-plus me-1"></i> Add New Feature</a>
+                                    </div>
+                                </div><!-- end col-->
+                            </div>
+                        @endcan
 
                         <div class="table-responsive" id="feature_table_wrapper">
                             <table id="feature_table" class="table align-middle table-nowrap table-check" >
@@ -55,10 +57,16 @@
                                         <th class="align-middle">SL NO.</th>
                                         <th class="align-middle">Image</th>
                                         <th class="align-middle">Title</th>
-                                        <th class="align-middle">Description</th>
-                                        <th class="align-middle">Status</th>
-                                        <th class="align-middle">View Details</th>
-                                        <th class="align-middle">Action</th>
+                                        <th class="align-middle">Description</th>                                        
+                                        <th class="align-middle">Status</th>                                        
+
+                                        @if (auth()->user()->hasPermissionTo('view-feature') || auth()->user()->isSuperAdmin())
+                                            <th class="align-middle">View Details</th>
+                                        @endif
+                                        
+                                        @if (auth()->user()->hasAnyPermission(['update-feature','delete-feature']) || auth()->user()->isSuperAdmin())
+                                            <th class="align-middle">Action</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -82,25 +90,27 @@
 
 <!-- Modal -->
 
-<!-- delete faq modal -->
 
-<div class="modal fade" id="deleteFeature" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteFeatureLabel" aria-modal="true" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="deleteFeatureLabel">Delete Feature</h3>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <h5>Are you sure?</h5>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger feature_delete_modal" data-id="">Delete</button>
+@if (auth()->user()->hasPermissionTo('delete-feature') || auth()->user()->isSuperAdmin())
+    <!-- delete faq modal -->
+    <div class="modal fade" id="deleteFeature" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteFeatureLabel" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="deleteFeatureLabel">Delete Feature</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5>Are you sure?</h5>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger feature_delete_modal" data-id="">Delete</button>
+                </div>
             </div>
         </div>
-    </div>
-</div>
+    </div>    
+@endif
 
 
 @endsection
@@ -176,7 +186,13 @@
                         }, 200);
 
                     },
-                    error:function(){
+                    error:function(response){
+                        if(response.status === 403){
+                            alert(response.responseJSON.message);
+
+                            return;
+                        }
+
                         if(confirm('Something went wrong! Try reloading the page.')){
                             window.location.reload();
                         }

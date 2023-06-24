@@ -17,7 +17,7 @@
                         <div class="product-ratting">
                             <ul>
                                 {{ getAvgRating($product->id) }}
-                                <li class="review-total"> <a href="#"> ( {{ getReviewNumber($product->id) }} Reviews )</a></li>
+                                <li class="review-total"> <span> ( {{ getReviewNumber($product->id) }} Reviews )</span></li>
                             </ul>
                         </div>
                         <h3>{{ $product->product_name }}</h3>

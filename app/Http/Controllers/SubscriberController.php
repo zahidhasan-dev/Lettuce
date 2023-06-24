@@ -6,6 +6,7 @@ use App\Models\Subscriber;
 use Illuminate\Http\Request;
 use App\Mail\NewsletterSubscribed;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use App\Jobs\NewsletterSubscribedJob;
 use Illuminate\Support\Facades\Validator;
@@ -13,9 +14,10 @@ use Illuminate\Support\Facades\Validator;
 class SubscriberController extends Controller
 {
 
-    
-    public function subscribers()
+    public function index()
     {
+        Gate::authorize('view-any', Subscriber::class);
+
         $subscribers = Subscriber::paginate(20);
         
         return view('admin.newsletter.subscriber.index', compact('subscribers'))->render();
@@ -27,6 +29,8 @@ class SubscriberController extends Controller
         if(request()->ajax()){
             
             $subscriber = Subscriber::where('subscriber_id', $subscriber_id)->firstOrFail();
+
+            Gate::authorize('view', $subscriber);
     
             return view('admin.newsletter.subscriber.subscriber_details', compact('subscriber'))->render();
 
@@ -41,6 +45,9 @@ class SubscriberController extends Controller
         if(request()->ajax()){
 
             $subscriber = Subscriber::where('subscriber_id',$subscriber_id)->firstOrFail(); 
+            
+            Gate::authorize('delete', $subscriber);
+
             $subscriber->delete();
 
             return response()->json(['success'=>'Deleted Successfully!']);

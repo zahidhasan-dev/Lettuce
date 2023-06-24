@@ -8,12 +8,15 @@ use App\Models\StripeSetting;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\MailSettingFormRequest;
 use App\Http\Requests\StripeSettingFormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class SettingsController extends Controller
 {
 
     public function mailSettings()
     {
+        Gate::authorize('view-any', MailSetting::class);
+
         $mail_settings = MailSetting::first();
 
         return view('admin.settings.mail.index', compact('mail_settings'));
@@ -22,6 +25,8 @@ class SettingsController extends Controller
 
     public function createOrUpdateMailSettings(MailSettingFormRequest $request)
     {
+        Gate::authorize('create-or-update', MailSetting::class);
+
         DB::beginTransaction();
 
         try {

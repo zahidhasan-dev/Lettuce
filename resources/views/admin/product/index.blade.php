@@ -42,8 +42,12 @@
                                 </div>
                                 <div class="col-xs-12 col-sm-6">
                                     <div class="product_table_btn_wrapper">
-                                        <button type="button" class="btn btn-danger waves-effect waves-light me-2 product_delete_all" >Delete All</button>
-                                        <a href="{{ route('product.create') }}" class="btn btn-primary">Add New Product</a>
+                                        @can('product-mass-destroy', \App\Models\Product::class)
+                                            <button type="button" class="btn btn-danger waves-effect waves-light me-2 product_delete_all" >Delete All</button>
+                                        @endcan
+                                        @can('create', \App\Models\Product::class)
+                                            <a href="{{ route('product.create') }}" class="btn btn-primary">Add New Product</a>
+                                        @endcan
                                     </div>
                                 </div>
                             </div>
@@ -51,12 +55,14 @@
                                 <table id="products_table" class="table nowrap w-100">
                                     <thead>
                                         <tr class="align-top">
-                                            <th>
-                                                <div class="form-check font-size-16">
-                                                    <input class="form-check-input" type="checkbox" id="checkAllProduct">
-                                                    <label class="form-check-label" for="checkAllProduct"></label>
-                                                </div>
-                                            </th>
+                                            @can('product-mass-destroy', \App\Models\Product::class)
+                                                <th>
+                                                    <div class="form-check font-size-16">
+                                                        <input class="form-check-input" type="checkbox" id="checkAllProduct">
+                                                        <label class="form-check-label" for="checkAllProduct"></label>
+                                                    </div>
+                                                </th>
+                                            @endcan
                                             <th>Thumbnail</th>
                                             <th>Name</th>
                                             <th>Category</th>
@@ -67,7 +73,9 @@
                                             <th>Discount</th>
                                             <th>Featured</th>
                                             <th>Status</th>
-                                            <th>Action</th>
+                                            @if (auth()->user()->hasAnyPermission(['view-product','update-product','delete-product']) || auth()->user()->isSuperAdmin())
+                                                <th>Action</th>
+                                            @endif
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -85,43 +93,47 @@
     <!-- End Page-content -->
 
 
-    <!-- delete category modal -->
-
-    <div class="modal fade" id="deleteProduct" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteProductLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="deleteProductLabel">Delete Product</h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5>Are you sure?</h5>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger product_delete_modal" data-id="">Delete</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="deleteAllProduct" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteProductLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="deleteProductLabel">Delete Product</h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5>Are you sure?</h5>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger product_delete_all_modal" data-id="">Delete All</button>
+    @if (auth()->user()->hasPermissionTo('delete-product') || auth()->user()->isSuperAdmin())
+        <!-- delete product modal -->
+        <div class="modal fade" id="deleteProduct" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteProductLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="deleteProductLabel">Delete Product</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Are you sure?</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger product_delete_modal" data-id="">Delete</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
+
+    @can('product-mass-destroy', \App\Models\Product::class)
+        <!-- delete all product modal -->
+        <div class="modal fade" id="deleteAllProduct" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteProductLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="deleteProductLabel">Delete Product</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Are you sure?</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger product_delete_all_modal" data-id="">Delete All</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endcan
 
     
 
@@ -137,11 +149,19 @@
         {   
 
             $("#products_table").DataTable({
-                columnDefs: [
-                    { orderable: false, targets: [0,1,4,5,7,8,9,10,11] }
-                ],
-                order: [[2, 'asc']]
+                @if (auth()->user()->can('product-mass-destroy', \App\Models\Product::class))
+                    columnDefs: [
+                        { orderable: false, targets: [0,1,4,5,7,8,9,10,11] }
+                    ],
+                    order: [[2, 'asc']]
+                @else
+                    columnDefs: [
+                        { orderable: false, targets: [0,3,4,6,7,8,9,10] }
+                    ],
+                    order: [[1, 'asc']]
+                @endif
             });
+
 
             $.ajaxSetup({
                 headers: {
@@ -165,8 +185,21 @@
                         $('.product_alert').delay(100).fadeIn();
                         $('.product_alert').delay(800).fadeOut();
                     },
-                    error:function(){
-                        if(confirm('Something went wrong! Try reloading the page.')){
+                    error:function(response){
+                        if($('#productFeaturedUpdate_'+id).prop('checked') === true){
+                            $('#productFeaturedUpdate_'+id).prop('checked', false);
+                        }
+                        else{
+                            $('#productFeaturedUpdate_'+id).prop('checked', true);
+                        }
+
+                        if(response.status === 403){
+                            alert(response.responseJSON.message);
+                            
+                            return;
+                        }
+                        
+                        if(confirm("Something went wrong! Try reloading the page.")){
                             window.location.reload();
                         }
                     }
@@ -188,8 +221,23 @@
                         $('.product_alert').delay(100).fadeIn();
                         $('.product_alert').delay(800).fadeOut();
                     },
-                    error:function(){
-                        alert("Something went wrong!");
+                    error:function(response){
+                        if($('#switchProductStatus_'+id).prop('checked') === true){
+                            $('#switchProductStatus_'+id).prop('checked', false);
+                        }
+                        else{
+                            $('#switchProductStatus_'+id).prop('checked', true);
+                        }
+
+                        if(response.status === 403){
+                            alert(response.responseJSON.message);
+                            
+                            return;
+                        }
+                        
+                        if(confirm("Something went wrong! Try reloading the page.")){
+                            window.location.reload();
+                        }
                     }
                 });
 

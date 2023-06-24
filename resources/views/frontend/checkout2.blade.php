@@ -529,21 +529,21 @@
                 messageContainer.classList.add("hidden");
                 messageText.textContent = "";
             }, 4000);
-            }
+        }
 
             // Show a spinner on payment submission
             function setLoading(isLoading) {
-            if (isLoading) {
-                // Disable the button and show a spinner
-                document.querySelector("#order_submit").disabled = true;
-                document.querySelector("#spinner").classList.remove("hidden");
-                document.querySelector("#button-text").classList.add("hidden");
-            } else {
-                document.querySelector("#order_submit").disabled = false;
-                document.querySelector("#spinner").classList.add("hidden");
-                document.querySelector("#button-text").classList.remove("hidden");
+                if (isLoading) {
+                    // Disable the button and show a spinner
+                    document.querySelector("#order_submit").disabled = true;
+                    document.querySelector("#spinner").classList.remove("hidden");
+                    document.querySelector("#button-text").classList.add("hidden");
+                } else {
+                    document.querySelector("#order_submit").disabled = false;
+                    document.querySelector("#spinner").classList.add("hidden");
+                    document.querySelector("#button-text").classList.remove("hidden");
+                }
             }
-        }
 
 
         

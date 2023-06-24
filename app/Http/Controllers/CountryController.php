@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CountryFormPost;
 use App\Models\Country;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class CountryController extends Controller
 {
@@ -15,20 +16,12 @@ class CountryController extends Controller
      */
     public function index()
     {
+        Gate::authorize('view-any', Country::class);
 
         $countries = Country::orderBy('country_name')->paginate(10);
         return view('admin.region.country.index', compact('countries'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -38,6 +31,8 @@ class CountryController extends Controller
      */
     public function store(CountryFormPost $request)
     {
+        Gate::authorize('create', Country::class);
+
         $country = Country::create($request->all());
 
         if($country)
@@ -49,16 +44,6 @@ class CountryController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Country  $country
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Country $country)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -68,6 +53,8 @@ class CountryController extends Controller
      */
     public function edit(Country $country)
     {
+        Gate::authorize('update', $country);
+
         return response()->json($country);
     }
 
@@ -80,6 +67,8 @@ class CountryController extends Controller
      */
     public function update(Request $request, Country $country)
     {
+        Gate::authorize('update', $country);
+
         $countryExists = Country::where('country_name',$request->country_name)->where('id','!=',$country->id)->exists();
 
         if($countryExists != true)
@@ -103,6 +92,8 @@ class CountryController extends Controller
      */
     public function destroy(Country $country)
     {
+        Gate::authorize('delete', $country);
+
         $delete = $country->delete();
 
         if($delete)

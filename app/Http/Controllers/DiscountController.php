@@ -8,6 +8,7 @@ use App\Models\Discount;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\DiscountFormPost;
 
 class DiscountController extends Controller
@@ -19,6 +20,8 @@ class DiscountController extends Controller
      */
     public function index()
     {   
+        Gate::authorize('view-any', Discount::class);
+        
         $discounts = Discount::orderBy('created_at','desc')->paginate(10);
 
         return view('admin.offers.discount.index', compact('discounts'));
@@ -43,6 +46,7 @@ class DiscountController extends Controller
      */
     public function store(DiscountFormPost $request)
     {   
+        Gate::authorize('create', Discount::class);
 
         $validityDateTimeUTC  = localDateTimeToUTC($request->discount_validity);
    
@@ -86,6 +90,8 @@ class DiscountController extends Controller
      */
     public function edit(Discount $discount)
     {
+        Gate::authorize('update', $discount);
+
         $discount_type = '<option value="" selected disabled>-- Select Type --</option>
                             <option value="fixed" '.(($discount->discount_type == 'fixed')?'selected':'').'>Fixed</option>
                             <option value="percent" '.(($discount->discount_type == 'percent')?'selected':'').' >Percent</option>';
@@ -110,6 +116,8 @@ class DiscountController extends Controller
      */
     public function update(Request $request, Discount $discount)
     {
+        Gate::authorize('update', $discount);
+
         $discount_exists = Discount::where('id','!=',$discount->id)->where('discount_name',$discount->discount_name)->first();
 
         $validityDateTimeUTC  = localDateTimeToUTC($request->discount_validity);
@@ -149,6 +157,8 @@ class DiscountController extends Controller
      */
     public function destroy(Discount $discount)
     {
+        Gate::authorize('delete', $discount);
+
         $delete = $discount->delete();
 
         if($delete)
@@ -164,6 +174,8 @@ class DiscountController extends Controller
     public function updateDiscountStatus($disocunt_id)
     {
         $discount = Discount::where('id',$disocunt_id)->first();
+
+        Gate::authorize('update', $discount);
 
         if($discount->status == 0){
             $discount->status = 1;

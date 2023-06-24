@@ -8,6 +8,7 @@ use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Intervention\Image\Facades\Image;
 use App\Http\Requests\CategoryFormPost;
 
@@ -20,7 +21,8 @@ class CategoryController extends Controller
      */
     public function index()
     {   
-               
+        Gate::authorize('view-any', Category::class);
+        
         $categories = Category::orderBy('category_name','asc')->paginate(10);
 
         //  parent category with sub-category
@@ -54,6 +56,7 @@ class CategoryController extends Controller
      */
     public function store(CategoryFormPost $request)
     {
+        Gate::authorize('create', Category::class);
 
         $category_slug = Str::slug($request->category_name);
         
@@ -150,6 +153,8 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
+        Gate::authorize('update', $category);
+
         return response()->json($category);
     }
 
@@ -162,6 +167,7 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
+        Gate::authorize('update', $category);
 
         $category_exists = Category::where('id','!=',$category->id)->where('category_name',$request->category_name)->exists();
 
@@ -216,6 +222,8 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category,Request $request)
     {
+        Gate::authorize('delete', $category);
+
         $delete_photo = base_path('public/uploads/category/'.$category->category_photo);
         unlink($delete_photo);
 
@@ -246,6 +254,8 @@ class CategoryController extends Controller
     public function updateCategoryStatus($category_id)
     {
         $category = Category::where('id', $category_id)->first();
+
+        Gate::authorize('update', $category);
 
         if($category->status == 0){
             $category->status = 1;

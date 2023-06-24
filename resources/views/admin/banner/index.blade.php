@@ -41,14 +41,20 @@
                             </div>
                         </div>
                         <div class="row mb-2">
-                            <div class="col-sm-6 col-md-7 col-lg-8">
-                                <div class="text-center text-sm-start text-md-start text-lg-start text-xl-start">
-                                    <a href="{{ route('banner.create') }}" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2"><i class="mdi mdi-plus me-1"></i> Add New Banner</a>
-                                </div>
-                            </div><!-- end col-->
+                            @can('create', \App\Models\Banner::class)
+                                <div class="col-sm-6 col-md-7 col-lg-8">
+                                    <div class="text-center text-sm-start text-md-start text-lg-start text-xl-start">
+                                        <a href="{{ route('banner.create') }}" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2">
+                                            <i class="mdi mdi-plus me-1"></i> Add New Banner
+                                        </a>
+                                    </div>
+                                </div><!-- end col-->
+                            @endcan
                             <div class="col-sm-6 col-md-5 col-lg-4">
                                 <div class="text-center text-sm-end text-md-end text-lg-end text-xl-end">
-                                    <label class="d-block mb-4 text-center text-sm-end text-md-end text-lg-end text-xl-end"><input type="search" class="form-control form-control-sm" id="banner_search" name="banner_search" placeholder="Search"></label>
+                                    <label class="d-block mb-4 text-center text-sm-end text-md-end text-lg-end text-xl-end">
+                                        <input type="search" class="form-control form-control-sm" id="banner_search" name="banner_search" placeholder="Search">
+                                    </label>
                                 </div>
                             </div><!-- end col-->
                         </div>
@@ -65,8 +71,15 @@
                                         <th class="align-middle">Discount</th>
                                         <th class="align-middle">Banner Slug</th>
                                         <th class="align-middle">Status</th>
-                                        <th class="align-middle">View Details</th>
-                                        <th class="align-middle">Action</th>
+                                            
+                                        @if (auth()->user()->hasPermissionTo('view-banner') || auth()->user()->isSuperAdmin())
+                                            <th class="align-middle">View Details</th>
+                                        @endif
+                                        
+                                        @if (auth()->user()->hasAnyPermission(['update-banner','delete-banner']) || auth()->user()->isSuperAdmin())
+                                            <th class="align-middle">Action</th>
+                                        @endif
+                                        
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -91,25 +104,26 @@
 
 <!-- Modal -->
 
-<!-- delete faq modal -->
-
-<div class="modal fade" id="deleteBanner" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteBannerLabel" aria-modal="true" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="deleteBannerLabel">Delete Banner</h3>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <h5>Are you sure?</h5>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger banner_delete_modal" data-id="">Delete</button>
+@if(auth()->user()->hasPermissionTo('delete-banner') || auth()->user()->isSuperAdmin())
+    <!-- delete faq modal -->
+    <div class="modal fade" id="deleteBanner" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteBannerLabel" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="deleteBannerLabel">Delete Banner</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5>Are you sure?</h5>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger banner_delete_modal" data-id="">Delete</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+@endif
 
 
 @endsection
@@ -185,7 +199,13 @@
                         }, 200);
 
                     },
-                    error:function(){
+                    error:function(response){
+                        if(response.status === 403){
+                            alert(response.responseJSON.message);
+
+                            return;
+                        }
+                        
                         if(confirm('Something went wrong! Try reloading the page.')){
                             window.location.reload();
                         }

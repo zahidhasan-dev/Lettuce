@@ -154,7 +154,6 @@ class AdminController extends Controller
 
         return response()->json($data_array);
 
-
     }
 
 

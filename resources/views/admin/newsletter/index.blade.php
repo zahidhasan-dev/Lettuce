@@ -47,7 +47,9 @@
                                             <th>SL NO.</th>
                                             <th>Subject</th>
                                             <th>Created_at</th>
-                                            <th>Action</th>
+                                            @if (auth()->user()->hasAnyPermission(['view-newsletter','delete-newsletter']) || auth()->user()->isSuperAdmin())
+                                                <th>Action</th>
+                                            @endif
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -67,40 +69,46 @@
 
 
 
-    <div class="modal fade" id="viewNewsletter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewNewsletterLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="viewNewsletterLabel">Newsletter Details</h3>
-                    <button type="button" class="btn-close close_newsletter_view" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    @include('admin.newsletter.newsletter_details')
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary close_newsletter_view" data-bs-dismiss="modal">Close</button>
+    @if (auth()->user()->hasPermissionTo('view-newsletter') || auth()->user()->isSuperAdmin())
+        <!-- view newsletter modal-->    
+        <div class="modal fade" id="viewNewsletter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewNewsletterLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="viewNewsletterLabel">Newsletter Details</h3>
+                        <button type="button" class="btn-close close_newsletter_view" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        @include('admin.newsletter.newsletter_details')
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary close_newsletter_view" data-bs-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
 
-    <div class="modal fade" id="deleteNewsletter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteNewsletterLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="deleteNewsletterLabel">Delete Newsletter</h3>
-                    <button type="button" class="btn-close close_newsletter_delete" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h3>Are you sure?</h3>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger delete_newsletter" data-id="">Delete</button>
-                    <button type="button" class="btn btn-secondary close_newsletter_delete" data-bs-dismiss="modal">Cancel</button>
+    @if (auth()->user()->hasPermissionTo('delete-newsletter') || auth()->user()->isSuperAdmin())
+        <!-- view newsletter modal-->
+        <div class="modal fade" id="deleteNewsletter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteNewsletterLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="deleteNewsletterLabel">Delete Newsletter</h3>
+                        <button type="button" class="btn-close close_newsletter_delete" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h3>Are you sure?</h3>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger delete_newsletter" data-id="">Delete</button>
+                        <button type="button" class="btn btn-secondary close_newsletter_delete" data-bs-dismiss="modal">Cancel</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
 
 @endsection
 

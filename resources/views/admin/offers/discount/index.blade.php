@@ -24,7 +24,7 @@
             <!-- end page title -->
 
             <div class="row">
-                <div class="col-xxl-9 order-xxl-1 order-2 col-12">
+                <div class="{{ auth()->user()->can('create', \App\Models\Discount::class) ? 'col-xxl-9' : 'col-xxl-12' }} order-xxl-1 order-2 col-12">
                     <div class="card">
                         <div class="alert alert-success discount_alert" style="display: none" role="alert">
                                     
@@ -49,7 +49,9 @@
                                         <th>Slug</th>
                                         <th>Validity</th>
                                         <th>Status</th>
-                                        <th>Action</th>
+                                        @if (auth()->user()->hasAnyPermission(['update-discount','delete-discount']) || auth()->user()->isSuperAdmin())
+                                            <th>Action</th>
+                                        @endif
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -61,151 +63,158 @@
                         </div>
                     </div>
                 </div> <!-- end col -->
-                <div class="col-xxl-3 order-xxl-2 order-1 col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title mb-2">Add discount</h4>
-                            @if (session('success'))
-                                <div class="alert alert-success">
-                                    {{ session('success') }}
-                                </div>
-                            @endif
-                            @if (session('error'))
-                                <div class="alert alert-danger">
-                                    {{ session('error') }}
-                                </div>
-                            @endif
-                            <div class="info_form">
-                                <form action="{{ route('discount.store') }}" method="POST">
-                                    @csrf
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="mt-4">
-                                                <label for="discount-type-input" class="form-label">Discount Type :</label>
-                                                <select class="form-control" id="discount-type-input" name="discount_type" >
-                                                    <option value=""selected disabled>-- Select Type --</option>
-                                                    <option value="fixed">Fixed</option>
-                                                    <option value="percent">Percent</option>
-                                                </select>
-                                            </div>
-                                            @error('discount_type')
-                                            <small class="text-danger">{{$message}}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="mt-4">
-                                                <label for="discount-name-input" class="form-label">Discount Name :</label>
-                                                <input type="text" class="form-control" id="discount-name-input" name="discount_name" placeholder="Enter Discount Name" value="{{ old('discount_name') }}">
-                                            </div>
-                                            @error('discount_name')
-                                            <small class="text-danger">{{$message}}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="mt-4">
-                                                <label for="discount-slug-input" class="form-label">Discount Slug :</label>
-                                                <input type="text" class="form-control" id="discount-slug-input" name="discount_slug" placeholder="Enter Discount Slug" value="{{ old('discount_slug') }}">
-                                            </div>
-                                            @error('discount_slug')
-                                            <small class="text-danger">{{$message}}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="mt-4">
-                                                <label for="discount-value-input" class="form-label">Discount Value :</label>
-                                                <input type="number" class="form-control" id="discount-value-input" name="discount_value" placeholder="Enter Discount Value" value="{{ old('discount_value') }}">
-                                            </div>
-                                            @error('discount_value')
-                                            <small class="text-danger">{{$message}}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="mt-4">
-                                                <label for="discount-validity-input" class="form-label">Discount Validity :</label>
-                                                <input type="datetime-local" class="form-control" id="discount-validity-input" name="discount_validity" value="{{ old('discount_validity') }}">
-                                            </div>
-                                            @error('discount_validity')
-                                            <small class="text-danger">{{$message}}</small>
-                                            @enderror
-                                        </div>
-
-                                        <div class="mt-4">
-                                            <button type="submit" class="btn btn-primary w-md">Add</button>
-                                        </div>
+                @can('create', \App\Models\Discount::class)
+                    <div class="col-xxl-3 order-xxl-2 order-1 col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title mb-2">Add discount</h4>
+                                @if (session('success'))
+                                    <div class="alert alert-success">
+                                        {{ session('success') }}
                                     </div>
-                                </form>
+                                @endif
+                                @if (session('error'))
+                                    <div class="alert alert-danger">
+                                        {{ session('error') }}
+                                    </div>
+                                @endif
+                                <div class="info_form">
+                                    <form action="{{ route('discount.store') }}" method="POST">
+                                        @csrf
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="mt-4">
+                                                    <label for="discount-type-input" class="form-label">Discount Type :</label>
+                                                    <select class="form-control" id="discount-type-input" name="discount_type" >
+                                                        <option value=""selected disabled>-- Select Type --</option>
+                                                        <option value="fixed">Fixed</option>
+                                                        <option value="percent">Percent</option>
+                                                    </select>
+                                                </div>
+                                                @error('discount_type')
+                                                <small class="text-danger">{{$message}}</small>
+                                                @enderror
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="mt-4">
+                                                    <label for="discount-name-input" class="form-label">Discount Name :</label>
+                                                    <input type="text" class="form-control" id="discount-name-input" name="discount_name" placeholder="Enter Discount Name" value="{{ old('discount_name') }}">
+                                                </div>
+                                                @error('discount_name')
+                                                <small class="text-danger">{{$message}}</small>
+                                                @enderror
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="mt-4">
+                                                    <label for="discount-slug-input" class="form-label">Discount Slug :</label>
+                                                    <input type="text" class="form-control" id="discount-slug-input" name="discount_slug" placeholder="Enter Discount Slug" value="{{ old('discount_slug') }}">
+                                                </div>
+                                                @error('discount_slug')
+                                                <small class="text-danger">{{$message}}</small>
+                                                @enderror
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="mt-4">
+                                                    <label for="discount-value-input" class="form-label">Discount Value :</label>
+                                                    <input type="number" class="form-control" id="discount-value-input" name="discount_value" placeholder="Enter Discount Value" value="{{ old('discount_value') }}">
+                                                </div>
+                                                @error('discount_value')
+                                                <small class="text-danger">{{$message}}</small>
+                                                @enderror
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="mt-4">
+                                                    <label for="discount-validity-input" class="form-label">Discount Validity :</label>
+                                                    <input type="datetime-local" class="form-control" id="discount-validity-input" name="discount_validity" value="{{ old('discount_validity') }}">
+                                                </div>
+                                                @error('discount_validity')
+                                                <small class="text-danger">{{$message}}</small>
+                                                @enderror
+                                            </div>
+
+                                            <div class="mt-4">
+                                                <button type="submit" class="btn btn-primary w-md">Add</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div> <!-- end col -->
+                    </div> <!-- end col -->
+                @endcan
+                    
+
             </div> <!-- end row -->
         </div> <!-- container-fluid -->
     </div>
     <!-- End Page-content -->
 
 
-    <!-- edit discount modal -->
-    <div class="modal fade" id="editDiscount" tabindex="-1" aria-labelledby="editDiscountLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editDiscountLabel">Edit Discount</h5>
-                    <button type="button" class="btn-close close_discount_form" data-bs-dismiss="modal" aria-label="Close"></button>
+    @if (auth()->user()->hasPermissionTo('update-discount') || auth()->user()->isSuperAdmin())
+        <!-- edit discount modal -->
+        <div class="modal fade" id="editDiscount" tabindex="-1" aria-labelledby="editDiscountLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editDiscountLabel">Edit Discount</h5>
+                        <button type="button" class="btn-close close_discount_form" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form class="discount_edit_form">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="id="discount-type-input" class="col-form-label">Discount Type:</label>
+                                <select class="form-control discount_type" id="discount-type-input" name="discount_type" >
+                                    <option selected disabled value="">-- Select Type --</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="" class="col-form-label">Discount Name:</label>
+                                <input type="text" class="form-control discount_name" id="discount_name" name="discount_name" placeholder="Discount Name">
+                            </div>
+                            <div class="mb-3">
+                                <label for="" class="col-form-label">Discount Slug:</label>
+                                <input type="text" class="form-control discount_slug" id="discount_slug" name="discount_slug" placeholder="Discount Slug">
+                            </div>
+                            <div class="mb-3">
+                                <label for="" class="col-form-label">Discount Value:</label>
+                                <input type="number" class="form-control discount_value" name="discount_value" placeholder="Discount Value">
+                            </div>
+                            <div class="mb-3">
+                                <label for="" class="col-form-label">Discount Validity:</label>
+                                <input type="datetime-local" class="form-control discount_validity" name="discount_validity">
+                            </div>
+                        </div>
+                        <div class="modal-footer discount_modal_footer">
+                            <button type="button" class="btn btn-secondary close_discount_form" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary discount_update_btn" data-id="" id="editDiscountPost">Update</button>
+                        </div>
+                    </form>
                 </div>
-                <form class="discount_edit_form">
+            </div>
+        </div>
+    @endif
+
+
+    @if (auth()->user()->hasPermissionTo('delete-discount') || auth()->user()->isSuperAdmin())
+        <!-- delete discount modal -->
+        <div class="modal fade" id="deleteDiscount" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteDiscountLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="deleteDiscountLabel">Delete discount</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
                     <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="id="discount-type-input" class="col-form-label">Discount Type:</label>
-                            <select class="form-control discount_type" id="discount-type-input" name="discount_type" >
-                                <option selected disabled value="">-- Select Type --</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="" class="col-form-label">Discount Name:</label>
-                            <input type="text" class="form-control discount_name" id="discount_name" name="discount_name" placeholder="Discount Name">
-                        </div>
-                        <div class="mb-3">
-                            <label for="" class="col-form-label">Discount Slug:</label>
-                            <input type="text" class="form-control discount_slug" id="discount_slug" name="discount_slug" placeholder="Discount Slug">
-                        </div>
-                        <div class="mb-3">
-                            <label for="" class="col-form-label">Discount Value:</label>
-                            <input type="number" class="form-control discount_value" name="discount_value" placeholder="Discount Value">
-                        </div>
-                        <div class="mb-3">
-                            <label for="" class="col-form-label">Discount Validity:</label>
-                            <input type="datetime-local" class="form-control discount_validity" name="discount_validity">
-                        </div>
+                        <h5>Are you sure?</h5>
                     </div>
-                    <div class="modal-footer discount_modal_footer">
-                        <button type="button" class="btn btn-secondary close_discount_form" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary discount_update_btn" data-id="" id="editDiscountPost">Update</button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger discount_delete_modal" data-id="">Delete</button>
                     </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- delete discount modal -->
-
-    <div class="modal fade" id="deleteDiscount" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteDiscountLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="deleteDiscountLabel">Delete discount</h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5>Are you sure?</h5>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger discount_delete_modal" data-id="">Delete</button>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
 
 @endsection
 
@@ -372,7 +381,6 @@
                     url = url.replace(':id',id);
 
                 $.ajax({
-
                     type:'GET',
                     url:url,
                     success:function(data){
@@ -385,10 +393,25 @@
                             alert(data.error);
                         }
                     },
-                    error:function(){
-                        alert("Something went wrong!");
-                    }
+                    error:function(response){
 
+                        if($('#switchDiscountStatus_'+id).prop('checked') === true){
+                            $('#switchDiscountStatus_'+id).prop('checked', false);
+                        }
+                        else{
+                            $('#switchDiscountStatus_'+id).prop('checked', true);
+                        }
+
+                        if(response.status === 403){
+                            alert(response.responseJSON.message);
+
+                            return;
+                        }
+
+                        if(confirm("Something went wrong! Try reloading the page.")){
+                            window.location.reload();
+                        }
+                    }
                 });
             });
 

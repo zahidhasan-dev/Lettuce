@@ -47,7 +47,9 @@
                                             <th>SL NO.</th>
                                             <th>Email</th>
                                             <th>Status</th>
-                                            <th>Action</th>
+                                            @if (auth()->user()->hasAnyPermission(['view-subscriber','delete-subscriber']) || auth()->user()->isSuperAdmin())
+                                                <th>Action</th>
+                                            @endif
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -66,41 +68,46 @@
     <!-- End Page-content -->
 
 
-
-    <div class="modal fade" id="viewSubscriber" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewSubscriberLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="viewSubscriberLabel">Subscriber Details</h3>
-                    <button type="button" class="btn-close close_subscriber_view" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    @include('admin.newsletter.subscriber.subscriber_details')
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary close_subscriber_view" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="deleteSubscriber" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteSubscriberLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="deleteSubscriberLabel">Delete Subscriber</h3>
-                    <button type="button" class="btn-close close_subscriber_delete" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h3>Are you sure?</h3>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger delete_subscriber" data-id="">Delete</button>
-                    <button type="button" class="btn btn-secondary close_subscriber_delete" data-bs-dismiss="modal">Cancel</button>
+    @if (auth()->user()->hasPermissionTo('view-subscriber') || auth()->user()->isSuperAdmin())
+        <!-- view subscriber modal-->
+        <div class="modal fade" id="viewSubscriber" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewSubscriberLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="viewSubscriberLabel">Subscriber Details</h3>
+                        <button type="button" class="btn-close close_subscriber_view" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        @include('admin.newsletter.subscriber.subscriber_details')
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary close_subscriber_view" data-bs-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
+
+    @if (auth()->user()->hasPermissionTo('delete-subscriber') || auth()->user()->isSuperAdmin())
+        <!-- delete subscriber modal-->
+        <div class="modal fade" id="deleteSubscriber" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteSubscriberLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="deleteSubscriberLabel">Delete Subscriber</h3>
+                        <button type="button" class="btn-close close_subscriber_delete" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h3>Are you sure?</h3>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger delete_subscriber" data-id="">Delete</button>
+                        <button type="button" class="btn btn-secondary close_subscriber_delete" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 
 @endsection
 

@@ -59,7 +59,7 @@
                                     <div class="col-md-7 col-sm-8 col-12">
                                         <div class="mt-4">
                                             <label for="name-input" class="form-label">Name :</label>
-                                            <input type="text" class="form-control" id="name-input" name="user_name" placeholder="Enter Your Name" value="{{ auth()->user()->name }}">
+                                            <input type="text" class="form-control" id="name-input" name="user_name" placeholder="Enter Your Name" value="{{ old('user_name', auth()->user()->name)}}">
                                         </div>
                                     </div>
                                     @error('user_name')
@@ -69,7 +69,7 @@
                                     <div class="col-md-7 col-sm-8 col-12">
                                         <div class="mt-4">
                                             <label for="phone-input" class="form-label">Phone :</label>
-                                            <input type="number" class="form-control" id="phone-input" name="phone" placeholder="Enter Your Phone" value="{{ auth()->user()->userDetails->phone }}">
+                                            <input type="number" class="form-control" id="phone-input" name="phone" placeholder="Enter Your Phone" value="{{ old('phone', auth()->user()->userDetails->phone) }}">
                                         </div>
                                     </div>
                                     @error('phone')
@@ -82,7 +82,8 @@
                                             <select name="country" class="form-control change_country">
                                                 <option disabled selected value="">--Select Country--</option>
                                                  @foreach (countries() as $country)
-                                                 <option value="{{ $country->id }}" @if(auth()->user()->userDetails->country != null) {{ ( auth()->user()->userDetails->getcity->country->id == $country->id )?'selected':'' }} @endif>{{ $country->country_name }}</option>
+                                                 <option value="{{ $country->id }}" {{ ( old('country', auth()->user()->userDetails->getcity->country->id ?? null) == $country->id ) ? 'selected' : '' }}>{{ $country->country_name }}</option>
+                                                 {{-- <option value="{{ $country->id }}" @if(auth()->user()->userDetails->country != null) {{ ( auth()->user()->userDetails->getcity->country->id == $country->id )?'selected':'' }} @endif>{{ $country->country_name }}</option> --}}
                                                  @endforeach 
                                             </select>
                                         </div>
@@ -96,13 +97,14 @@
                                             <label for="" class="form-label">City :</label>
                                             <select name="city"  class="form-control profile_city_list">
                                                 <option disabled selected value="">--Select City--</option>
-                                                @foreach (cityByCountry(auth()->user()->userDetails->country) as $city)
-                                                <option value="{{ $city->id }}" @if(auth()->user()->userDetails->country != null) {{ ( auth()->user()->userDetails->city == $city->id )?'selected':'' }} @endif>{{ $city->city_name }}</option>
+                                                @foreach (cityByCountry(old('country', auth()->user()->userDetails->country)) as $city)
+                                                <option value="{{ $city->id }}" {{ ( old('city', auth()->user()->userDetails->city == $city->id) == $city->id ) ? 'selected' : '' }}>{{ $city->city_name }}</option>
+                                                {{-- <option value="{{ $city->id }}" @if(auth()->user()->userDetails->country != null) {{ ( auth()->user()->userDetails->city == $city->id )?'selected':'' }} @endif>{{ $city->city_name }}</option> --}}
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
-                                    @error('country')
+                                    @error('city')
                                     <small class="text-danger">{{$message}}</small>
                                     @enderror
 

@@ -40,13 +40,15 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="row mb-2">
-                            <div class="col-12">
-                                <div class="text-center text-sm-start text-md-start text-lg-start text-xl-start">
-                                    <a href="{{ route('about.create') }}" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2"><i class="mdi mdi-plus me-1"></i> Add New About</a>
-                                </div>
-                            </div><!-- end col-->
-                        </div>
+                        @can('create', \App\Models\About::class)
+                            <div class="row mb-2">
+                                <div class="col-12">
+                                    <div class="text-center text-sm-start text-md-start text-lg-start text-xl-start">
+                                        <a href="{{ route('about.create') }}" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2"><i class="mdi mdi-plus me-1"></i> Add New About</a>
+                                    </div>
+                                </div><!-- end col-->
+                            </div>
+                        @endcan
 
                         <div class="table-responsive" id="about_table_wrapper">
                             <table id="about_table" class="table align-middle table-nowrap table-check" >
@@ -56,13 +58,13 @@
                                         <th class="align-middle">Image</th>
                                         <th class="align-middle">Sub-title</th>
                                         <th class="align-middle">Title</th>
-                                        <th class="align-middle">Description_1</th>
-                                        <th class="align-middle">Description_2</th>
-                                        <th class="align-middle">Author Name</th>
-                                        <th class="align-middle">Author Title</th>
                                         <th class="align-middle">Status</th>
-                                        <th class="align-middle">View Details</th>
-                                        <th class="align-middle">Action</th>
+                                        @if (auth()->user()->hasPermissionTo('view-about') || auth()->user()->isSuperAdmin())
+                                            <th class="align-middle">View Details</th>
+                                        @endif
+                                        @if (auth()->user()->hasAnyPermission(['update-about','delete-about']) || auth()->user()->isSuperAdmin())
+                                            <th class="align-middle">Action</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -86,25 +88,27 @@
 
 <!-- Modal -->
 
-<!-- delete faq modal -->
 
-<div class="modal fade" id="deleteAbout" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteAboutLabel" aria-modal="true" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="deleteAboutLabel">Delete About</h3>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <h5>Are you sure?</h5>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger about_delete_modal" data-id="">Delete</button>
+@if (auth()->user()->hasPermissionTo('delete-about') || auth()->user()->isSuperAdmin())
+    <!-- delete faq modal -->
+    <div class="modal fade" id="deleteAbout" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteAboutLabel" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="deleteAboutLabel">Delete About</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5>Are you sure?</h5>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger about_delete_modal" data-id="">Delete</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+@endif
 
 
 @endsection
@@ -184,7 +188,13 @@
                         }, 200);
 
                     },
-                    error:function(){
+                    error:function(response){
+                        if(response.status === 403){
+                            alert(response.responseJSON.message);
+
+                            return;
+                        }
+
                         if(confirm('Something went wrong! Try reloading the page.')){
                             window.location.reload();
                         }

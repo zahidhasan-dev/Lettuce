@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class PermissionController extends Controller
 {
@@ -19,18 +20,13 @@ class PermissionController extends Controller
      */
     public function index()
     {
-        return view('admin.authorization.permission.index');
+        Gate::authorize('view-any', Permission::class);
+
+        $permissions = Permission::paginate(20);
+        
+        return view('admin.authorization.permission.index', compact('permissions'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -40,6 +36,8 @@ class PermissionController extends Controller
      */
     public function store(Request $request)
     {
+        Gate::authorize('create', Permission::class);
+
         if($request->ajax()){
 
             $permission_name = Str::slug($request->permission_name,'-');
@@ -78,16 +76,7 @@ class PermissionController extends Controller
         return redirect()->back();
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Permission  $permission
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Permission $permission)
-    {
-        //
-    }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -97,6 +86,8 @@ class PermissionController extends Controller
      */
     public function edit(Permission $permission)
     {
+        Gate::authorize('update', $permission);
+
         $roles = Role::all();
 
         $role_elem = '';
@@ -139,6 +130,8 @@ class PermissionController extends Controller
      */
     public function update(Request $request, Permission $permission)
     {
+        Gate::authorize('update', $permission);
+
         if($request->ajax()){
 
             $permission_name = Str::slug($request->permission_name,'-');
@@ -180,6 +173,8 @@ class PermissionController extends Controller
      */
     public function destroy(Permission $permission)
     {
+        Gate::authorize('delete', $permission);
+        
         if(request()->ajax()){
 
             $permission->delete();

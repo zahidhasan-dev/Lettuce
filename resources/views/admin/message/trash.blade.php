@@ -1,5 +1,6 @@
 @extends('layouts.dashboard')
 
+
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -44,8 +45,15 @@
                                         <button id="message_sort_default_btn" class="message_sort_btn btn btn-dark active" data-value="">All Message</span></button>
                                         <button id="message_sort_read_message_btn" class="message_sort_btn btn btn-primary" data-value="1">Read Message</button>
                                         <button id="message_sort_unread_message_btn" class="message_sort_btn btn btn-warning" data-value="0">Unread Message</button>
-                                        <button id="restore_all_message_btn" class="restore_all_message_btn btn btn-success">Restore All</button>
-                                        <button id="delete_all_message_btn" class="delete_all_message_btn btn btn-danger">Delete All</button>
+
+                                        @can('mass-restore', \App\Models\Message::class)
+                                            <button id="restore_all_message_btn" class="restore_all_message_btn btn btn-success">Restore All</button>
+                                        @endcan
+
+                                        @can('mass-force-destroy', \App\Models\Message::class)
+                                            <button id="delete_all_message_btn" class="delete_all_message_btn btn btn-danger">Delete All</button>
+                                        @endcan
+
                                     </div>
                                 </div>
                             </div>
@@ -53,16 +61,20 @@
                                 <table id="messages_table" class="table nowrap w-100">
                                     <thead>
                                     <tr class="align-top">
-                                        <th style="width: 20px;" class="align-middle">
-                                            <div class="form-check font-size-16">
-                                                <input class="form-check-input" type="checkbox" id="checkAllMessage">
-                                                <label class="form-check-label" for="checkAllMessage"></label>
-                                            </div>
-                                        </th>
+                                       @canany(['mass-force-destroy', 'mass-restore'], \App\Models\Message::class)
+                                            <th style="width: 20px;" class="align-middle">
+                                                <div class="form-check font-size-16">
+                                                    <input class="form-check-input" type="checkbox" id="checkAllMessage">
+                                                    <label class="form-check-label" for="checkAllMessage"></label>
+                                                </div>
+                                            </th>
+                                       @endcanany
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>Message</th>
-                                        <th>Action</th>
+                                        @if (auth()->user()->hasPermissionTo('delete-message') || auth()->user()->isSuperAdmin())
+                                            <th>Action</th>
+                                        @endif
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -84,87 +96,91 @@
 
 
 
-    <!-- delete message modal -->
-
-    <div class="modal fade" id="deleteMessage" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteMessageLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="deleteMessageLabel">Delete Message</h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5>Are you sure?</h5>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger modal_delete_message_btn" data-id="">Delete</button>
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- delete all message modal  -->
-
-    <div class="modal fade" id="deleteAllMessage" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteMessageLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="deleteMessageLabel">Delete Message</h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5>Are you sure?</h5>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger modal_message_delete_all" data-id="">Delete All</button>
+    @if (auth()->user()->hasPermissionTo('delete-message') || auth()->user()->isSuperAdmin())
+        <!-- delete message modal -->
+        <div class="modal fade" id="deleteMessage" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteMessageLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="deleteMessageLabel">Delete Message</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Are you sure?</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger modal_delete_message_btn" data-id="">Delete</button>
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
 
-    <!-- restore message modal -->
 
-    <div class="modal fade" id="restoreMessage" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="restoreMessageLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="restoreMessageLabel">Restore Message</h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5>Are you sure?</h5>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success modal_restore_message_btn" data-id="">Restore</button>
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+    @can('mass-force-destroy', \App\Models\Message::class)
+        <!-- delete all message modal  -->
+        <div class="modal fade" id="deleteAllMessage" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteMessageLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="deleteMessageLabel">Delete Message</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Are you sure?</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger modal_message_delete_all" data-id="">Delete All</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endcan
 
-
-    <!-- restore all message modal  -->
-
-    <div class="modal fade" id="restoreAllMessage" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="restoreMessageLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="restoreMessageLabel">Restore Message</h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5>Are you sure?</h5>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success modal_message_restore_all" data-id="">Restore All</button>
+    @if (auth()->user()->hasPermissionTo('delete-message') || auth()->user()->isSuperAdmin())
+        <!-- restore message modal -->
+        <div class="modal fade" id="restoreMessage" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="restoreMessageLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="restoreMessageLabel">Restore Message</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Are you sure?</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success modal_restore_message_btn" data-id="">Restore</button>
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
+
+
+    @can('mass-restore', \App\Models\Message::class)
+        <!-- restore all message modal  -->
+        <div class="modal fade" id="restoreAllMessage" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="restoreMessageLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="restoreMessageLabel">Restore Message</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Are you sure?</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-success modal_message_restore_all" data-id="">Restore All</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endcan
 
     
 

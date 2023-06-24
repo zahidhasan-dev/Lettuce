@@ -23,7 +23,7 @@
             <!-- end page title -->
 
             <div class="row">
-                <div class="col-md-8 order-md-1 order-sm-2 col-12">
+                <div class="{{ auth()->user()->can('create', \App\Models\Country::class) ? 'col-md-8' : 'col-md-12' }} order-md-1 order-sm-2 col-12">
                     <div class="card">
                         <div class="alert alert-success country_alert" style="display: none" role="alert">
                                     
@@ -35,7 +35,9 @@
                                 <tr>
                                     <th>SL NO.</th>
                                     <th>Country Name</th>
-                                    <th>Action</th>
+                                    @if (auth()->user()->hasAnyPermission(['update-country', 'delete-country']) || auth()->user()->isSuperAdmin())
+                                        <th>Action</th>
+                                    @endif
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -43,12 +45,22 @@
                                     <tr>
                                         <td>{{ $countries->firstitem()+$index }}</td>
                                         <td>{{ $country->country_name }}</td>
-                                        <td>
-                                            <div class="d-flex gap-3">
-                                                <a href="javascript:void(0);" class="text-success edit_country" data-id="{{ $country->id }}" data-bs-toggle="modal" data-bs-target="#editCountry"><i class="mdi mdi-pencil font-size-18"></i></a>
-                                                <a href="javascript:void(0);" class="text-danger country_delete" data-id="{{ $country->id }}" data-bs-toggle="modal" data-bs-target="#deleteCountry"><i class="mdi mdi-delete font-size-18"></i></a>
-                                            </div>
-                                        </td>
+                                        @canany(['update', 'delete'], $country)
+                                            <td>
+                                                <div class="d-flex gap-3">
+                                                    @can('update', $country)
+                                                        <a href="javascript:void(0);" class="text-success edit_country" data-id="{{ $country->id }}" data-bs-toggle="modal" data-bs-target="#editCountry">
+                                                            <i class="mdi mdi-pencil font-size-18"></i>
+                                                        </a>
+                                                    @endcan
+                                                    @can('delete', $country)
+                                                        <a href="javascript:void(0);" class="text-danger country_delete" data-id="{{ $country->id }}" data-bs-toggle="modal" data-bs-target="#deleteCountry">
+                                                            <i class="mdi mdi-delete font-size-18"></i>
+                                                        </a>
+                                                    @endcan
+                                                </div>
+                                            </td>
+                                        @endcanany
                                     </tr>
                                     @empty
                                         <tr>
@@ -62,94 +74,101 @@
                         </div>
                     </div>
                 </div> <!-- end col -->
-                <div class="col-md-4 order-md-2 order-sm-1 col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title mb-2">Add Country</h4>
-                            @if (session('success'))
-                                <div class="alert alert-success">
-                                    {{ session('success') }}
-                                </div>
-                            @endif
-                            @if (session('error'))
-                                <div class="alert alert-danger">
-                                    {{ session('error') }}
-                                </div>
-                            @endif
-                            <div class="info_form">
-                                <form action="{{ route('country.store') }}" method="POST">
-                                    @csrf
-                                    <div class="row">
-                                        <div class="col-12">
+
+                @can('create', \App\Models\Country::class)
+                    <div class="col-md-4 order-md-2 order-sm-1 col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title mb-2">Add Country</h4>
+                                @if (session('success'))
+                                    <div class="alert alert-success">
+                                        {{ session('success') }}
+                                    </div>
+                                @endif
+                                @if (session('error'))
+                                    <div class="alert alert-danger">
+                                        {{ session('error') }}
+                                    </div>
+                                @endif
+                                <div class="info_form">
+                                    <form action="{{ route('country.store') }}" method="POST">
+                                        @csrf
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="mt-4">
+                                                    <label for="country-name-input" class="form-label">Country Name :</label>
+                                                    <input type="text" class="form-control" id="country-name-input" name="country_name" placeholder="Enter Country Name" value="{{ old('country_name') }}">
+                                                </div>
+                                            </div>
+                                            @error('country_name')
+                                            <small class="text-danger">{{$message}}</small>
+                                            @enderror
+
                                             <div class="mt-4">
-                                                <label for="country-name-input" class="form-label">Country Name :</label>
-                                                <input type="text" class="form-control" id="country-name-input" name="country_name" placeholder="Enter Country Name" value="{{ old('country_name') }}">
+                                                <button type="submit" class="btn btn-primary w-md">Add</button>
                                             </div>
                                         </div>
-                                        @error('country_name')
-                                        <small class="text-danger">{{$message}}</small>
-                                        @enderror
-
-                                        <div class="mt-4">
-                                            <button type="submit" class="btn btn-primary w-md">Add</button>
-                                        </div>
-                                    </div>
-                                </form>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div> <!-- end col -->
+                    </div> <!-- end col -->
+                @endcan
+
             </div> <!-- end row -->
         </div> <!-- container-fluid -->
     </div>
     <!-- End Page-content -->
 
 
-    <!-- edit Country modal -->
-    <div class="modal fade" id="editCountry" tabindex="-1" aria-labelledby="editCountryLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addCountryLabel">Edit Country</h5>
-                    <button type="button" class="btn-close close_Country_form" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form class="country_edit_form">
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="recipient-name" class="col-form-label">Country Name:</label>
-                            <input type="text" class="form-control country_name" name="country_name" >
+    @if (auth()->user()->hasPermissionTo('update-country') || auth()->user()->isSuperAdmin())
+        <!-- edit Country modal -->
+        <div class="modal fade" id="editCountry" tabindex="-1" aria-labelledby="editCountryLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addCountryLabel">Edit Country</h5>
+                        <button type="button" class="btn-close close_Country_form" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form class="country_edit_form">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Country Name:</label>
+                                <input type="text" class="form-control country_name" name="country_name" >
+                            </div>
                         </div>
-                    </div>
-                    <div class="modal-footer Country_modal_footer">
-                        <button type="button" class="btn btn-secondary close_country_form" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" data-id="" id="editCountryPost">Update</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-
-
-    <!-- delete Country modal -->
-
-    <div class="modal fade" id="deleteCountry" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteCountryLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="deleteCountryLabel">Delete Country</h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5>Are you sure?</h5>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger country_delete_modal" data-id="">Delete</button>
+                        <div class="modal-footer Country_modal_footer">
+                            <button type="button" class="btn btn-secondary close_country_form" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" data-id="" id="editCountryPost">Update</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
+
+
+
+    @if (auth()->user()->hasPermissionTo('delete-country') || auth()->user()->isSuperAdmin())
+        <!-- delete Country modal -->
+        <div class="modal fade" id="deleteCountry" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteCountryLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="deleteCountryLabel">Delete Country</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Are you sure?</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger country_delete_modal" data-id="">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 
 @endsection
 

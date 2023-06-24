@@ -11,7 +11,6 @@
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                         <h4 class="mb-sm-0 font-size-18">Order</h4>
-
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
                                 <li class="breadcrumb-item"><a href="{{ route('admin.home') }}">Home</a></li>
@@ -61,8 +60,12 @@
                                             <th class="align-middle">Payment Status</th>
                                             <th class="align-middle">Payment Method</th>
                                             <th class="align-middle">Order Status</th>
-                                            <th class="align-middle">View Details</th>
-                                            <th class="align-middle">Action</th>
+                                            @if (auth()->user()->hasPermissionTo('view-order') || auth()->user()->isSuperAdmin())
+                                                <th class="align-middle">View Details</th>
+                                            @endif
+                                            @if (auth()->user()->hasAnyPermission(['update-order','delete-order','view-order']) || auth()->user()->isSuperAdmin())
+                                                <th class="align-middle">Action</th>
+                                            @endif
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -82,58 +85,67 @@
 
 
 
-    <div class="modal fade" id="viewOrderItem" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewOrderItemLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="viewOrderItemLabel">Order Details</h3>
-                    <button type="button" class="btn-close close_order_item_view" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    @include('admin.order.order_details')
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary close_order_item_view" data-bs-dismiss="modal">Close</button>
+    @if (auth()->user()->hasPermissionTo('view-order') || auth()->user()->isSuperAdmin())
+        <!-- view order item modal-->
+        <div class="modal fade" id="viewOrderItem" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewOrderItemLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="viewOrderItemLabel">Order Details</h3>
+                        <button type="button" class="btn-close close_order_item_view" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        @include('admin.order.order_details')
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary close_order_item_view" data-bs-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
 
-    <div class="modal fade" id="updateOrderStatus" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="updateOrderStatusLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="updateOrderStatusLabel">Order Status</h3>
-                    <button type="button" class="btn-close close_order_status_update" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h3>Are you sure?</h3>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" id="update_order_status_btn" data-id="">Confirm</button>
-                    <button type="button" class="btn btn-secondary close_order_status_update" data-bs-dismiss="modal">Cancel</button>
+    @if (auth()->user()->hasPermissionTo('update-order') || auth()->user()->isSuperAdmin())
+        <!-- update order modal-->
+        <div class="modal fade" id="updateOrderStatus" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="updateOrderStatusLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="updateOrderStatusLabel">Order Status</h3>
+                        <button type="button" class="btn-close close_order_status_update" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h3>Are you sure?</h3>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" id="update_order_status_btn" data-id="">Confirm</button>
+                        <button type="button" class="btn btn-secondary close_order_status_update" data-bs-dismiss="modal">Cancel</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
 
-    <div class="modal fade" id="deleteOrder" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteOrderLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="deleteOrderLabel">Delete Order</h3>
-                    <button type="button" class="btn-close close_order_delete" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h3>Are you sure?</h3>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger delete_order" data-id="">Delete</button>
-                    <button type="button" class="btn btn-secondary close_order_delete" data-bs-dismiss="modal">Cancel</button>
+    @if (auth()->user()->hasPermissionTo('delete-order') || auth()->user()->isSuperAdmin())
+        <!-- delete order modal-->
+        <div class="modal fade" id="deleteOrder" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteOrderLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="deleteOrderLabel">Delete Order</h3>
+                        <button type="button" class="btn-close close_order_delete" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h3>Are you sure?</h3>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger delete_order" data-id="">Delete</button>
+                        <button type="button" class="btn btn-secondary close_order_delete" data-bs-dismiss="modal">Cancel</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
 
 @endsection
 
@@ -142,7 +154,7 @@
     
 
     <script>
-
+        
         $(document).ready(function(){
 
             $.ajaxSetup({

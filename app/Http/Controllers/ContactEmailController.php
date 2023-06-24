@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ContactEmail;
 use Illuminate\Http\Request;
 use App\Rules\ContactEmailRule;
+use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\ContactEmailFormRequest;
 
 class ContactEmailController extends Controller
@@ -16,6 +17,8 @@ class ContactEmailController extends Controller
      */
     public function index()
     {   
+        Gate::authorize('view-any', ContactEmail::class);
+
         $emails = ContactEmail::orderBy('created_at','desc')->paginate(20);
         
         return view('admin.contact.email.index', compact('emails'));
@@ -39,6 +42,8 @@ class ContactEmailController extends Controller
      */
     public function store(ContactEmailFormRequest $request)
     {   
+        Gate::authorize('create', ContactEmail::class);
+
         ContactEmail::create($request->all());
 
         return response()->json(['status'=>'success']);
@@ -63,6 +68,8 @@ class ContactEmailController extends Controller
      */
     public function edit(ContactEmail $email)
     {
+        Gate::authorize('update', $email);
+
         return response()->json(['status'=>'success','email'=>$email]);
     }
 
@@ -75,6 +82,8 @@ class ContactEmailController extends Controller
      */
     public function update(Request $request, ContactEmail $email)
     {   
+        Gate::authorize('update', $email);
+
         $request->validate([
             'contact_email'=>['required','string','email','max:100',new ContactEmailRule('contact_emails','contact_email',$email->id)],
         ]);
@@ -93,6 +102,8 @@ class ContactEmailController extends Controller
      */
     public function destroy(ContactEmail $email)
     {
+        Gate::authorize('delete', $email);
+
         $email->delete();
 
         return response()->json(['status'=>'success']);
@@ -102,6 +113,8 @@ class ContactEmailController extends Controller
     public function updateEmailStatus($email_id)
     {
         $email = ContactEmail::findOrFail($email_id);
+
+        Gate::authorize('update', $email);
 
         if($email->is_active == 0){
             $email->is_active = 1;
@@ -119,6 +132,8 @@ class ContactEmailController extends Controller
     public function updatePrimaryEmailStatus($email_id)
     {
         $email = ContactEmail::findOrFail($email_id);
+
+        Gate::authorize('update', $email);
 
         if($email->is_primary == 0){
             $email->is_primary = 1;

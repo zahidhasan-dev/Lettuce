@@ -41,13 +41,18 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="row mb-2">
-                            <div class="col-12">
-                                <div class="text-center text-sm-start text-md-start text-lg-start text-xl-start">
-                                    <a href="javascript:void(0);" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target="#addContactEmail" ><i class="mdi mdi-plus me-1"></i> Add New Email</a>
-                                </div>
-                            </div><!-- end col-->
-                        </div>
+                        @can('create', \App\Models\ContactEmail::class)
+                            <div class="row mb-2">
+                                <div class="col-12">
+                                    <div class="text-center text-sm-start text-md-start text-lg-start text-xl-start">
+                                        <a href="javascript:void(0);" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2" data-bs-toggle="modal" data-bs-target="#addContactEmail" >
+                                            <i class="mdi mdi-plus me-1"></i> Add New Email
+                                        </a>
+                                    </div>
+                                </div><!-- end col-->
+                            </div>
+                        @endcan
+                        
 
                         <div class="table-responsive" id="contact_email_table_wrapper">
                             <table id="contact_email_table" class="table align-middle table-nowrap table-check" >
@@ -56,8 +61,11 @@
                                         <th class="align-middle">SL NO.</th>
                                         <th class="align-middle">Email</th>
                                         <th class="align-middle">Primary Status</th>
-                                        <th class="align-middle">Status</th>
-                                        <th class="align-middle">Action</th>
+                                        <th class="align-middle">Status</th>                                        
+
+                                        @if (auth()->user()->hasAnyPermission(['update-contact','delete-contact']) || auth()->user()->isSuperAdmin())
+                                            <th class="align-middle">Action</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -81,85 +89,90 @@
 
 <!-- Modal -->
 
-<!-- add Email modal -->
-<div class="modal fade" id="addContactEmail" tabindex="-1" aria-labelledby="addContactEmailLabel" aria-modal="true" role="dialog">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addContactEmailLabel">Add Email</h5>
-                <button type="button" class="btn-close close_contact_email_form" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="contact_email_form_wrapper" id="addContactEmailForm_wrapper">
-                <form id="addContactEmailForm" method="POST">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="contact_email" class="col-form-label">Email:</label>
-                            <input type="email" class="form-control contact_email" id="contact_email" name="contact_email">
-                            <small class="text-danger" id="contact_email_error"></small>
+@if (auth()->user()->hasPermissionTo('create-contact') || auth()->user()->isSuperAdmin())
+     || auth()->user()->isSuperAdmin()<!-- add Email modal -->
+    <div class="modal fade" id="addContactEmail" tabindex="-1" aria-labelledby="addContactEmailLabel" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addContactEmailLabel">Add Email</h5>
+                    <button type="button" class="btn-close close_contact_email_form" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="contact_email_form_wrapper" id="addContactEmailForm_wrapper">
+                    <form id="addContactEmailForm" method="POST">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="contact_email" class="col-form-label">Email:</label>
+                                <input type="email" class="form-control contact_email" id="contact_email" name="contact_email">
+                                <small class="text-danger" id="contact_email_error"></small>
+                            </div>
                         </div>
-                    </div>
-                    <div class="modal-footer faq_modal_footer">
-                        <button type="button" class="btn btn-secondary close_contact_email_form" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="addContactEmailBtn">Add</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<!-- edit Email modal -->
-<div class="modal fade" id="editContactEmail" tabindex="-1" aria-labelledby="editContactEmailLabel" aria-modal="true" role="dialog">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editContactEmailLabel">Edit Email</h5>
-                <button type="button" class="btn-close close_contact_email_edit_form" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="contact_email_form_wrapper" id="editContactEmailForm_wrapper">
-                <form id="editContactEmailForm" method="POST">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="edit_contact_email" class="col-form-label">Email:</label>
-                            <input type="email" class="form-control contact_email" name="contact_email" id="edit_contact_email">
-                            <small class="text-danger" id="edit_contact_email_error"></small>
+                        <div class="modal-footer faq_modal_footer">
+                            <button type="button" class="btn btn-secondary close_contact_email_form" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="addContactEmailBtn">Add</button>
                         </div>
-                    </div>
-                    <div class="modal-footer faq_modal_footer">
-                        <button type="button" class="btn btn-secondary close_contact_email_edit_form" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="editContactEmailBtn" data-id="">Update</button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-</div>
+    </div>    
+@endif
 
 
-
-<!-- delete faq modal -->
-
-<div class="modal fade" id="deleteContactEmail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteContactEmailLabel" aria-modal="true" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="deleteContactEmailLabel">Delete Email</h3>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <h5>Are you sure?</h5>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger contact_email_delete_modal" data-id="">Delete</button>
+@if (auth()->user()->hasPermissionTo('update-contact') || auth()->user()->isSuperAdmin())
+    <!-- edit Email modal -->
+    <div class="modal fade" id="editContactEmail" tabindex="-1" aria-labelledby="editContactEmailLabel" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editContactEmailLabel">Edit Email</h5>
+                    <button type="button" class="btn-close close_contact_email_edit_form" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="contact_email_form_wrapper" id="editContactEmailForm_wrapper">
+                    <form id="editContactEmailForm" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="edit_contact_email" class="col-form-label">Email:</label>
+                                <input type="email" class="form-control contact_email" name="contact_email" id="edit_contact_email">
+                                <small class="text-danger" id="edit_contact_email_error"></small>
+                            </div>
+                        </div>
+                        <div class="modal-footer faq_modal_footer">
+                            <button type="button" class="btn btn-secondary close_contact_email_edit_form" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="editContactEmailBtn" data-id="">Update</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-</div>
+    </div>    
+@endif
+
+
+
+@if (auth()->user()->hasPermissionTo('delete-contact') || auth()->user()->isSuperAdmin())
+    <!-- delete faq modal -->
+    <div class="modal fade" id="deleteContactEmail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteContactEmailLabel" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="deleteContactEmailLabel">Delete Email</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5>Are you sure?</h5>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger contact_email_delete_modal" data-id="">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>    
+@endif
 
 
 @endsection
@@ -367,7 +380,13 @@
                         }, 200);
 
                     },
-                    error:function(){
+                    error:function(response){
+                        if(response.status === 403){
+                            alert(response.responseJSON.message);
+
+                            return;
+                        }
+                        
                         if(confirm('Something went wrong! Try reloading the page.')){
                             window.location.reload();
                         }
@@ -405,7 +424,13 @@
                         }, 200);
 
                     },
-                    error:function(){
+                    error:function(response){
+                        if(response.status === 403){
+                            alert(response.responseJSON.message);
+                            
+                            return;
+                        }
+
                         if(confirm('Something went wrong! Try reloading the page.')){
                             window.location.reload();
                         }

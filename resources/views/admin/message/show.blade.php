@@ -69,27 +69,31 @@ active
                                     @endforeach
                                 @endif
 
-                                <a href="javascript: void(0);" class="btn btn-secondary waves-effect" id="message_reply_btn"><i class="mdi mdi-reply"></i> Reply</a>
-                                <div id="reply_message_form_wrapper" class="mt-5">
-                                    <div class="d-flex mb-4">
-                                        <div class="flex-shrink-0 me-3">
-                                            <img class="border rounded-circle avatar-sm" src="{{ asset('dashboard_assets/images/logo-sm.png') }}" alt="Generic placeholder image">
-                                        </div>
-                                        <div class="flex-grow-1" id="reply_message_form_container">
-                                            <h6 calss="m-0"><i class="mdi mdi-reply" style="font-size:16px"></i> {{ $message->name }}<small class="text-muted m-0"> ({{ $message->email }})</small></h6>
-                                            <form action="{{ route('admin.message.reply') }}" method="POST" id="reply_message_form">
-                                                @csrf
-                                                <input type="hidden" name="message_id" value="{{ $message->id }}" id="reply_message_id">
-                                                <div class="mb-4">
-                                                    <textarea name="reply_message" class="form-control" id="reply_message" cols="30" rows="10"></textarea>
-                                                </div>
-                                                <a href="javascript:void(0);" class="btn btn-secondary reply_message_form_btn reply_message_cancel_btn" id="reply_message_cancel_btn">Cancel</a>
-                                                <button type="submit" class="btn btn-success reply_message_form_btn" id="reply_message_send_btn">Send</button>
-                                                <small class="reply_message_error reply_message_form_error text-danger font-size-12 d-block" style="margin-top:10px"></small>
-                                            </form>
+                                @can('reply-message', $message)    
+                                    <a href="javascript: void(0);" class="btn btn-secondary waves-effect" id="message_reply_btn"><i class="mdi mdi-reply"></i> Reply</a>
+
+                                    <div id="reply_message_form_wrapper" class="mt-5">
+                                        <div class="d-flex mb-4">
+                                            <div class="flex-shrink-0 me-3">
+                                                <img class="border rounded-circle avatar-sm" src="{{ asset('dashboard_assets/images/logo-sm.png') }}" alt="Generic placeholder image">
+                                            </div>
+                                            <div class="flex-grow-1" id="reply_message_form_container">
+                                                <h6 calss="m-0"><i class="mdi mdi-reply" style="font-size:16px"></i> {{ $message->name }}<small class="text-muted m-0"> ({{ $message->email }})</small></h6>
+                                                <form action="{{ route('admin.message.reply') }}" method="POST" id="reply_message_form">
+                                                    @csrf
+                                                    <input type="hidden" name="message_id" value="{{ $message->id }}" id="reply_message_id">
+                                                    <div class="mb-4">
+                                                        <textarea name="reply_message" class="form-control" id="reply_message" cols="30" rows="10"></textarea>
+                                                    </div>
+                                                    <a href="javascript:void(0);" class="btn btn-secondary reply_message_form_btn reply_message_cancel_btn" id="reply_message_cancel_btn">Cancel</a>
+                                                    <button type="submit" class="btn btn-success reply_message_form_btn" id="reply_message_send_btn">Send</button>
+                                                    <small class="reply_message_error reply_message_form_error text-danger font-size-12 d-block" style="margin-top:10px"></small>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                @endcan
+
                             </div>
                         </div>
                     </div>

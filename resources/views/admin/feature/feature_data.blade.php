@@ -17,15 +17,23 @@
                 <input class="form-check-input switchFeatureStatus" type="checkbox" data-id="{{ $feature->id }}" id="switchFeatureStatus_{{ $feature->id }}" {{ ($feature->is_active == 1) ? 'checked' : ''}}>
             </div>
         </td>
-        <td>
-            <a href="{{ route('feature.show',$feature->id) }}" class="btn btn-primary btn-sm btn-rounded">View Details</a>
-        </td>
-        <td>
-            <div class="d-flex gap-3">
-                <a href="{{ route('feature.edit',$feature->id) }}" class="text-success" ><i class="mdi mdi-pencil font-size-18"></i></a>
-                <a href="javascript:void(0);" class="text-danger feature_delete" data-id="{{ $feature->id }}" data-bs-toggle="modal" data-bs-target="#deleteFeature"><i class="mdi mdi-delete font-size-18"></i></a>
-            </div>
-        </td>
+        @can('view', $feature)
+            <td>
+                <a href="{{ route('feature.show',$feature->id) }}" class="btn btn-primary btn-sm btn-rounded">View Details</a>
+            </td>
+        @endcan
+        @canany(['update','delete'], $feature)
+            <td>
+                <div class="d-flex gap-3">
+                    @can('update', $feature)
+                        <a href="{{ route('feature.edit',$feature->id) }}" class="text-success" ><i class="mdi mdi-pencil font-size-18"></i></a>
+                    @endcan
+                    @can('delete', $feature)  
+                        <a href="javascript:void(0);" class="text-danger feature_delete" data-id="{{ $feature->id }}" data-bs-toggle="modal" data-bs-target="#deleteFeature"><i class="mdi mdi-delete font-size-18"></i></a>
+                    @endcan
+                </div>
+            </td>
+        @endcanany
     </tr>
 @empty
     <tr>

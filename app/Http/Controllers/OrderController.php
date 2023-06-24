@@ -10,6 +10,7 @@ use App\Jobs\OrderShippedJob;
 use App\Jobs\OrderDeliveredJob;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
@@ -21,31 +22,13 @@ class OrderController extends Controller
      */
     public function index()
     {
+        Gate::authorize('view-any', Order::class);
+
         $orders = Order::orderBy('created_at','desc')->paginate(20);
 
         return view('admin.order.index', compact('orders'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
     /**
      * Display the specified resource.
@@ -55,33 +38,14 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
+        Gate::authorize('view', $order);
+
         $order->load('order_items');
 
         return view('admin.order.order_details', compact('order'))->render();
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Order  $order
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Order $order)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Order  $order
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Order $order)
-    {
-        //
-    }
 
     /**
      * Remove the specified resource from storage.
@@ -91,6 +55,8 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
+        Gate::authorize('delete', $order);
+
         if(request()->ajax()){
 
             $order->delete();
@@ -135,6 +101,8 @@ class OrderController extends Controller
 
     public function updateOrderStatus(Order $order)
     {
+        Gate::authorize('update'); 
+
         if(request()->ajax()){
 
             $status = $order->order_status;
@@ -180,6 +148,8 @@ class OrderController extends Controller
 
     public function orderInvoice(Order $order)
     {
+        Gate::authorize('view', $order);
+
         $order->load('order_items');
 
         Pdf::setOptions([

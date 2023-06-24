@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CouponFormPost;
-use App\Models\Coupon;
 use Carbon\Carbon;
+use App\Models\Coupon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use App\Http\Requests\CouponFormPost;
 
 class CouponController extends Controller
 {
@@ -16,7 +17,8 @@ class CouponController extends Controller
      */
     public function index()
     {
-
+        Gate::authorize('view-any', Coupon::class);
+        
         $coupons  = Coupon::orderBy('created_at','desc')->paginate(10);
 
         return view('admin.offers.coupon.index', compact('coupons'));
@@ -41,6 +43,7 @@ class CouponController extends Controller
      */
     public function store(CouponFormPost $request)
     {
+        Gate::authorize('create', Coupon::class);
 
         $coupon_validity = localDateTimeToUTC($request->coupon_validity);
 
@@ -83,6 +86,7 @@ class CouponController extends Controller
      */
     public function edit(Coupon $coupon)
     {
+        Gate::authorize('update', $coupon);
 
         $coupon_type = '<option value="" selected disabled>-- Select Type --</option>
                         <option value="fixed" '.(($coupon->coupon_type == 'fixed')?'selected':'').'>Fixed</option>
@@ -109,6 +113,8 @@ class CouponController extends Controller
      */
     public function update(Request $request, Coupon $coupon)
     {
+        Gate::authorize('update', $coupon);
+
         $coupon_exists = Coupon::where('id','!=',$coupon->id)->where('coupon_code',$request->coupon_code)->first();
 
         $coupon_validity = localDateTimeToUTC($request->coupon_validity);
@@ -147,6 +153,8 @@ class CouponController extends Controller
      */
     public function destroy(Coupon $coupon)
     {
+        Gate::authorize('delete', $coupon);
+        
         $delete = $coupon->delete();
 
         if($delete)
@@ -161,6 +169,8 @@ class CouponController extends Controller
     public function updateCouponStatus($coupon_id)
     {
         $coupon = Coupon::where('id',$coupon_id)->first();
+
+        Gate::authorize('update', $coupon);
 
         if($coupon->status == 0){
             $coupon->status = 1;

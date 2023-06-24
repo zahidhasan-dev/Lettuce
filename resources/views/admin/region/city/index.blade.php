@@ -23,7 +23,7 @@
             <!-- end page title -->
 
             <div class="row">
-                <div class="col-md-8 order-md-1 order-sm-2 col-12">
+                <div class="{{ auth()->user()->can('create', \App\Models\City::class) ? 'col-md-8' : 'col-md-12' }} order-md-1 order-sm-2 col-12">
                     <div class="card">
                         <div class="alert alert-success city_alert" style="display: none" role="alert">
                                     
@@ -36,7 +36,9 @@
                                     <th>SL NO.</th>
                                     <th>City Name</th>
                                     <th>Country Name</th>
-                                    <th>Action</th>
+                                    @if (auth()->user()->hasAnyPermission(['update-city','delete-city']) || auth()->user()->isSuperAdmin())
+                                        <th>Action</th>
+                                    @endif
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -45,12 +47,23 @@
                                         <td>{{ $cities->firstitem()+$index }}</td>
                                         <td>{{ $city->city_name }}</td>
                                         <td>{{ $city->country->country_name }}</td>
-                                        <td>
-                                            <div class="d-flex gap-3">
-                                                <a href="javascript:void(0);" class="text-success edit_city" data-id="{{ $city->id }}" data-bs-toggle="modal" data-bs-target="#editCity"><i class="mdi mdi-pencil font-size-18"></i></a>
-                                                <a href="javascript:void(0);" class="text-danger city_delete" data-id="{{ $city->id }}" data-bs-toggle="modal" data-bs-target="#deleteCity"><i class="mdi mdi-delete font-size-18"></i></a>
-                                            </div>
-                                        </td>
+                                        @canany(['update','delete'], $city)
+                                            <td>
+                                                <div class="d-flex gap-3">
+                                                    @can('update', $city)
+                                                        <a href="javascript:void(0);" class="text-success edit_city" data-id="{{ $city->id }}" data-bs-toggle="modal" data-bs-target="#editCity">
+                                                            <i class="mdi mdi-pencil font-size-18"></i>
+                                                        </a>
+                                                    @endcan
+
+                                                    @can('delete', $city)
+                                                        <a href="javascript:void(0);" class="text-danger city_delete" data-id="{{ $city->id }}" data-bs-toggle="modal" data-bs-target="#deleteCity">
+                                                            <i class="mdi mdi-delete font-size-18"></i>
+                                                        </a>
+                                                    @endcan
+                                                </div>
+                                            </td>
+                                        @endcanany
                                     </tr>
                                     @empty
                                         <tr>
@@ -64,112 +77,118 @@
                         </div>
                     </div>
                 </div> <!-- end col -->
-                <div class="col-md-4 order-md-2 order-sm-1 col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title mb-2">Add City</h4>
-                            @if (session('success'))
-                                <div class="alert alert-success">
-                                    {{ session('success') }}
-                                </div>
-                            @endif
-                            @if (session('error'))
-                                <div class="alert alert-danger">
-                                    {{ session('error') }}
-                                </div>
-                            @endif
-                            <div class="info_form">
-                                <form action="{{ route('city.store') }}" method="POST">
-                                    @csrf
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="mt-4">
-                                                <label for="" class="form-label">Country :</label>
-                                                <select name="country_id" class="form-control">
-                                                    <option disabled selected value="">--Select Country--</option>
-                                                    @foreach ($countries as $country)
-                                                        <option  value="{{ $country->id }}">{{ $country->country_name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            @error('country_id')
-                                            <small class="text-danger">{{$message}}</small>
-                                            @enderror
-                                            <div class="mt-4">
-                                                <label for="city-name-input" class="form-label">City Name :</label>
-                                                <input type="text" class="form-control" id="city-name-input" name="city_name" placeholder="Enter City Name" value="{{ old('city_name') }}">
-                                            </div>
-                                            @error('city_name')
-                                            <small class="text-danger">{{$message}}</small>
-                                            @enderror
-                                        </div>
-
-                                        <div class="mt-4">
-                                            <button type="submit" class="btn btn-primary w-md">Add</button>
-                                        </div>
+                @can('create', \App\Models\City::class)
+                    <div class="col-md-4 order-md-2 order-sm-1 col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title mb-2">Add City</h4>
+                                @if (session('success'))
+                                    <div class="alert alert-success">
+                                        {{ session('success') }}
                                     </div>
-                                </form>
+                                @endif
+                                @if (session('error'))
+                                    <div class="alert alert-danger">
+                                        {{ session('error') }}
+                                    </div>
+                                @endif
+                                <div class="info_form">
+                                    <form action="{{ route('city.store') }}" method="POST">
+                                        @csrf
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="mt-4">
+                                                    <label for="" class="form-label">Country :</label>
+                                                    <select name="country_id" class="form-control">
+                                                        <option disabled selected value="">--Select Country--</option>
+                                                        @foreach ($countries as $country)
+                                                            <option  value="{{ $country->id }}">{{ $country->country_name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                @error('country_id')
+                                                <small class="text-danger">{{$message}}</small>
+                                                @enderror
+                                                <div class="mt-4">
+                                                    <label for="city-name-input" class="form-label">City Name :</label>
+                                                    <input type="text" class="form-control" id="city-name-input" name="city_name" placeholder="Enter City Name" value="{{ old('city_name') }}">
+                                                </div>
+                                                @error('city_name')
+                                                <small class="text-danger">{{$message}}</small>
+                                                @enderror
+                                            </div>
+
+                                            <div class="mt-4">
+                                                <button type="submit" class="btn btn-primary w-md">Add</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div> <!-- end col -->
+                    </div> <!-- end col -->
+                @endcan
+
             </div> <!-- end row -->
         </div> <!-- container-fluid -->
     </div>
     <!-- End Page-content -->
 
 
-    <!-- edit city modal -->
-    <div class="modal fade" id="editCity" tabindex="-1" aria-labelledby="editCityLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editCityLabel">Edit city</h5>
-                    <button type="button" class="btn-close close_city_form" data-bs-dismiss="modal" aria-label="Close"></button>
+    @if (auth()->user()->hasPermissionTo('update-city') || auth()->user()->isSuperAdmin())
+        <!-- edit city modal -->
+        <div class="modal fade" id="editCity" tabindex="-1" aria-labelledby="editCityLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editCityLabel">Edit city</h5>
+                        <button type="button" class="btn-close close_city_form" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form class="city_edit_form">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="" class="form-label">Country :</label>
+                                <select name="country_id" class="form-control select_country">
+                                    
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">city Name:</label>
+                                <input type="text" class="form-control city_name" name="city_name" >
+                            </div>
+                        </div>
+                        <div class="modal-footer city_modal_footer">
+                            <button type="button" class="btn btn-secondary close_city_form" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" data-id="" id="editCityPost">Update</button>
+                        </div>
+                    </form>
                 </div>
-                <form class="city_edit_form">
+            </div>
+        </div>
+    @endif
+
+
+
+    @if (auth()->user()->hasPermissionTo('delete-city') || auth()->user()->isSuperAdmin())
+        <!-- delete city modal -->
+        <div class="modal fade" id="deleteCity" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteCityLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="deleteCityLabel">Delete city</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
                     <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="" class="form-label">Country :</label>
-                            <select name="country_id" class="form-control select_country">
-                                
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="recipient-name" class="col-form-label">city Name:</label>
-                            <input type="text" class="form-control city_name" name="city_name" >
-                        </div>
+                        <h5>Are you sure?</h5>
                     </div>
-                    <div class="modal-footer city_modal_footer">
-                        <button type="button" class="btn btn-secondary close_city_form" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" data-id="" id="editCityPost">Update</button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger city_delete_modal" data-id="">Delete</button>
                     </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-
-
-    <!-- delete city modal -->
-
-    <div class="modal fade" id="deleteCity" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteCityLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="deleteCityLabel">Delete city</h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5>Are you sure?</h5>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger city_delete_modal" data-id="">Delete</button>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
 
 @endsection
 

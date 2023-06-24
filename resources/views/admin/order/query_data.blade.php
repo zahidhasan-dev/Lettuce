@@ -36,33 +36,45 @@
         <td>
             <span class="badge badge-pill {{ $status_class }} font-size-12 text-capitalize">{{ $order->order_status }}</span>
         </td>
-        <td>
-            <!-- Button trigger modal -->
-            <button type="button" id="view_order_details_btn" class="btn btn-primary btn-sm btn-rounded" data-id="{{ $order->id }}" data-bs-toggle="modal" data-bs-target="#viewOrderItem">
-                View Details
-            </button>
-        </td>
-        <td>
-            <div class="d-flex gap-3">
 
-                <a href="{{ route('admin.order.invoice', $order->id) }}" target="_blank" class="btn btn-info btn-sm" style="min-width:80px;">Invoice</a>
+        @can('view', $order)
+            <td>
+                <!-- Button trigger modal -->
+                <button type="button" id="view_order_details_btn" class="btn btn-primary btn-sm btn-rounded" data-id="{{ $order->id }}" data-bs-toggle="modal" data-bs-target="#viewOrderItem">
+                    View Details
+                </button>
+            </td>
+        @endcan
 
-                @if ($order->order_status == 'completed')
-                    <a href="javascript:void(0);" data-id="{{ $order->id }}" id="order_delete_btn" class="btn btn-danger btn-sm" style="min-width:80px;" data-bs-toggle="modal" data-bs-target="#deleteOrder">Delete</a>
-                @else
-                    <a href="javascript:void(0);" data-id="{{ $order->id }}" id="order_status_btn" class="btn btn-success btn-sm" style="min-width:80px;" data-bs-toggle="modal" data-bs-target="#updateOrderStatus">
-                        @if ($order->order_status == 'pending')
-                        Process
-                        @elseif ($order->order_status == 'processing')
-                        Deliver
-                        @elseif ($order->order_status == 'delivering')
-                        Complete
-                        @endif
-                    </a>
-                @endif
+        @canany(['update', 'view', 'delete'], $order)
+            <td>
+                <div class="d-flex gap-3">
 
-            </div>
-        </td>
+                    @can('view', $order)
+                        <a href="{{ route('admin.order.invoice', $order->id) }}" target="_blank" class="btn btn-info btn-sm" style="min-width:80px;">Invoice</a>
+                    @endcan
+
+                    @if ($order->order_status == 'completed')
+                        @can('delete', $order)
+                            <a href="javascript:void(0);" data-id="{{ $order->id }}" id="order_delete_btn" class="btn btn-danger btn-sm" style="min-width:80px;" data-bs-toggle="modal" data-bs-target="#deleteOrder">Delete</a>
+                        @endcan
+                    @else
+                        @can('update', $order)
+                            <a href="javascript:void(0);" data-id="{{ $order->id }}" id="order_status_btn" class="btn btn-success btn-sm" style="min-width:80px;" data-bs-toggle="modal" data-bs-target="#updateOrderStatus">
+                                @if ($order->order_status == 'pending')
+                                Process
+                                @elseif ($order->order_status == 'processing')
+                                Deliver
+                                @elseif ($order->order_status == 'delivering')
+                                Complete
+                                @endif
+                            </a>
+                        @endcan
+                    @endif
+
+                </div>
+            </td>
+        @endcanany
     </tr>
 @empty
     <tr>

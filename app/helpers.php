@@ -908,8 +908,7 @@
     if(!function_exists('getUser')){
 
         function getUser($user_id){
-            $user = \App\Models\User::where('id',$user_id)->first();
-            return $user;
+            return \App\Models\User::where('id',$user_id)->first();
         }
 
     }
@@ -946,10 +945,13 @@
                     $empty_star = (5 - $floor_avg) - 1;
 
                     for($i=1;$i<=5;$i++){
+
                         echo '<li style="margin:0px 1px;"><i class="fas fa-star"></i></li>';
 
                         if($floor_avg == $i){
+
                             break;
+
                         }
 
                     }
@@ -959,7 +961,9 @@
                     if($empty_star > 0){
 
                         for($i=1;$i<=$empty_star;$i++){
+
                             echo '<li style="margin:0px 1px;"><i class="far fa-star"></i></li>';
+
                         }
 
                     }
@@ -970,17 +974,22 @@
                     $empty_star = 5 - $avg_rating;
 
                     for($i=1;$i<=5;$i++){
+
                         echo '<li style="margin:0px 1px;"><i class="fas fa-star"></i></li>';
 
                         if($avg_rating == $i){
+
                             break;
+
                         }
                     }
 
                     if($empty_star > 0){
 
                         for($i=1;$i<=$empty_star;$i++){
+
                             echo '<li style="margin:0px 1px;"><i class="far fa-star"></i></li>';
+
                         }
 
                     }
@@ -988,9 +997,13 @@
 
             }
             else{
+
                 for($i=1;$i<=5;$i++){
+
                     echo '<li style="margin:0px 1px;"><i class="far fa-star"></i></li>';
+
                 }
+                
             }
 
         }

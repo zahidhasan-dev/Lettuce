@@ -43,7 +43,7 @@
                         @endif
                         <h3 class="mb-4">Mail Settings</h3>
 
-                        <form action="{{ route('admin.settings.mail.update') }}" method="POST">
+                        <form action="{{ auth()->user()->can('create-or-update', \App\Models\MailSetting::class) ? route('admin.settings.mail.update') : '' }}" method="POST">
                             @csrf
                             <div class="row">
                                 <div class="col-12">
@@ -105,9 +105,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="d-flex flex-wrap gap-2">
-                                <button type="submit" class="btn btn-primary waves-effect waves-light" id="update_mail_settings_btn">Update</button>
-                            </div>
+                            @can('create-or-update', \App\Models\MailSetting::class)
+                                <div class="d-flex flex-wrap gap-2">
+                                    <button type="submit" class="btn btn-primary waves-effect waves-light" id="update_mail_settings_btn">Update</button>
+                                </div>
+                            @endcan
                         </form>
 
                     </div>

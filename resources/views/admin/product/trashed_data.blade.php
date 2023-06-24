@@ -1,11 +1,15 @@
 @foreach ($trashed_products as $index => $product)
 <tr class="product_row" id="product_row_{{ $product->id }}">
-    <td>
-        <div class="form-check font-size-16">
-            <input class="form-check-input product_check" type="checkbox" id="product_check_{{ $product->id }}" value="{{ $product->id }}">
-            <label class="form-check-label" for="product_check_{{ $product->id }}"></label>
-        </div>
-    </td>
+
+    @canany(['product-force-delete-all','product-restore-all'], \App\Models\Product::class)
+        <td>
+            <div class="form-check font-size-16">
+                <input class="form-check-input product_check" type="checkbox" id="product_check_{{ $product->id }}" value="{{ $product->id }}">
+                <label class="form-check-label" for="product_check_{{ $product->id }}"></label>
+            </div>
+        </td>
+    @endcanany
+
     <td>
         <img width="80px" src="{{ asset('uploads/product/'.$product->thumbnail) }}" alt="">
     </td>
@@ -36,15 +40,23 @@
         @endif
     </td>
     <td>{{ $product->has_discount }}</td>
-    <td>
-        <div class="d-flex gap-3">
-            <form action="{{ route('product.forcedelete',$product->id) }}" method="post" id="product_force_delete_form_{{ $product->id }}">
-                @csrf
-                @method('DELETE')
-                <a href="javascript:void(0);" class="text-danger product_force_delete" data-id="{{ $product->id }}" data-bs-toggle="modal" data-bs-target="#forceDeleteProduct"><i class="fas fa-trash font-size-18"></i></a>
-            </form>
-            <a href="javascript:void(0);" class="text-success product_restore" data-id="{{ $product->id }}" data-bs-toggle="modal" data-bs-target="#restoreProduct"><i class="fas fa-trash-restore font-size-18"></i></a>
-        </div>
-    </td>
+
+    @canany(['restore','force-delete'], $product)
+        <td>
+            <div class="d-flex gap-3">
+                @can('force-delete', $product)                    
+                    <form action="{{ route('product.forcedelete',$product->id) }}" method="post" id="product_force_delete_form_{{ $product->id }}">
+                        @csrf
+                        @method('DELETE')
+                        <a href="javascript:void(0);" class="text-danger product_force_delete" data-id="{{ $product->id }}" data-bs-toggle="modal" data-bs-target="#forceDeleteProduct"><i class="fas fa-trash font-size-18"></i></a>
+                    </form>
+                @endcan
+                @can('restore', $product)                    
+                    <a href="javascript:void(0);" class="text-success product_restore" data-id="{{ $product->id }}" data-bs-toggle="modal" data-bs-target="#restoreProduct"><i class="fas fa-trash-restore font-size-18"></i></a>
+                @endcan
+            </div>
+        </td>
+    @endcanany
+
 </tr>
 @endforeach

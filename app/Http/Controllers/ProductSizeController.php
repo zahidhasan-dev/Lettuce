@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\sizeFormPost;
 use App\Models\ProductSize;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ProductSizeController extends Controller
 {
@@ -15,7 +16,10 @@ class ProductSizeController extends Controller
      */
     public function index()
     {   
+        Gate::authorize('view-any', ProductSize::class);
+
         $sizes = ProductSize::all();
+
         return view('admin.size.index', compact('sizes'));
     }
 
@@ -37,6 +41,8 @@ class ProductSizeController extends Controller
      */
     public function store(sizeFormPost $request)
     {
+
+        Gate::authorize('create', ProductSize::class);
 
        ProductSize::create($request->all());
 
@@ -63,6 +69,9 @@ class ProductSizeController extends Controller
      */
     public function edit(ProductSize $size)
     {
+
+        Gate::authorize('update', $size);
+
         return response()->json($size);
     }
 
@@ -75,6 +84,9 @@ class ProductSizeController extends Controller
      */
     public function update(Request $request, ProductSize $size)
     {
+        
+        Gate::authorize('update', $size);
+
         $scale_exists = ProductSize::where('id','!=',$size->id)->where('scale_name',$request->scale_name)->exists();
 
        if(!$scale_exists){
@@ -98,6 +110,9 @@ class ProductSizeController extends Controller
      */
     public function destroy(ProductSize $size)
     {
+
+        Gate::authorize('delete', $size);
+
         $size->delete();
 
         return redirect()->back()->with(['delete_success'=>'Deleted Successfully!']);

@@ -12,6 +12,7 @@ use App\Jobs\NewsletterSendJob;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\NewsletterFormRequest;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class NewsletterController extends Controller
 {
@@ -24,6 +25,8 @@ class NewsletterController extends Controller
 
     public function index()
     {
+        Gate::authorize('view-any', Newsletter::class);
+
         $newsletters = Newsletter::orderBy('created_at','desc')->paginate(20);
 
         return view('admin.newsletter.index', compact('newsletters'));
@@ -32,6 +35,8 @@ class NewsletterController extends Controller
 
     public function show(Newsletter $newsletter)
     {
+        Gate::authorize('view', $newsletter);
+
         file_put_contents(resource_path()."/views/admin/newsletter/preview.blade.php", $newsletter->newsletter_code);
 
         return view('admin.newsletter.newsletter_details', compact('newsletter'))->render();
@@ -40,6 +45,8 @@ class NewsletterController extends Controller
 
     public function destroy(Newsletter $newsletter)
     {
+        Gate::authorzie('delete', $newsletter);
+
         if(request()->ajax()){
             $newsletter->delete();
             return response()->json(['success'=>'Deleted Successfully!']);
@@ -63,12 +70,16 @@ class NewsletterController extends Controller
 
     public function createNewsletter()
     {
+        Gate::authorize('create', Newsletter::class);
+
         return view('admin.newsletter.create_newsletter');
     }
 
 
     public function writePreviewNewsletter(Request $request)
     {
+        Gate::authorize('create', Newsletter::class);
+        
         if($request->ajax()){
 
             $newsletter = $request->newsletter_code;
@@ -111,6 +122,8 @@ class NewsletterController extends Controller
 
     public function sendNewsletter(NewsletterFormRequest $request)
     {
+        Gate::authorize('create', Newsletter::class);
+
         if($request->ajax()){
 
             if($request->validator->fails()){

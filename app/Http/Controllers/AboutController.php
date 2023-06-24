@@ -47,7 +47,7 @@ class AboutController extends Controller
      */
     public function store(AboutFormRequest $request)
     {
-        Gate::authorize('create',About::class);
+        Gate::authorize('create', About::class);
 
         DB::beginTransaction();
 
@@ -202,7 +202,7 @@ class AboutController extends Controller
 
     public function updateAboutStatus(About $about)
     {
-        Gate::authorize('update-about-status',$about);
+        Gate::authorize('update-about-status', $about);
 
         if($about->is_active == 0){
             $about->is_active = 1;

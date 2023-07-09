@@ -101,48 +101,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {   
-
-        // category with products
-        // $ids = collect();
-        // $parent = $category->id;
-        // $ids = collect($parent);
-
-        // if($category->sub_category->count() > 0){
-        //     foreach($category->sub_category as $sub_category){
-        //         $ids  = $ids->merge($sub_category->id);
-        //     }
-        // }
-
-        // $products = Product::whereHas('categories', function($query) use($ids){
-        //     $query->whereIn('id',$ids);
-        // })->with('categories.main_category')->get();
-
-        
-
-
-
-
-            // category with products count
-
-        // $categories = Category::whereNull('parent_category')->with(['sub_category' => function ($query) {
-        //     $query->withCount('products');
-        // }])->withCount('products')->get();
-
-
-        // foreach($categories as $parentCategory){
-
-        //     foreach($parentCategory->sub_category as $subCategory){
-
-        //         echo $subCategory->products_count.':::child<br><br>';
-
-        //     }
-        //     echo  $parentCategory->products_count + $parentCategory->sub_category->sum('products_count').'parent:::<br><br>';
-
-        // }
-
-
-         
-
+        //
     }
 
     /**

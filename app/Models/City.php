@@ -15,4 +15,10 @@ class City extends Model
     {
         return $this->belongsTo(Country::class,'country_id','id');
     }
+
+
+    function orders()
+    {
+        return $this->hasMany(\App\Models\Order::class,'billing_city');
+    }
 }

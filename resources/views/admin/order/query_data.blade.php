@@ -18,7 +18,7 @@
         <td><a href="javascript: void(0);" class="text-body fw-bold">#{{ $order->id }}</a> </td>
         <td>{{ $order->billing_name }}</td>
         <td>{{ $order->billing_email }}</td>
-        <td>{{ number_format(($order->order_total/100),2) }}</td>
+        <td>${{ number_format(($order->order_total/100),2) }}</td>
         <td>
             @if ($order->payment_status == 'paid')
                 <span class="badge badge-pill badge-soft-success font-size-12">Paid</span>
@@ -40,7 +40,7 @@
         @can('view', $order)
             <td>
                 <!-- Button trigger modal -->
-                <button type="button" id="view_order_details_btn" class="btn btn-primary btn-sm btn-rounded" data-id="{{ $order->id }}" data-bs-toggle="modal" data-bs-target="#viewOrderItem">
+                <button type="button" id="view_order_details_btn_{{ $order->order_id }}" class="view_order_details_btn btn btn-primary btn-sm btn-rounded" data-id="{{ $order->id }}" data-bs-toggle="modal" data-bs-target="#viewOrderItem">
                     View Details
                 </button>
             </td>

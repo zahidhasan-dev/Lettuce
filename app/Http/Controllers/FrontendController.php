@@ -43,10 +43,6 @@ class FrontendController extends Controller
         $banners = Banner::where('banner_type','campaign')->where('status',1)->inRandomOrder()->limit(3)->get();
         $hero_banners = Banner::where('banner_type','hero')->where('status',1)->get();
 
-        // $discounted_products = Product::where('has_discount',1)->where('status',1)->with('product_discount.discount', function($query){
-        //     $query->where('status',1)->where('discount_validity','>=',Carbon::now());
-        // })->inRandomOrder()->limit(12)->get();
-
         $discounted_products = Product::whereHas('product_discount.discount', function($q){
                                         $q->where('status',1)->where('discount_validity','>=',Carbon::now());
                                     })

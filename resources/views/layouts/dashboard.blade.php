@@ -643,6 +643,38 @@
                 letter-spacing: .15rem;
             }
 
+
+            span#dash_menu_message_count {
+                font-size: 9.75px;
+                font-weight: 500;
+                color:#fff;
+                margin-top:2px;
+            }
+
+            span#dash_menu_order_count {
+                font-size: 9.75px;
+                font-weight: 500;
+                color:#fff;
+                position: absolute;
+                right: 25px;    
+                top:15px;
+            }
+            
+                        
+            .vertical-collpsed .vertical-menu #sidebar-menu>ul>li>a span#dash_menu_order_count {
+                padding-left: 0.6em;
+                right: unset;
+                left: 40px;
+                top: 3px;
+                display: inline-block;
+            }
+
+            .vertical-collpsed .vertical-menu #sidebar-menu>ul>li:hover>a span#dash_menu_order_count {
+                left: unset;
+                right: 20px;
+                top:20px;
+            }
+
             
         </style>
 
@@ -858,10 +890,10 @@
 
                             @can('view-any', \App\Models\Order::class)
                                 <li>
-                                    <a href="{{ route('order.index') }}" class="waves-effect" id="dash_menu_order_btn">
+                                    <a href="{{ route('order.index') }}" class="waves-effect position-relative" id="dash_menu_order_btn">
                                         <i class="mdi mdi-cart-arrow-down"></i>
                                         @if (pending_orders_count() > 0)
-                                            <span class="badge rounded-pill bg-danger float-end" id="dash_menu_order_count">{{ pending_orders_count() }}</span>                                        
+                                            <span class="rounded-pill bg-danger float-end" id="dash_menu_order_count">{{ pending_orders_count() }}</span>                                        
                                         @endif
                                         <span key="t-maps">Order</span>
                                     </a>
@@ -918,7 +950,7 @@
                                         <li id="dash_menu_inbox_btn">
                                             <a href="{{ route('admin.message.index') }}" class="@yield('message_inbox_active')">Inbox
                                                 @if (total_unread_message() > 0)
-                                                    <span class="badge rounded-pill bg-danger float-end" id="dash_menu_order_count">{{ total_unread_message() }}</span>
+                                                    <span class="rounded-pill bg-danger float-end" id="dash_menu_message_count">{{ total_unread_message() }}</span>
                                                 @endif
                                             </a>
                                         </li>
@@ -1011,11 +1043,13 @@
         <script src="{{ asset('dashboard_assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
         <script src="{{ asset('dashboard_assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
         <script src="{{ asset('dashboard_assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js') }}"></script>
+        <script src="{{ asset('dashboard_assets/libs/apexcharts/apexcharts.min.js') }}"></script>
         <script src="{{ asset('dashboard_assets/js/app.js') }}"></script>
 
         @yield('footer_script')
 
         <script>
+
 
             function roundNumber(number) {
                 var results = Number((Math.abs(number) * 100).toPrecision(15));

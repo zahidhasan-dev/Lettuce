@@ -1132,5 +1132,25 @@
 
 
 
+    if(!function_exists('get_revenue_growth_rate')){
+
+        function get_revenue_growth_rate(int $final_value, int $initial_value){
+
+
+            if($initial_value == 0){
+                $growth = 100;
+            }
+            else{
+                $growth = ((($final_value-$initial_value)/$initial_value)*100);
+            }
+
+            return number_format($growth,(is_float($growth) ? 2 : 0));
+            
+        }
+
+    }
+
+
+
 
 ?>

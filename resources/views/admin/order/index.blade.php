@@ -164,7 +164,7 @@
             });
 
 
-            $(document).on('click','#view_order_details_btn', function(e){
+            $(document).on('click','.view_order_details_btn', function(e){
 
                 e.preventDefault();
 

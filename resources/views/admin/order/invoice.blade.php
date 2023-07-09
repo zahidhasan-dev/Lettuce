@@ -148,7 +148,7 @@
             <div class="flex-container page_header clearfix">
                 <div class="float-start flex-item-6 d-inline-block">
                     <div class="text-150">
-                        <img src="{{ public_path('frontend_assets/img/logo.png') }}" alt="Logo">
+                        <img width="150" src="{{ public_path('frontend_assets/img/logo-dark.png') }}" alt="Logo">
                     </div>
                 </div>
                 {{-- <div class="float-end flex-item-6 d-inline-block">

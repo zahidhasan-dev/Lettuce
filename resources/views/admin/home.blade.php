@@ -277,6 +277,67 @@
                 </div>
             </div>
             <!-- end row -->
+            
+            
+            <div class="row">
+                <div class="col-xl-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title mb-4">Top Selling product</h4>
+
+                            <div class="table-responsive mt-4">
+                                <table class="table align-middle mb-0">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <h5 class="font-size-14 mb-1">Product A</h5>
+                                                <p class="text-muted mb-0">Neque quis est</p>
+                                            </td>
+
+                                            <td style="position: relative;">
+                                                <div id="radialchart-1" class="apex-charts" style="min-height: 61px;"><div id="apexchartsp6e7unjc" class="apexcharts-canvas apexchartsp6e7unjc apexcharts-theme-light" style="width: 60px; height: 61px;"><svg id="SvgjsSvg2424" width="60" height="61" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" class="apexcharts-svg" xmlns:data="ApexChartsNS" transform="translate(0, 0)" style="background: transparent;"><g id="SvgjsG2426" class="apexcharts-inner apexcharts-graphical" transform="translate(0, 0)"><defs id="SvgjsDefs2425"><clipPath id="gridRectMaskp6e7unjc"><rect id="SvgjsRect2428" width="66" height="62" x="-3" y="-1" rx="0" ry="0" opacity="1" stroke-width="0" stroke="none" stroke-dasharray="0" fill="#fff"></rect></clipPath><clipPath id="gridRectMarkerMaskp6e7unjc"><rect id="SvgjsRect2429" width="64" height="64" x="-2" y="-2" rx="0" ry="0" opacity="1" stroke-width="0" stroke="none" stroke-dasharray="0" fill="#fff"></rect></clipPath></defs><g id="SvgjsG2430" class="apexcharts-radialbar"><g id="SvgjsG2431"><g id="SvgjsG2432" class="apexcharts-tracks"><g id="SvgjsG2433" class="apexcharts-radialbar-track apexcharts-track" rel="1"><path id="apexcharts-radialbarTrack-0" d="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 1 1 29.99642420350187 9.512195433998325" fill="none" fill-opacity="1" stroke="rgba(242,242,242,0.85)" stroke-opacity="1" stroke-linecap="butt" stroke-width="5.678048780487805" stroke-dasharray="0" class="apexcharts-radialbar-area" data:pathOrig="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 1 1 29.99642420350187 9.512195433998325"></path></g></g><g id="SvgjsG2435"><g id="SvgjsG2437" class="apexcharts-series apexcharts-radial-series" seriesName="seriesx1" rel="1" data:realIndex="0"><path id="SvgjsPath2438" d="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 0 1 44.98383193561228 43.972649328109725" fill="none" fill-opacity="0.85" stroke="rgba(85,110,230,0.85)" stroke-opacity="1" stroke-linecap="butt" stroke-width="5.853658536585366" stroke-dasharray="0" class="apexcharts-radialbar-area apexcharts-radialbar-slice-0" data:angle="133" data:value="37" index="0" j="0" data:pathOrig="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 0 1 44.98383193561228 43.972649328109725"></path></g><circle id="SvgjsCircle2436" r="17.64878048780488" cx="30" cy="30" class="apexcharts-radialbar-hollow" fill="transparent"></circle></g></g></g><line id="SvgjsLine2439" x1="0" y1="0" x2="60" y2="0" stroke="#b6b6b6" stroke-dasharray="0" stroke-width="1" class="apexcharts-ycrosshairs"></line><line id="SvgjsLine2440" x1="0" y1="0" x2="60" y2="0" stroke-dasharray="0" stroke-width="0" class="apexcharts-ycrosshairs-hidden"></line></g><g id="SvgjsG2427" class="apexcharts-annotations"></g></svg><div class="apexcharts-legend"></div></div></div>
+                                            <div class="resize-triggers"><div class="expand-trigger"><div style="width: 87px; height: 86px;"></div></div><div class="contract-trigger"></div></div></td>
+                                            <td>
+                                                <p class="text-muted mb-1">Sales</p>
+                                                <h5 class="mb-0">37 %</h5>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <h5 class="font-size-14 mb-1">Product B</h5>
+                                                <p class="text-muted mb-0">Quis autem iure</p>
+                                            </td>
+
+                                            <td style="position: relative;">
+                                                <div id="radialchart-2" class="apex-charts" style="min-height: 61px;"><div id="apexchartspvpa8bc7" class="apexcharts-canvas apexchartspvpa8bc7 apexcharts-theme-light" style="width: 60px; height: 61px;"><svg id="SvgjsSvg2441" width="60" height="61" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" class="apexcharts-svg" xmlns:data="ApexChartsNS" transform="translate(0, 0)" style="background: transparent;"><g id="SvgjsG2443" class="apexcharts-inner apexcharts-graphical" transform="translate(0, 0)"><defs id="SvgjsDefs2442"><clipPath id="gridRectMaskpvpa8bc7"><rect id="SvgjsRect2445" width="66" height="62" x="-3" y="-1" rx="0" ry="0" opacity="1" stroke-width="0" stroke="none" stroke-dasharray="0" fill="#fff"></rect></clipPath><clipPath id="gridRectMarkerMaskpvpa8bc7"><rect id="SvgjsRect2446" width="64" height="64" x="-2" y="-2" rx="0" ry="0" opacity="1" stroke-width="0" stroke="none" stroke-dasharray="0" fill="#fff"></rect></clipPath></defs><g id="SvgjsG2447" class="apexcharts-radialbar"><g id="SvgjsG2448"><g id="SvgjsG2449" class="apexcharts-tracks"><g id="SvgjsG2450" class="apexcharts-radialbar-track apexcharts-track" rel="1"><path id="apexcharts-radialbarTrack-0" d="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 1 1 29.99642420350187 9.512195433998325" fill="none" fill-opacity="1" stroke="rgba(242,242,242,0.85)" stroke-opacity="1" stroke-linecap="butt" stroke-width="5.678048780487805" stroke-dasharray="0" class="apexcharts-radialbar-area" data:pathOrig="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 1 1 29.99642420350187 9.512195433998325"></path></g></g><g id="SvgjsG2452"><g id="SvgjsG2454" class="apexcharts-series apexcharts-radial-series" seriesName="seriesx1" rel="1" data:realIndex="0"><path id="SvgjsPath2455" d="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 1 1 9.888613802535662 33.90925746625116" fill="none" fill-opacity="0.85" stroke="rgba(52,195,143,0.85)" stroke-opacity="1" stroke-linecap="butt" stroke-width="5.853658536585366" stroke-dasharray="0" class="apexcharts-radialbar-area apexcharts-radialbar-slice-0" data:angle="259" data:value="72" index="0" j="0" data:pathOrig="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 1 1 9.888613802535662 33.90925746625116"></path></g><circle id="SvgjsCircle2453" r="17.64878048780488" cx="30" cy="30" class="apexcharts-radialbar-hollow" fill="transparent"></circle></g></g></g><line id="SvgjsLine2456" x1="0" y1="0" x2="60" y2="0" stroke="#b6b6b6" stroke-dasharray="0" stroke-width="1" class="apexcharts-ycrosshairs"></line><line id="SvgjsLine2457" x1="0" y1="0" x2="60" y2="0" stroke-dasharray="0" stroke-width="0" class="apexcharts-ycrosshairs-hidden"></line></g><g id="SvgjsG2444" class="apexcharts-annotations"></g></svg><div class="apexcharts-legend"></div></div></div>
+                                            <div class="resize-triggers"><div class="expand-trigger"><div style="width: 87px; height: 86px;"></div></div><div class="contract-trigger"></div></div></td>
+                                            <td>
+                                                <p class="text-muted mb-1">Sales</p>
+                                                <h5 class="mb-0">72 %</h5>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <h5 class="font-size-14 mb-1">Product C</h5>
+                                                <p class="text-muted mb-0">Sed aliquam mauris.</p>
+                                            </td>
+
+                                            <td style="position: relative;">
+                                                <div id="radialchart-3" class="apex-charts" style="min-height: 61px;"><div id="apexchartsmdznhq26" class="apexcharts-canvas apexchartsmdznhq26 apexcharts-theme-light" style="width: 60px; height: 61px;"><svg id="SvgjsSvg2458" width="60" height="61" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" class="apexcharts-svg" xmlns:data="ApexChartsNS" transform="translate(0, 0)" style="background: transparent;"><g id="SvgjsG2460" class="apexcharts-inner apexcharts-graphical" transform="translate(0, 0)"><defs id="SvgjsDefs2459"><clipPath id="gridRectMaskmdznhq26"><rect id="SvgjsRect2462" width="66" height="62" x="-3" y="-1" rx="0" ry="0" opacity="1" stroke-width="0" stroke="none" stroke-dasharray="0" fill="#fff"></rect></clipPath><clipPath id="gridRectMarkerMaskmdznhq26"><rect id="SvgjsRect2463" width="64" height="64" x="-2" y="-2" rx="0" ry="0" opacity="1" stroke-width="0" stroke="none" stroke-dasharray="0" fill="#fff"></rect></clipPath></defs><g id="SvgjsG2464" class="apexcharts-radialbar"><g id="SvgjsG2465"><g id="SvgjsG2466" class="apexcharts-tracks"><g id="SvgjsG2467" class="apexcharts-radialbar-track apexcharts-track" rel="1"><path id="apexcharts-radialbarTrack-0" d="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 1 1 29.99642420350187 9.512195433998325" fill="none" fill-opacity="1" stroke="rgba(242,242,242,0.85)" stroke-opacity="1" stroke-linecap="butt" stroke-width="5.678048780487805" stroke-dasharray="0" class="apexcharts-radialbar-area" data:pathOrig="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 1 1 29.99642420350187 9.512195433998325"></path></g></g><g id="SvgjsG2469"><g id="SvgjsG2471" class="apexcharts-series apexcharts-radial-series" seriesName="seriesx1" rel="1" data:realIndex="0"><path id="SvgjsPath2472" d="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 1 1 25.043551407226317 49.87922951394725" fill="none" fill-opacity="0.85" stroke="rgba(244,106,106,0.85)" stroke-opacity="1" stroke-linecap="butt" stroke-width="5.853658536585366" stroke-dasharray="0" class="apexcharts-radialbar-area apexcharts-radialbar-slice-0" data:angle="194" data:value="54" index="0" j="0" data:pathOrig="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 1 1 25.043551407226317 49.87922951394725"></path></g><circle id="SvgjsCircle2470" r="17.64878048780488" cx="30" cy="30" class="apexcharts-radialbar-hollow" fill="transparent"></circle></g></g></g><line id="SvgjsLine2473" x1="0" y1="0" x2="60" y2="0" stroke="#b6b6b6" stroke-dasharray="0" stroke-width="1" class="apexcharts-ycrosshairs"></line><line id="SvgjsLine2474" x1="0" y1="0" x2="60" y2="0" stroke-dasharray="0" stroke-width="0" class="apexcharts-ycrosshairs-hidden"></line></g><g id="SvgjsG2461" class="apexcharts-annotations"></g></svg><div class="apexcharts-legend"></div></div></div>
+                                            <div class="resize-triggers"><div class="expand-trigger"><div style="width: 87px; height: 86px;"></div></div><div class="contract-trigger"></div></div></td>
+                                            <td>
+                                                <p class="text-muted mb-1">Sales</p>
+                                                <h5 class="mb-0">54 %</h5>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
 
             <div class="row">
                 <div class="col-lg-12">

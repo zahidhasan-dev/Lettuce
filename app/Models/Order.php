@@ -9,58 +9,58 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
 {
-    use HasFactory;
+   use HasFactory;
 
-    protected $guarded = [];
-
-
-
-    function order_user()
-    {
-        return $this->belongsTo(User::class);
-    }
+   protected $guarded = [];
 
 
-    function order_items()
-    {
-        return $this->hasMany(OrderItem::class);
-    }
+
+   function order_user()
+   {
+      return $this->belongsTo(User::class);
+   }
 
 
-    public function scopeToday($query)
-    {
-       return $query->whereDate('created_at', Carbon::today());
-    }
+   function order_items()
+   {
+      return $this->hasMany(OrderItem::class);
+   }
 
 
-    public function scopeYesterday($query)
-    {
-       return $query->whereDate('created_at', Carbon::yesterday());
-    }
+   public function scopeToday($query)
+   {
+      return $query->whereDate('created_at', Carbon::today());
+   }
 
 
-    public function scopeWeekly($query, $from, $to)
-    {
-       return $query->whereBetween('created_at',[$from, $to]);
-    }
+   public function scopeYesterday($query)
+   {
+      return $query->whereDate('created_at', Carbon::yesterday());
+   }
 
 
-    public function scopeMonthly($query, $from , $to)
-    {
-       return $query->whereBetween('created_at',[$from, $to]);
-    }
+   public function scopeWeekly($query, $from, $to)
+   {
+      return $query->whereBetween('created_at',[$from, $to]);
+   }
 
 
-    public function scopeYearly($query, $from , $to)
-    {
-       return $query->whereBetween('created_at',[$from, $to]);
-    }
+   public function scopeMonthly($query, $from , $to)
+   {
+      return $query->whereBetween('created_at',[$from, $to]);
+   }
 
 
-    public function scopeCountTotal($query)
-    {
-        return $query->select(DB::raw('COUNT(*) as orders_count, SUM(order_total) as revenue'))->first();
-    }
+   public function scopeYearly($query, $from , $to)
+   {
+      return $query->whereBetween('created_at',[$from, $to]);
+   }
+
+
+   public function scopeCountTotal($query)
+   {
+      return $query->select(DB::raw('COUNT(*) as orders_count, SUM(order_total) as revenue'))->first();
+   }
 
     
 }

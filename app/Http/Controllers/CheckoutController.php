@@ -188,7 +188,6 @@ class CheckoutController extends Controller
             'billing_phone'=>$request['billing_phone'],
             'billing_country'=>$request['billing_country'],
             'billing_city'=>$request['billing_city'],
-            'billing_city'=>$request['billing_city'],
             'billing_zipcode'=>$request['billing_zipcode'],
             'billing_address'=>$request['billing_address'],
             'order_note'=>$request['order_note'],

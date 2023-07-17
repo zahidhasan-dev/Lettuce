@@ -100,7 +100,7 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <h6 class="m-0 text-right">Vat{{ ' ('.($order->order_vat * 100).'%)' }}:</h6>
+                        <h6 class="m-0 text-right">Vat{{ ' ('.($order->order_vat).'%)' }}:</h6>
                     </td>
                     <td>
                         ${{ number_format(($order->vat_value / 100), 2) }}

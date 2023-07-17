@@ -175,6 +175,28 @@
 
                 $('#dash_menu_inbox_btn').load(' #dash_menu_inbox_btn>* ');
             });
+
+
+             // delete all message 
+
+             $(document).on('click','#delete_all_message_btn', function(e){
+
+                e.preventDefault();
+
+                let all_messages = [];
+
+                $('.message_check:checked').each(function(){
+                    all_messages.push($(this).val());
+                });
+
+                if(all_messages.length != 0){
+                    $('#deleteAllMessage').modal('show');
+                    $('.modal_message_delete_all').data('id',all_messages);
+                }
+                else{
+                    alert('Please select row!');
+                }
+            });
             
 
             $(document).on('click','.modal_message_delete_all', function(e){

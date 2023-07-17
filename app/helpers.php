@@ -383,7 +383,7 @@
 
         function productSize($product_id){
 
-            $product = \App\Models\Product::where('id',$product_id)->first();
+            $product = \App\Models\Product::with('size')->where('id',$product_id)->first();
 
             if($product){
 
@@ -805,7 +805,7 @@
         function getCartTotal(){
 
             $cartSubTotal =  (getCartSubTotal() * 100);
-            $shipping = 10 * 100;
+            $shipping = config('app.shipping');
             
             if(getCartSubTotal() > 100 || getCartNumber() == 0){
                 $shipping = 0;
@@ -830,7 +830,7 @@
                 $newSubTotal = 0;
             }
 
-            $vat = 15 / 100;
+            $vat = config('app.vat') / 100;
             $vat_value = $newSubTotal * $vat;
 
             $cartTotal = ($newSubTotal * (1 + $vat)) + $shipping;
@@ -840,7 +840,7 @@
                 'coupon_code'=>$coupon_code,
                 'coupon_value_type'=>$coupon_value_type,
                 'coupon_discount_amount'=>$coupon_amount,
-                'vat'=>$vat,
+                'vat'=>$vat*100,
                 'vat_value'=>$vat_value,
                 'shipping'=>$shipping,
                 'cart_sub_total'=>$cartSubTotal,
@@ -1014,12 +1014,38 @@
     if(!function_exists('top_rated_products')){
 
         function top_rated_products(){
-            return  \App\Models\Product::where('status',1)
-                                        ->whereHas('reviews')
-                                        ->withCount('reviews')
-                                        ->orderBy('reviews_count','desc');
+            return \App\Models\Product::where('status',1)
+                                    ->whereHas('reviews')
+                                    ->with('reviews')
+                                    ->withCount('reviews')
+                                    ->withAvg('reviews as avg_rating', 'review_rating')
+                                    ->orderBy('avg_rating', 'desc');
         }
 
+    }
+
+
+    if(! function_exists('best_selling_products')){
+
+        function best_selling_products(){
+            return \App\Models\Product::where('status',1)
+                                    ->whereHas('product_orders')
+                                    ->withCount('product_orders as total_order')
+                                    ->orderBy('total_order', 'desc');
+        }
+
+    }
+
+
+    if(! function_exists('most_viewed_products')){
+
+        function most_viewed_products(){
+            return \App\Models\Product::where('status',1)
+                                    ->wherehas('product_views')
+                                    ->withCount('product_views as total_view')
+                                    ->orderBy('total_view','desc');
+        }
+        
     }
 
 
@@ -1137,8 +1163,11 @@
         function get_revenue_growth_rate(int $final_value, int $initial_value){
 
 
-            if($initial_value == 0){
+            if($final_value > 0 && $initial_value == 0){
                 $growth = 100;
+            }
+            elseif ($final_value == 0 && $initial_value == 0) {
+                $growth = 0;
             }
             else{
                 $growth = ((($final_value-$initial_value)/$initial_value)*100);
@@ -1151,6 +1180,18 @@
     }
 
 
+
+    if(!function_exists('get_logo_image') ){
+
+        function get_logo_image(string $logoType){
+            $logo = \App\Models\Logo::where('type',$logoType)->select('image')->first();
+
+            $image = $logo != null ? $logo->image : '';
+
+            return asset('uploads/logo/'.$image);
+        }
+
+    }
 
 
 ?>

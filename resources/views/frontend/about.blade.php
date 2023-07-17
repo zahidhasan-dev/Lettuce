@@ -44,7 +44,7 @@
         <!-- ABOUT US AREA END -->
 
     <!-- FEATURE AREA START ( Feature - 6) -->
-    <div class="ltn__feature-area section-bg-1 pt-115 pb-90">
+    <div class="ltn__feature-area pb-90">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
@@ -57,7 +57,7 @@
             <div class="row justify-content-center">
                 @foreach ($features as $feature)    
                     <div class="col-lg-4 col-sm-6 col-12">
-                        <div class="ltn__feature-item ltn__feature-item-7">
+                        <div class="feature_item ltn__feature-item ltn__feature-item-7">
                             <div class="ltn__feature-icon-title">
                                 <div class="ltn__feature-icon">
                                     <span><img src="{{ asset('uploads/feature/'.$feature->feature_image) }}" alt="#"></span>
@@ -76,49 +76,49 @@
     <!-- FEATURE AREA END -->
 
 
-    <!-- FAQ AREA START (faq-2) (ID > accordion_2) -->
-    <div class="ltn__faq-area pt-115 pb-120">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="section-title-area ltn__section-title-2 text-center">
-                        <h1 class="section-title white-color---">Some Questions</h1>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="ltn__faq-inner ltn__faq-inner-2">
-                        <div id="accordion_2">
-
-                            @foreach ($faqs as $key => $faq )
-                            <!-- card -->
-                            <div class="card">
-                                <h6 class="collapsed ltn__card-title" data-toggle="collapse" data-target="#faq-item-{{ $faq->id }}" aria-expanded="{{ $key == 0 ? 'true' : 'false' }}">
-                                    How to buy a product?
-                                </h6>
-                                <div id="faq-item-{{ $faq->id }}" class="collapse {{ $key == 0 ? 'show' : '' }}" data-parent="#accordion_2">
-                                    <div class="card-body">
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Scelerisque eleifend donec pretium vulputate sapien nec sagittis. Proin libero nunc consequat interdum. Condimentum lacinia quis vel eros donec ac.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <aside class="sidebar-area ltn__right-sidebar mt-60">
-                        <!-- Banner Widget -->
-                        <div class="widget ltn__banner-widget">
-                            <a href="{{ route('shop') }}"><img src="{{ asset('frontend_assets/img/bg/12.png') }}" alt="Banner Image"></a>
-                        </div>
-                    </aside>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- FAQ AREA START -->
-
    
+@endsection
+
+
+@section('footer_script')
+    
+    <script>
+        
+        window.addEventListener('load', function(){
+            adjustElemHeight('.feature_item');
+        });
+
+
+        window.addEventListener('resize', function () {
+            adjustElemHeight('.feature_item');
+        });
+
+        function adjustElemHeight(elem){
+            let elems = [];
+            let h_height = 0;
+
+            if(typeof elem === 'string'){
+                elems = document.querySelectorAll(elem);
+            }
+            else if(typeof elem === 'object'){
+                elem.forEach(function(el){
+                    elems.push(document.querySelector(el));
+                });
+            }
+
+            elems.forEach(function(elem){
+                elem.style = `min-height:${0+"px"}`;
+
+                if(elem.offsetHeight > h_height){
+                    h_height = elem.offsetHeight;
+                }
+            });
+
+            elems.forEach(function(elem){
+                elem.style = `min-height:${h_height+"px"}`;
+            });
+        }
+
+    </script>
+
 @endsection

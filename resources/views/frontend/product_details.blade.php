@@ -337,7 +337,7 @@
                         @if ($banner != null)
                             <!-- Banner Widget -->
                             <div class="widget ltn__banner-widget">
-                                <a href="{{ $banner->url }}"><img src="{{ asset('uploads/banner/'.$banner->banner_image) }}" alt="#"></a>
+                                <a href="{{ url($banner->url) }}"><img src="{{ asset('uploads/banner/'.$banner->banner_image) }}" alt="#"></a>
                             </div>
                         @endif
                         

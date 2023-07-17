@@ -26,6 +26,7 @@ class AuthServiceProvider extends ServiceProvider
         'App\Models\Category' => 'App\Policies\CategoryPolicy',
         'App\Models\Coupon' => 'App\Policies\CouponPolicy',
         'App\Models\Discount' => 'App\Policies\DiscountPolicy',
+        'App\Models\Logo' => 'App\Policies\LogoPolicy',
         'App\Models\Order' => 'App\Policies\OrderPolicy',
         'App\Models\Country' => 'App\Policies\CountryPolicy',
         'App\Models\City' => 'App\Policies\CityPolicy',

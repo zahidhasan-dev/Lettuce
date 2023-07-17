@@ -14,7 +14,7 @@
         <!-- App favicon -->
         
         <!-- Place favicon.png in the root directory -->
-        <link rel="shortcut icon" href="{{ asset('dashboard_assets/images/favicon.png') }}" type="image/x-icon" />
+        <link rel="shortcut icon" href="{{ get_logo_image('favicon') }}" type="image/x-icon" />
         <!-- Responsive -->
         <link href="{{ asset('dashboard_assets/libs/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('dashboard_assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
@@ -31,9 +31,45 @@
 
         <style>
 
+
+            #top_product_wrapper .table>:not(caption)>*>*{
+                padding:8px;
+            }
+
+            #top_product_wrapper .product_name{
+                width:40%;
+                padding:8px;
+            }
+            
+            #top_product_wrapper .product_image{
+                width:20%;
+                padding:8px;
+            }
+
+            #top_product_wrapper .product_sale,
+            #top_product_wrapper .product_view,
+            #top_product_wrapper .product_rating_count {
+                width:40%;
+                text-align:center;
+            }
+
+            .dash_product_link{
+                color: #495057;
+                transition: .3s;
+            }
+
+            .dash_product_link:hover{
+                color:#556ee6;
+            }
+
+            #top_rated_product .product_rating li i{
+                font-size: 10px;
+            }
+
             .product_rating ul{
                 padding:0;
             }
+            
             .product_rating li{
                 list-style: none;
                 display: inline-block;
@@ -457,7 +493,9 @@
             
             #banner_image_wrapper,
             #about_image_wrapper,
-            #feature_image_wrapper {
+            #feature_image_wrapper,
+            .logo_image_wrapper {
+                max-width: 100%;
                 height: 180px;
                 width: 230px;
                 position: relative;
@@ -467,12 +505,33 @@
             #product_thumbnail_wrapper #product_thumbnail_preview,
             #banner_image_wrapper #banner_image_preview,
             #about_image_wrapper #about_image_preview,
-            #feature_image_wrapper #feature_image_preview{
+            #feature_image_wrapper #feature_image_preview,
+            .logo_image_wrapper .logo_image_preview{
                 position: absolute;
                 height: 100%;
                 width:100%;
                 max-width:100%;
                 padding:10px;
+            }
+
+            .logo_image_wrapper{
+                max-width: 100%;
+                width: 160px;
+                height: 160px;
+                background-color: #d3d3d3;
+                border: none;
+            }
+
+            .logo_wrapper a{
+                min-width: 74px;
+            }
+
+            .logo_image_wrapper .logo_image_preview{
+                object-fit: scale-down;
+            }
+
+            #logo_success_alert.hide{
+                opacity: 0;
             }
 
             #feature_image_wrapper #feature_image_preview {
@@ -486,7 +545,8 @@
             #product_thumbnail_label,
             #banner_image_label,
             #about_image_label,
-            #feature_image_label {
+            #feature_image_label,
+            .logo_image_label {
                 position: absolute;
                 width: 100%;
                 height: 100%;
@@ -497,6 +557,10 @@
                 margin-bottom: 0 !important;
                 cursor:pointer;
                 z-index:9;
+            }
+
+            .logo_image_label > *{
+                color:#474545 !important;
             }
            
            
@@ -697,10 +761,10 @@
                         <div class="navbar-brand-box">
                            <a href="{{ route('index') }}" class="logo logo-light">
                                 <span class="logo-sm">
-                                    <img src="{{ asset('dashboard_assets/images/logo-sm.png') }}" alt="" height="25">
+                                    <img src="{{ get_logo_image('mobile') }}" alt="logo" height="25">
                                 </span>
                                 <span class="logo-lg">
-                                    <img src="{{ asset('dashboard_assets/images/logo-light.png') }}" alt="" height="30">
+                                    <img src="{{ get_logo_image('light') }}" alt="logo" height="30">
                                 </span>
                             </a>
                         </div>
@@ -760,13 +824,18 @@
                                 </a>
                             </li>
 
-                            @if (auth()->user()->hasAnyPermission(['view-about','create-about','view-feature','create-feature','view-banner','create-banner','view-contact','view-faq']) || auth()->user()->isSuperAdmin())
+                            @if (auth()->user()->hasAnyPermission(['view-logo','create-logo','view-about','create-about','view-feature','create-feature','view-banner','create-banner','view-contact','view-faq']) || auth()->user()->isSuperAdmin())
                                 <li class="@yield('about_parent_active')">
                                     <a href="javascript: void(0);" class="has-arrow waves-effect">
                                         <i class="bx bx-layout"></i>
                                         <span key="t-multi-level">Frontend</span>
                                     </a>
                                     <ul class="sub-menu mm-collapse" aria-expanded="true">
+                                        
+                                        @canany(['create', 'view-any'], \App\Models\Logo::class)
+                                            <li><a href="{{ route('admin.logo.index') }}" key="t-compact-sidebar">Logo</a></li>
+                                        @endcanany
+                                        
                                         @canany (['view-any','create'], \App\Models\About::class)
                                             <li class="@yield('about_parent_active')">
                                                 <a href="javascript: void(0);" class="has-arrow" key="t-level-1-2">About</a>
@@ -841,7 +910,7 @@
                                 </li>
                             @endcan
 
-                            @if (auth()->user()->hasAnyPermission(['view-product','create-product','update-product','view-size']) || auth()->user()->isSuperAdmin())                                
+                            @if (auth()->user()->hasAnyPermission(['view-product','create-product','view-size','create-product-discount','delete-product-discount']) || auth()->user()->isSuperAdmin())                                
                                 <li class="@yield('parent_active')">
                                     <a href="javascript: void(0);" class="has-arrow waves-effect">
                                         <i class="bx bxl-product-hunt"></i>
@@ -856,13 +925,13 @@
                                             <li><a href="{{ route('product.create') }}">Add Product</a></li>
                                         @endcan
 
-                                        @if (auth()->user()->hasPermissionTo('update-product') || auth()->user()->isSuperAdmin())
+                                        @canany (['create-product-discount','delete-product-discount'], \App\Models\Product::class)
                                             <li><a href="{{ route('product.discount.create') }}">Product Discount</a></li>
-                                        @endif
+                                        @endcan
 
                                         @can('view-any', \App\Models\ProductSize::class)
                                             <li><a href="{{ route('size.index') }}">Size</a></li>                                        
-                                        @endcan
+                                        @endcanany
                                         @can('view-any', \App\Models\Product::class)                                        
                                             <li><a href="{{ route('product.trash') }}">Trash</a></li>
                                         @endcan
@@ -1084,29 +1153,6 @@
 
                 });
             }
-            
-
-
-            // delete all message 
-
-            $(document).on('click','#delete_all_message_btn', function(e){
-
-                e.preventDefault();
-
-                let all_messages = [];
-
-                $('.message_check:checked').each(function(){
-                    all_messages.push($(this).val());
-                });
-
-                if(all_messages.length != 0){
-                    $('#deleteAllMessage').modal('show');
-                    $('.modal_message_delete_all').data('id',all_messages);
-                }
-                else{
-                    alert('Please select row!');
-                }
-            });
 
 
 
@@ -1162,12 +1208,13 @@
                 let message_status = $('#message_status').val();
                 let message_sort_by = $('.message_sort_btn.active').data('value');
                 let message_query = $(this).val().trim();
-                
+
                 $('#current_page').val(1);
 
                 messageQuery(message_status,message_sort_by,message_query,url);
 
             });
+            
 
 
             //message query 
@@ -1175,10 +1222,10 @@
             function messageQuery(message_status,message_sort_by='',message_query='',url,page=''){
 
                 let formData = {
-                    message_status:message_status,
-                    message_sort_by:message_sort_by,
-                    message_query:message_query,
-                    page:page
+                    message_status: message_status,
+                    message_sort_by: message_sort_by,
+                    message_query: message_query,
+                    page: page
                 };
 
                 $.ajax({
@@ -1303,21 +1350,21 @@
 
             // remove input photo
 
-            function removeInputPhoto(input,preview_wrapper,remove_btn,remove_overlay){
+            function removeInputPhoto(input,parentElem,remove_btn,overlayParentELem){
                 $(input).val('');
-                $(preview_wrapper).find('img').remove();
-                $(remove_overlay).removeClass('has_preview');
-                $(remove_overlay).find('.preview_overlay').remove();
+                $(parentElem).find('img').remove();
+                $(overlayParentELem).removeClass('has_preview');
+                $(overlayParentELem).find('.preview_overlay').remove();
                 $(remove_btn).remove();
             }
 
 
             // add image preview overlay 
 
-            function addPreviewOverlay(preview_wrapper,input_label){
-                if($(preview_wrapper).children('.has_preview').length == 0){
+            function addPreviewOverlay(parentElem,input_label){
+                if($(parentElem).children('.has_preview').length == 0){
                     $(input_label).addClass('has_preview');
-                    $(preview_wrapper).find('.has_preview').prepend('<span class="preview_overlay"></span>');
+                    $(parentElem).find('.has_preview').prepend('<span class="preview_overlay"></span>');
                 }
             }
 
@@ -1345,9 +1392,6 @@
                 
             }
             
-
-
-
             
             // document.getElementById('copyright_text').innerHTML = new Date().getFullYear() + " © Lettuce.";
 

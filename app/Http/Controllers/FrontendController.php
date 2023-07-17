@@ -41,6 +41,7 @@ class FrontendController extends Controller
         $total_products = Product::where('status',1)->count();
 
         $banners = Banner::where('banner_type','campaign')->where('status',1)->inRandomOrder()->limit(3)->get();
+        
         $hero_banners = Banner::where('banner_type','hero')->where('status',1)->get();
 
         $discounted_products = Product::whereHas('product_discount.discount', function($q){
@@ -58,19 +59,9 @@ class FrontendController extends Controller
                                 ->limit(12)
                                 ->get();
 
-        $most_viewed_products = Product::where('status',1)
-                                    ->wherehas('product_views')
-                                    ->withCount('product_views')
-                                    ->orderBy('product_views_count','desc')
-                                    ->limit(12)
-                                    ->get();
+        $most_viewed_products = most_viewed_products()->limit(12)->get();
 
-        $best_seller_products = Product::where('status',1)
-                                    ->whereHas('product_orders')
-                                    ->withCount('product_orders')
-                                    ->orderBy('product_orders_count','desc')
-                                    ->limit(12)
-                                    ->get();
+        $best_seller_products = best_selling_products()->limit(12)->get();
 
         return view('frontend.home', compact(
             'banners',
@@ -169,7 +160,7 @@ class FrontendController extends Controller
                             ->firstOrFail();
     
             $query = Product::whereHas('product_discount.discount', function($q) use($sale_banner){
-                                $q->where('id',$sale_banner->discount_id)->where('status',0)->where('discount_validity','>=',Carbon::now());
+                                $q->where('id',$sale_banner->discount_id)->where('status',1)->where('discount_validity','>=',Carbon::now());
                             })->with('product_discount.discount');                                
     
             if($sale_banner->category_id != null){
@@ -269,11 +260,10 @@ class FrontendController extends Controller
 
     public function about()
     {
-        $faqs = Faq::where('is_active',1)->get();
         $features = Feature::where('is_active',1)->limit(3)->get();
         $about = About::where('is_active',1)->first();
 
-        return view('frontend.about', compact('faqs','about','features'));
+        return view('frontend.about', compact('about','features'));
     }
 
 
@@ -344,18 +334,11 @@ class FrontendController extends Controller
 
     private function insertProductView(int $product_id)
     {
-        $user_id = null;
+        $user_id = auth()->id() ?? null;
 
-        if(auth()->check()){
-            $user_id = auth()->user()->id;
-        }
+        $column_value = auth()->check() ? ['user_id','=',$user_id] : ['user_ip','=',request()->ip()];
 
-        if(auth()->check()){
-            $is_unique_view = ProductView::where('product_id',$product_id)->where('user_id',$user_id)->exists();
-        }
-        else{
-            $is_unique_view = ProductView::where('product_id',$product_id)->where('user_ip',request()->ip())->exists();
-        }
+        $is_unique_view = ProductView::where('product_id',$product_id)->where([$column_value])->exists();
 
         if(!$is_unique_view){
             ProductView::create([

@@ -3,11 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\MailSetting;
-use Illuminate\Http\Request;
-use App\Models\StripeSetting;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\MailSettingFormRequest;
-use App\Http\Requests\StripeSettingFormRequest;
 use Illuminate\Support\Facades\Gate;
 
 class SettingsController extends Controller

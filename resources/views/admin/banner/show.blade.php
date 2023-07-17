@@ -128,7 +128,13 @@ active
                                             </tr>
                                             <tr>
                                                 <th scope="row">Url</th>
-                                                <td>{{ $banner->url }}</td>
+                                                <td>
+                                                    @if ($banner->url != null)
+                                                        {{ $banner->url }}
+                                                    @else
+                                                        N/A
+                                                    @endif
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">Status</th>

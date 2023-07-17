@@ -32,7 +32,7 @@
                                     <div class="tab-content">
                                         <div class="tab-pane fade active show" id="liton_tab_1_1">
                                             <div class="ltn__myaccount-tab-content-inner">
-                                                <p>Hello, <strong>{{ auth()->user()->name}} !</strong> </p>
+                                                <p>Hello, <strong>{{ auth()->user()->name }} !</strong> </p>
                                                 <p>From your account dashboard you can view your <span>recent orders</span>, manage your <span>billing address</span>, and <span>edit your password and account details</span>.</p>
                                             </div>
                                         </div>
@@ -80,9 +80,10 @@
                                                         <div class="show" id="address_content">
                                                             <address>
                                                                 <p><strong>{{ auth()->user()->name }}</strong></p>
-                                                                <p>{{ auth()->user()->userDetails->address }} <br>
-                                                                    {{ auth()->user()->userDetails->getcity->city_name }}, {{ auth()->user()->userDetails->getcountry->country_name }}</p>
-                                                                <p>Mobile: {{ auth()->user()->userDetails->phone }}</p>
+                                                                <p>{!! auth()->user()->userDetails->address != null ? auth()->user()->userDetails->address.' <br>' : '' !!}
+                                                                    {{ auth()->user()->userDetails->getcity->city_name ?? '' }} 
+                                                                    {{ (auth()->user()->userDetails->getcountry != null ) ? ', '.auth()->user()->userDetails->getcountry->country_name: ''}}</p>
+                                                                <p>Mobile: {{ auth()->user()->userDetails->phone ?? 'N/A' }}</p>
                                                             </address>
                                                         </div>
                                                         <div class="hide" id="edit_customer_address_form">

@@ -126,7 +126,7 @@
                                             <td class="cart_shipping_value">${{ number_format((getCartTotal()['shipping'] / 100),2) }}</td>
                                         </tr>
                                         <tr>
-                                            <td>Vat {{ ' ('.(getCartTotal()['vat'] * 100).'%)' }}</td>
+                                            <td>Vat {{ ' ('.(getCartTotal()['vat']).'%)' }}</td>
                                             <td class="cart_vat_value">${{ number_format((getCartTotal()['vat_value'] / 100),2) }}</td>
                                         </tr>
                                         <tr>

@@ -22,8 +22,6 @@ class HomeController extends Controller
 
     public function index()
     {
-        $chart_data = $this->getChartData();
-
         $growth_data = [
             'today' => Order::today()->countTotal(),
             'yesterday' => Order::yesterday()->countTotal(),
@@ -48,12 +46,48 @@ class HomeController extends Controller
                                 ->limit(3)
                                 ->get();
 
+        $top_rated_products = top_rated_products()->limit(3)->get();                        
+        
+        $best_seller_products = best_selling_products()->limit(3)->get();  
+        
+        $most_viewed_products = most_viewed_products()->limit(3)->get();
+
         $latest_orders = Order::orderBy('created_at', 'desc')
                             ->limit(5)
                             ->get();
 
-        return view('admin.home', compact('latest_orders','chart_data','growth_data','top_cities_by_order','count_total_order','total_product','total_customer'));
+        return view('admin.home', compact(
+            'latest_orders',
+            'growth_data',
+            'top_cities_by_order',
+            'count_total_order',
+            'total_product',
+            'total_customer',
+            'top_rated_products',
+            'best_seller_products',
+            'most_viewed_products',
+        ));
+    }
 
+
+
+    public function chart_data()
+    {
+        if(request()->isXmlHttpRequest()){  
+
+            $get_data = $this->getChartData();
+    
+            $data = array_map(function($d){
+
+                return [Carbon::createFromFormat('Y-m-d', $d['date'])->timestamp*1000, $d['order'],number_format($d['revenue']/100,2)];
+
+            },(array)$get_data,[]);
+    
+            return response()->json($data);
+            
+        }
+
+        return response()->json(['error' => 'Bad Request'], 400);
     }
 
 
@@ -62,11 +96,11 @@ class HomeController extends Controller
     {
         $data = [];
         $start_from = "2022-01-01";
-        $current = Carbon::parse($start_from)->format('Y-m-d');
+        $current = Carbon::createFromFormat('Y-m-d', $start_from)->format('Y-m-d');
         $add_days = 0;
 
         while($current < now()->format('Y-m-d')){
-            $current = Carbon::parse($start_from)->addDays($add_days)->format('Y-m-d');
+            $current = Carbon::createFromFormat('Y-m-d', $start_from)->addDays($add_days)->format('Y-m-d');
 
             $data[$current] = [
                 'date'=>$current,

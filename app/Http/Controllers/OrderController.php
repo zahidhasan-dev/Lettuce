@@ -24,7 +24,7 @@ class OrderController extends Controller
     {
         Gate::authorize('view-any', Order::class);
 
-        $orders = Order::orderBy('created_at','desc')->paginate(20);
+        $orders = Order::orderBy('id','desc')->paginate(20);
 
         return view('admin.order.index', compact('orders'));
     }
@@ -81,10 +81,10 @@ class OrderController extends Controller
     {
         $orders = Order::where('id','LIKE','%'.$request->order_query.'%')
                         ->orWhere('billing_email','LIKE','%'.$request->order_query.'%')
-                        ->orderBy('created_at','desc')->paginate(20);
+                        ->orderBy('id','desc')->paginate(20);
 
         if($request->order_query == ''){
-            $orders = Order::orderBy('created_at','desc')->paginate(20);
+            $orders = Order::orderBy('id','desc')->paginate(20);
         }
 
         if($request->order_sort_by != 'default'){
@@ -92,7 +92,7 @@ class OrderController extends Controller
                             ->where('order_status',$request->order_sort_by)
                             ->orWhere('billing_email','LIKE','%'.$request->order_query.'%')
                             ->where('order_status',$request->order_sort_by)
-                            ->orderBy('created_at','desc')->paginate(20);
+                            ->orderBy('id','desc')->paginate(20);
         }
 
         return view('admin.order.query_data', compact('orders'))->render();

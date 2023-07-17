@@ -45,7 +45,7 @@
                 </div>
                 <div class="col-lg-9">
                     <div class="ltn__slide-active-2 slick-slide-arrow-1 slick-slide-dots-1">
-                        <!-- ltn__slide-item -->
+                        {{-- <!-- ltn__slide-item -->
                         <div class="ltn__slide-item ltn__slide-item-10 section-bg-1 bg-image" data-bg="{{ asset('frontend_assets/img/slider/61.jpg') }}">
                             <div class="ltn__slide-item-inner">
                                 <div class="container">
@@ -64,7 +64,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                         @foreach ($hero_banners as $hero_banner)     
                             <!-- ltn__slide-item -->
                             <div class="ltn__slide-item ltn__slide-item-10 section-bg-1 bg-image" data-bg="{{ asset('uploads/banner/'.$hero_banner->banner_image) }}">
@@ -75,10 +75,10 @@
                                                 <div class="slide-item-info">
                                                     <div class="slide-item-info-inner ltn__slide-animation">
                                                         <h5 class="slide-sub-title ltn__secondary-color animated text-uppercase">{{ $hero_banner->banner_sub_title }}</h5>
-                                                        <h1 class="slide-title  animated">{{ $hero_banner->banner_title }}</h1>
+                                                        <h1 class="slide-title  animated">{{ ucwords($hero_banner->banner_title) }}</h1>
                                                         
                                                         <div class="btn-wrapper  animated">
-                                                            <a href="{{ $hero_banner->url }}" class="theme-btn-1 btn btn-effect-1 text-uppercase">{{ $hero_banner->banner_button }}</a>
+                                                            <a href="{{ url($hero_banner->url) }}" class="theme-btn-1 btn btn-effect-1 text-uppercase">{{ $hero_banner->banner_button }}</a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -433,7 +433,7 @@
                     <div class="col-lg-4 col-md-6">
                         <div class="ltn__banner-item">
                             <div class="ltn__banner-img" style="height:220px">
-                                <a href="{{ $banner->url }}">
+                                <a href="{{ url($banner->url) }}">
                                     <img width="100%" height="100%" src="{{ asset('uploads/banner/'.$banner->banner_image) }}" alt="Banner Image">
                                 </a>
                             </div>

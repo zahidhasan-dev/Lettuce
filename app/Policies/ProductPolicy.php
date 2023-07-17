@@ -113,13 +113,13 @@ class ProductPolicy
 
     public function createProductDiscount(User $user)
     {
-        return $user->hasPermissionTo('update-product') === true;
+        return $user->hasPermissionTo('create-product-discount') === true;
     }
+    
 
-
-    public function updateProductDiscount(User $user)
+    public function deleteProductDiscount(User $user)
     {
-        return $user->hasPermissionTo('update-product') === true;
+        return $user->hasPermissionTo('delete-product-discount') === true;
     }
 
 

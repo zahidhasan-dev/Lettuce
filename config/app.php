@@ -125,6 +125,10 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+    'shipping' => 500,
+    
+    'vat' => 15,
+
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
@@ -172,7 +176,7 @@ return [
         /*
          * Application Service Providers...
          */
-        App\Providers\HelperServiceProvider::class,
+        // App\Providers\HelperServiceProvider::class,
         App\Providers\PermissionServiceProvider::class,
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,

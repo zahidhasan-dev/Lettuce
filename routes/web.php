@@ -32,8 +32,11 @@ use App\Http\Controllers\ContactEmailController;
 use App\Http\Controllers\ContactPhoneController;
 use App\Http\Controllers\ProductReviewController;
 use App\Http\Controllers\ContactAddressController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LogoController;
 
 Auth::routes(['verify'=> true]);
+
 
 Route::controller(FrontendController::class)->group(function(){
     
@@ -86,6 +89,7 @@ Route::middleware(['auth','verified','prevent-back-history'])->group(function(){
         Route::group(['prefix'=>'admin'], function(){
 
             Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('admin.home');
+            Route::get('chart-data',[ HomeController::class, 'chart_data']);
 
             Route::resource('about', AboutController::class);
             Route::get('about/{about}/status/update', [AboutController::class, 'updateAboutStatus'])->name('about.status.update');
@@ -162,7 +166,7 @@ Route::middleware(['auth','verified','prevent-back-history'])->group(function(){
             Route::get('product/{id}/status/update', [ProductController::class, 'updateProductStatus'])->name('product.status.update');
             Route::get('product/discount/create', [ProductController::class, 'create_product_discount'])->name('product.discount.create');
             Route::post('product/discount/store', [ProductController::class, 'store_product_discount'])->name('product.discount.store');
-            Route::post('product/by/category/products', [ProductController::class , 'products_by_category'])->name('product.category.products');
+            Route::get('products_by_category', [ProductController::class , 'products_by_category'])->name('category.products');
             Route::get('product/discount/{discount}/edit', [ProductController::class, 'edit_product_discount'])->name('product.discount.edit');
             Route::post('product/{product_id}/discount/update', [ProductController::class, 'update_product_discount'])->name('product.discount.update');
             Route::delete('product/{product_id}/discount/delete', [ProductController::class, 'deleteProductDiscount'])->name('product.discount.delete');
@@ -206,13 +210,16 @@ Route::middleware(['auth','verified','prevent-back-history'])->group(function(){
                 Route::resource('role', RoleController::class);
     
                 Route::resource('permission', PermissionController::class);
-                
+
             });
-
-
+            
             Route::get('settings/mail', [SettingsController::class, 'mailSettings'])->name('admin.settings.mail');
             Route::post('settings/mail/update', [SettingsController::class, 'createOrUpdateMailSettings'])->name('admin.settings.mail.update');
-    
+            
+            Route::get('logo', [LogoController::class, 'index'])->name('admin.logo.index');
+            Route::post('logo/create-or-update', [LogoController::class,'createOrUpdate']);
+            Route::delete('logo/delete/{logo}', [LogoController::class,'destroy'])->name('admin.logo.destroy');
+            
         
         });
     

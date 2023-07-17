@@ -31,7 +31,7 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {   
+    {          
         Gate::authorize('view-any', Product::class);
         
         $products = Product::all();
@@ -92,22 +92,9 @@ class ProductController extends Controller
 
         try{
 
-            $has_discount = 0;
-            $is_featured = 0;
-            $status = 0;
-
-            if(isset($request->product_has_discount)){
-                $has_discount = $request->product_has_discount;
-            }
-
-            if(isset($request->product_featured)){
-                $is_featured = $request->product_featured;;
-            }
-
-            if(isset($request->product_status)){
-                $status = $request->product_status;
-            }
-            
+            $has_discount = $request->product_has_discount ?? 0;
+            $is_featured = $request->product_featured ?? 0;
+            $status = $request->product_status ?? 0;            
 
             $scale = ProductSize::where('id',$request->product_scale)->first();
         
@@ -162,7 +149,7 @@ class ProductController extends Controller
                 }
             }
 
-            if($request->product_has_discount == 1 && $request->product_discount != null){
+            if(($request->product_has_discount == 1 && $request->product_discount != null) && (auth()->user()->hasPermissionTo('create-product-discount') || auth()->user()->isSuperAdmin())){
 
                 ProductDiscount::insert([
                     'product_id'=>$product->id,
@@ -248,21 +235,9 @@ class ProductController extends Controller
 
             $slug = Str::slug($request->product_name,'-').'-'.$product_size.'-'.Carbon::now()->timestamp;
 
-            $has_discount = 0;
-            $is_featured = 0;
-            $status = 0;
-
-            if(isset($request->product_has_discount)){
-                $has_discount = $request->product_has_discount;
-            }
-
-            if(isset($request->product_featured)){
-                $is_featured = $request->product_featured;;
-            }
-
-            if(isset($request->product_status)){
-                $status = $request->product_status;
-            }
+            $has_discount = $request->product_has_discount ?? 0;
+            $is_featured = $request->product_featured ?? 0;
+            $status =$request->product_status ?? 0;
 
             $product->update([
                 'product_name' => $request->product_name,
@@ -277,28 +252,30 @@ class ProductController extends Controller
             ]);
 
 
-            if($has_discount == 1 && $request->product_discount != null){
+            if(auth()->user()->isSuperAdmin() || auth()->user()->hasPermissionTo('create-product-discount')){
+                if($has_discount == 1 && $request->product_discount != null){
 
-                if($product->product_discount != null){
-
-                    ProductDiscount::where('product_id',$product->id)->update([
-                        'discount_id'=>$request->product_discount,
-                    ]);
-
+                    if($product->product_discount != null){
+    
+                        ProductDiscount::where('product_id',$product->id)->update([
+                            'discount_id'=>$request->product_discount,
+                        ]);
+    
+                    }
+                    else{
+    
+                        ProductDiscount::create([
+                            'product_id'=>$product->id,
+                            'discount_id'=>$request->product_discount,
+                        ]);
+    
+                    }
                 }
-                else{
-
-                    ProductDiscount::create([
-                        'product_id'=>$product->id,
-                        'discount_id'=>$request->product_discount,
-                    ]);
-
+                elseif( $has_discount == 0 && $product->product_discount != null ){
+    
+                    ProductDiscount::where('product_id',$product->id)->delete();
+    
                 }
-            }
-            elseif( $has_discount == 0 && $product->product_discount != null ){
-
-                ProductDiscount::where('product_id',$product->id)->delete();
-
             }
 
 
@@ -553,8 +530,9 @@ class ProductController extends Controller
 
     public function create_product_discount()
     {
-
-        Gate::authorize('create-product-discount', Product::class);
+        if(!Gate::any(['create-product-discount','delete-product-discount'])){
+            abort(403);
+        }
 
         $products = Product::where('has_discount',0)->where('status',1)->get();
 
@@ -567,9 +545,10 @@ class ProductController extends Controller
         // $product_discounts = \App\Models\Product::where('has_discount',1)->paginate(10);
         // $product_discounts->load('product_discount.discount');
 
-        $product_discounts = Product::where('has_discount',1)->with(['product_discount.discount' => function($query){
+        $product_discounts = Product::where('has_discount',1)->whereHas('product_discount.discount')->with(['product_discount.discount' => function($query){
             $query->select('id','discount_name');
         }])->select('id','product_name','price','thumbnail','has_discount')->get();
+
 
         return view('admin.product.product_discount', compact('categories','products','discounts','product_discounts'));
         
@@ -609,7 +588,6 @@ class ProductController extends Controller
             return redirect()->back()->with('error','Something went wrong!')->withInput();
 
         }
-
         
     }
 
@@ -617,8 +595,7 @@ class ProductController extends Controller
 
     public function edit_product_discount($discount_id)
     {   
-
-        Gate::authorize('update-product-discount', Product::class);
+        Gate::authorize('create-product-discount', Product::class);
 
         $discount_results = '';
         $discounts = Discount::where('status',1)->where('discount_validity','>=',Carbon::now())->get();
@@ -628,14 +605,13 @@ class ProductController extends Controller
         }
 
         return response()->json($discount_results);
-
     }
 
 
     public function update_product_discount($product_id,Request $request)
     {   
 
-        Gate::authorize('update-product-discount', Product::class);
+        Gate::authorize('create-product-discount', Product::class);
 
         ProductDiscount::where('product_id',$product_id)->update([
             'discount_id'=>$request->discount_id,
@@ -650,6 +626,7 @@ class ProductController extends Controller
 
     public function deleteProductDiscount($product_id)
     {
+        Gate::authorize('delete-product-discount', Product::class);
 
         DB::beginTransaction();
 

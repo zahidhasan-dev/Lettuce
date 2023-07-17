@@ -24,6 +24,7 @@
             <!-- end page title -->
 
             <div class="row">
+                @can('create-product-discount', \App\Models\product::class)
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
@@ -100,6 +101,9 @@
                         </div>
                     </div>
                 </div> <!-- end col -->
+                @endcan
+
+
                 <div class="ccol-12">
                     <div class="card">
                         <div class="alert alert-success product_discount_alert" style="display: none" role="alert">
@@ -125,31 +129,39 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($product_discounts as $index => $product_discount)
-                                        <tr>
-                                            <td>{{ $loop->index+1 }}</td>
-                                            <td>
-                                                <img src="{{ asset('uploads/product/'.$product_discount->thumbnail) }}" width="50px"> 
-                                                {{ $product_discount->product_name.' '.productSize($product_discount->id).' ( '.'$'.round($product_discount->price / 100,2).' )' }}
-                                            </td>
-                                            <td>
-                                                {{ discountPrice($product_discount->id) }}
-                                            </td>
-                                            <td id="product_discount_col_{{  $product_discount->id }}" data-id="{{ $product_discount->product_discount->discount_id }}">
-                                                {{ $product_discount->product_discount->discount->discount_name.' ( '.discountValueType($product_discount->product_discount->discount_id).' )' }}
-                                            </td>
-                                            <td>
-                                                <div class="d-flex gap-3">
-                                                    <a href="javascript:void(0);" class="text-success edit_product_discount" data-id="{{ $product_discount->id }}" >
-                                                        <i class="mdi mdi-pencil font-size-20"></i>
-                                                    </a>
-                                                    <a href="javascript:void(0);" class="text-danger product_discount_delete" data-id="{{ $product_discount->id }}" data-bs-toggle="modal" data-bs-target="#deleteProductDiscount">
-                                                        <i class="mdi mdi-delete font-size-20"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        @endforeach
+                                        @forelse ($product_discounts as $index => $product_discount)
+                                            <tr>
+                                                <td>{{ $loop->index+1 }}</td>
+                                                <td>
+                                                    <img src="{{ asset('uploads/product/'.$product_discount->thumbnail) }}" width="50px"> 
+                                                    {{ $product_discount->product_name.' '.productSize($product_discount->id).' ( '.'$'.round($product_discount->price / 100,2).' )' }}
+                                                </td>
+                                                <td>
+                                                    {{ discountPrice($product_discount->id) }}
+                                                </td>
+                                                <td id="product_discount_col_{{  $product_discount->id }}" data-id="{{ $product_discount->product_discount->discount_id }}">
+                                                    {{ $product_discount->product_discount->discount->discount_name.' ( '.discountValueType($product_discount->product_discount->discount_id).' )' }}
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex gap-3">
+                                                        @can('create-product-discount', \App\Models\Product::class)
+                                                        <a href="javascript:void(0);" class="text-success edit_product_discount" data-id="{{ $product_discount->id }}" >
+                                                            <i class="mdi mdi-pencil font-size-20"></i>
+                                                        </a>
+                                                        @endcan
+                                                        @can('delete-product-discount', \App\Models\Product::class)
+                                                        <a href="javascript:void(0);" class="text-danger product_discount_delete" data-id="{{ $product_discount->id }}" data-bs-toggle="modal" data-bs-target="#deleteProductDiscount">
+                                                            <i class="mdi mdi-delete font-size-20"></i>
+                                                        </a>
+                                                        @endcan
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr class="text-center">
+                                                <td colspan="5">No data available!</td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>
@@ -192,9 +204,18 @@
     <script>
 
 
-        $(document).ready(function(){   
+        $(document).ready(function(){ 
+            
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
 
-            product_discounts_datatable();
+
+            @if ($product_discounts->count() > 0)
+                product_discounts_datatable();
+            @endif
 
             function product_discounts_datatable(){
                 $('#product_discounts_table').DataTable({
@@ -205,172 +226,168 @@
                 });
             }
             
-
-            $(".select_product").select2({
-                templateResult: formatState,
-                templateSelection: formatState
-            });
-
-            function formatState (opt) {
-
-                if (!opt.id) {
-                    return opt.text;
-                } 
-
-                var optimage = $(opt.element).attr('data-image'); 
-
-                if(!optimage){
-                    return opt.text;
-                } 
-                else{  
-                    var $opt = $('<span><img src="' + optimage + '" width="50px" /> ' + opt.text + '</span>');
-                    return $opt;
-                }
-
-            };
-            
-            
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-
-            function get_products_by_category(category_id){
-
-                let id = category_id;
-                let url = "{{ route('product.category.products') }}";
-
-                $.ajax({
-                    type:'POST',
-                    url:url,
-                    data:{category_id:id},
-                    success:function(data)
-                    {
-                        if(data.null_category === 'null'){
-                            $('.select_product').load(' .select_product > * ');
-                        }
-                        else{
-                            $('.select_product').html(data);
-                        }
-                        
-                    },
-                    error:function(){
-                        if(confirm('Something went wrong! Try reloading the page.')){
-                            window.location.reload();
-                        }
-                    }
+            @if(auth()->user()->isSuperAdmin() || auth()->user()->hasPermissionTo('create-product-discount'))
+                $(".select_product").select2({
+                    templateResult: formatState,
+                    templateSelection: formatState
                 });
 
-            }
+                function formatState (opt) {
 
+                    if (!opt.id) {
+                        return opt.text;
+                    } 
 
-            $('#discount_product_category').on('change',function(){
-                let id = $(this).val();
-                get_products_by_category(id);
-            });
+                    var optimage = $(opt.element).attr('data-image'); 
 
+                    if(!optimage){
+                        return opt.text;
+                    } 
+                    else{  
+                        var $opt = $('<span><img src="' + optimage + '" width="50px" /> ' + opt.text + '</span>');
+                        return $opt;
+                    }
 
-            (function update_product_discount_inline(){
+                };
+                
+            
 
-                $(document).on('click','.edit_product_discount', function(event){
-                    event.preventDefault();
+                function get_products_by_category(category_id){
 
-                    $(this).addClass('update_product_discount').removeClass('edit_product_discount')
-                    $(this).find('i').addClass('mdi-content-save').removeClass('mdi-pencil');
-
-                    let product_id = $(this).data('id');
-                    let discount_col = $('#product_discount_col_'+product_id);
-                    let discount_id = discount_col.data('id');
-                    let url = "{{ route('product.discount.edit',':id') }}";
-                        url = url.replace(':id',discount_id);
+                    let id = category_id;
+                    let url = "{{ route('category.products') }}";
 
                     $.ajax({
                         type:'GET',
                         url:url,
-                        success:function(data){
-                            discount_col.html('<select class="form-control text-capitalize" name="product_discount_edit">'+data+'</select>');
-                        },
-                        error:function(){
-                            if(confirm('Something went wrong! Try reloading the page.')){
-                                window.location.reload();
+                        data:{category_id:id},
+                        success:function(data)
+                        {
+                            if(data.null_category === 'null'){
+                                $('.select_product').load(' .select_product > * ');
                             }
-                        }
-                    });
-
-                });
-
-
-                $(document).on('click','.update_product_discount', function(event){
-                    event.preventDefault();
-
-                    $(this).addClass('edit_product_discount').removeClass('update_product_discount')
-                    $(this).find('i').addClass('mdi-pencil').removeClass('content-save');
-
-                    let product_id = $(this).data('id');
-                    let discount_col = $('#product_discount_col_'+product_id);
-                    let discount_id = discount_col.find('select option:selected').val();
-                    let url = "{{ route('product.discount.update',':id') }}";
-                        url = url.replace(':id',product_id);
-                        
-                    $.ajax({
-                        type:'POST',
-                        url:url,
-                        data:{discount_id:discount_id},
-                        success:function(data){
-
-                            discount_col.html(data);
-                            discount_col.data('id',discount_id);
-
-                            $('.product_discount_alert').html('Updated!');
-                            $('.product_discount_alert').fadeIn('slow').delay(500).fadeOut('slow');
+                            else{
+                                $('.select_product').html(data);
+                            }
                             
                         },
-                        error:function(){
+                        error:function(response){
                             if(confirm('Something went wrong! Try reloading the page.')){
                                 window.location.reload();
                             }
                         }
                     });
 
+                }
+
+
+                $('#discount_product_category').on('change',function(){
+                    let id = $(this).val();
+                    get_products_by_category(id);
                 });
 
-            })();
+            
+                (function update_product_discount_inline(){
+
+                    $(document).on('click','.edit_product_discount', function(event){
+                        event.preventDefault();
+
+                        $(this).addClass('update_product_discount').removeClass('edit_product_discount')
+                        $(this).find('i').addClass('mdi-content-save').removeClass('mdi-pencil');
+
+                        let product_id = $(this).data('id');
+                        let discount_col = $('#product_discount_col_'+product_id);
+                        let discount_id = discount_col.data('id');
+                        let url = "{{ route('product.discount.edit',':id') }}";
+                            url = url.replace(':id',discount_id);
+
+                        $.ajax({
+                            type:'GET',
+                            url:url,
+                            success:function(data){
+                                discount_col.html('<select class="form-control text-capitalize" name="product_discount_edit">'+data+'</select>');
+                            },
+                            error:function(){
+                                if(confirm('Something went wrong! Try reloading the page.')){
+                                    window.location.reload();
+                                }
+                            }
+                        });
+
+                    });
 
 
-            $(document).on('click','.product_discount_delete',function(event){
-                event.preventDefault();
-                $('.product_discount_delete_modal').data('id',$(this).data('id'));
-                delete_product_discount();
-            });
+                    $(document).on('click','.update_product_discount', function(event){
+                        event.preventDefault();
 
+                        $(this).addClass('edit_product_discount').removeClass('update_product_discount')
+                        $(this).find('i').addClass('mdi-pencil').removeClass('content-save');
 
-            function delete_product_discount(){
-                $(document).on('click','.product_discount_delete_modal', function(event){
+                        let product_id = $(this).data('id');
+                        let discount_col = $('#product_discount_col_'+product_id);
+                        let discount_id = discount_col.find('select option:selected').val();
+                        let url = "{{ route('product.discount.update',':id') }}";
+                            url = url.replace(':id',product_id);
+                            
+                        $.ajax({
+                            type:'POST',
+                            url:url,
+                            data:{discount_id:discount_id},
+                            success:function(data){
+
+                                discount_col.html(data);
+                                discount_col.data('id',discount_id);
+
+                                $('.product_discount_alert').html('Updated!');
+                                $('.product_discount_alert').fadeIn('slow').delay(500).fadeOut('slow');
+                                
+                            },
+                            error:function(){
+                                if(confirm('Something went wrong! Try reloading the page.')){
+                                    window.location.reload();
+                                }
+                            }
+                        });
+
+                    });
+
+                })();
+            @endif
+
+            @if(auth()->user()->isSuperAdmin() || auth()->user()->hasPermissionTo('delete-product-discount'))
+                $(document).on('click','.product_discount_delete',function(event){
                     event.preventDefault();
-
-                    let id = $(this).data('id');
-                    let url = "{{ route('product.discount.delete',':id') }}";
-                        url = url.replace(':id',id);
-
-                    $('#deleteProductDiscount').modal('hide');
-                        
-                    $.ajax({
-                        type:'DELETE',
-                        url:url,
-                        success:function(data){
-                            window.location.reload();
-                        },
-                        error:function(){
-                            if(confirm('Something went wrong! Try reloading the page.')){
-                                window.location.reload();
-                            }
-                        }
-                    });
-
+                    $('.product_discount_delete_modal').data('id',$(this).data('id'));
+                    delete_product_discount();
                 });
-            };
+
+
+                function delete_product_discount(){
+                    $(document).on('click','.product_discount_delete_modal', function(event){
+                        event.preventDefault();
+
+                        let id = $(this).data('id');
+                        let url = "{{ route('product.discount.delete',':id') }}";
+                            url = url.replace(':id',id);
+
+                        $('#deleteProductDiscount').modal('hide');
+                            
+                        $.ajax({
+                            type:'DELETE',
+                            url:url,
+                            success:function(data){
+                                window.location.reload();
+                            },
+                            error:function(){
+                                if(confirm('Something went wrong! Try reloading the page.')){
+                                    window.location.reload();
+                                }
+                            }
+                        });
+
+                    });
+                };
+            @endif
         
 
         });

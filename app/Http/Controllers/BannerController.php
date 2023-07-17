@@ -26,7 +26,7 @@ class BannerController extends Controller
     {   
         Gate::authorize('view-any', Banner::class);
         
-        $banners = Banner::orderBy('id','desc')->paginate(20);
+        $banners = Banner::orderBy('id','asc')->paginate(20);
 
         return view('admin.banner.index',compact('banners'));
 
@@ -74,13 +74,13 @@ class BannerController extends Controller
         $status = $request->banner_status ?? 0;
         $banner_slug = Str::slug($request->banner_slug,'-');
 
-        $url = route('shop');
+        $url = '/shop';
 
         if($request->banner_category != '' && $request->banner_discount == ''){
-           $url = route('shop',$banner_slug);
+           $url = '/shop'.'/'.$banner_slug;
         }
         else if($request->banner_discount != ''){
-           $url = route('shop.sale',$banner_slug);
+           $url = '/sale'.'/'.$banner_slug;
         }
 
         DB::beginTransaction();
@@ -119,6 +119,8 @@ class BannerController extends Controller
         } catch (\Throwable $th) {
 
             DB::rollBack();
+
+            throw $th;
 
             return redirect()->back()->with('error','Something went wrong!')->withInput();
 
@@ -189,13 +191,13 @@ class BannerController extends Controller
             $banner_status = $request->banner_status ?? 0;
             $banner_slug = Str::slug($request->banner_slug,'-');
 
-            $url = route('shop');
+            $url = '/shop';
 
             if($request->banner_category != '' && $request->banner_discount == ''){
-                $url = route('shop',$banner_slug);
+                $url = '/shop'.'/'.$banner_slug;
             }
             else if($request->banner_discount != ''){
-                $url = route('shop.sale',$banner_slug);
+                $url = '/sale'.'/'.$banner_slug;
             }
             
             $banner->banner_type = $request->banner_type;
@@ -357,9 +359,12 @@ class BannerController extends Controller
     {
         $category_name = '';
         $discount_name = '';
+        $category = [];
+
 
         if($request->category_id != ''){
-            $category_name = get_category_name($request->category_id);
+            $category = Category::where('id',$request->category_id)->with('main_category')->first();
+            $category_name = $category->category_name;
         }
 
         if($request->discount_id != ''){
@@ -367,6 +372,10 @@ class BannerController extends Controller
         }
 
         $slug = Str::slug($category_name.' '.$discount_name,'-');
+
+        if($request->discount_id == '' && $category->main_category != null){
+            $slug = Str::slug($category->main_category->category_name,'-').'/'.$slug;
+        }
 
         return $slug;
     }

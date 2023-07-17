@@ -111,8 +111,8 @@
 
             <div class="row">
                 <div class="col-md-6 col-xl-3">
-                    <div class="card">
-                        <div class="card-body" style="padding:17px">
+                    <div class="card revenue_stats" id="daily_revenue_stats">
+                        <div class="card-body">
                             <h4 class="card-title mb-2">Daily</h4>
                             <div class="row">
                                 <div class="col-sm-12">
@@ -133,8 +133,8 @@
                     </div>
                 </div>
                 <div class="col-md-6 col-xl-3">
-                    <div class="card">
-                        <div class="card-body" style="padding:17px">
+                    <div class="card revenue_stats" id="weekly_revenue_stats">
+                        <div class="card-body">
                             <h4 class="card-title mb-2">Weekly</h4>
                             <div class="row">
                                 <div class="col-sm-12">
@@ -155,8 +155,8 @@
                     </div>
                 </div>
                 <div class="col-md-6 col-xl-3">
-                    <div class="card">
-                        <div class="card-body" style="padding:17px">
+                    <div class="card revenue_stats" id="monthly_revenue_stats">
+                        <div class="card-body">
                             <h4 class="card-title mb-2">Monthly</h4>
                             <div class="row">
                                 <div class="col-sm-12">
@@ -177,8 +177,8 @@
                     </div>
                 </div>
                 <div class="col-md-6 col-xl-3">
-                    <div class="card">
-                        <div class="card-body" style="padding:17px">
+                    <div class="card revenue_stats" id="yearly_revenue_stats">
+                        <div class="card-body">
                             <h4 class="card-title mb-2">Yearly</h4>
                             <div class="row">
                                 <div class="col-sm-12">
@@ -239,13 +239,15 @@
                         <div class="card-body">
                             <h4 class="card-title mb-4">Top Cities Selling Product</h4>
 
-                            <div class="text-center">
-                                <div class="mb-4">
-                                    <i class="bx bx-map-pin text-primary display-4"></i>
+                            @if (!empty($top_cities_by_order[0]))
+                                <div class="text-center">
+                                    <div class="mb-4">
+                                        <i class="bx bx-map-pin text-primary display-4"></i>
+                                    </div>
+                                    <h3>{{ $top_cities_by_order[0]['orders_count'] }}</h3>
+                                    <p>{{ $top_cities_by_order[0]['city_name'] }}</p>
                                 </div>
-                                <h3>{{ $top_cities_by_order[0]['orders_count'] }}</h3>
-                                <p>{{ $top_cities_by_order[0]['city_name'] }}</p>
-                            </div>
+                            @endif
 
                             <div class="table-responsive mt-4">
                                 <table class="table align-middle table-nowrap">
@@ -279,57 +281,106 @@
             <!-- end row -->
             
             
-            <div class="row">
+            <div class="row" id="top_product_wrapper">
                 <div class="col-xl-4">
-                    <div class="card">
+                    <div class="card top_product" id="top_selling_product">
                         <div class="card-body">
-                            <h4 class="card-title mb-4">Top Selling product</h4>
-
+                            <h4 class="card-title mb-4">Top Selling Product</h4>
                             <div class="table-responsive mt-4">
                                 <table class="table align-middle mb-0">
                                     <tbody>
-                                        <tr>
-                                            <td>
-                                                <h5 class="font-size-14 mb-1">Product A</h5>
-                                                <p class="text-muted mb-0">Neque quis est</p>
-                                            </td>
+                                        @forelse ($best_seller_products as $best_seller_product)
+                                            <tr>
+                                                <td class="product_name">
+                                                    <h5 class="font-size-14 mb-1"><a href="{{ route('product.show', $best_seller_product->id) }}" class="dash_product_link">{{ $best_seller_product->product_name }}</a></h5>
+                                                    <p class="text-muted mb-0">{{ '$'.number_format(($best_seller_product->price/100),2) }}</p>
+                                                </td>
 
-                                            <td style="position: relative;">
-                                                <div id="radialchart-1" class="apex-charts" style="min-height: 61px;"><div id="apexchartsp6e7unjc" class="apexcharts-canvas apexchartsp6e7unjc apexcharts-theme-light" style="width: 60px; height: 61px;"><svg id="SvgjsSvg2424" width="60" height="61" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" class="apexcharts-svg" xmlns:data="ApexChartsNS" transform="translate(0, 0)" style="background: transparent;"><g id="SvgjsG2426" class="apexcharts-inner apexcharts-graphical" transform="translate(0, 0)"><defs id="SvgjsDefs2425"><clipPath id="gridRectMaskp6e7unjc"><rect id="SvgjsRect2428" width="66" height="62" x="-3" y="-1" rx="0" ry="0" opacity="1" stroke-width="0" stroke="none" stroke-dasharray="0" fill="#fff"></rect></clipPath><clipPath id="gridRectMarkerMaskp6e7unjc"><rect id="SvgjsRect2429" width="64" height="64" x="-2" y="-2" rx="0" ry="0" opacity="1" stroke-width="0" stroke="none" stroke-dasharray="0" fill="#fff"></rect></clipPath></defs><g id="SvgjsG2430" class="apexcharts-radialbar"><g id="SvgjsG2431"><g id="SvgjsG2432" class="apexcharts-tracks"><g id="SvgjsG2433" class="apexcharts-radialbar-track apexcharts-track" rel="1"><path id="apexcharts-radialbarTrack-0" d="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 1 1 29.99642420350187 9.512195433998325" fill="none" fill-opacity="1" stroke="rgba(242,242,242,0.85)" stroke-opacity="1" stroke-linecap="butt" stroke-width="5.678048780487805" stroke-dasharray="0" class="apexcharts-radialbar-area" data:pathOrig="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 1 1 29.99642420350187 9.512195433998325"></path></g></g><g id="SvgjsG2435"><g id="SvgjsG2437" class="apexcharts-series apexcharts-radial-series" seriesName="seriesx1" rel="1" data:realIndex="0"><path id="SvgjsPath2438" d="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 0 1 44.98383193561228 43.972649328109725" fill="none" fill-opacity="0.85" stroke="rgba(85,110,230,0.85)" stroke-opacity="1" stroke-linecap="butt" stroke-width="5.853658536585366" stroke-dasharray="0" class="apexcharts-radialbar-area apexcharts-radialbar-slice-0" data:angle="133" data:value="37" index="0" j="0" data:pathOrig="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 0 1 44.98383193561228 43.972649328109725"></path></g><circle id="SvgjsCircle2436" r="17.64878048780488" cx="30" cy="30" class="apexcharts-radialbar-hollow" fill="transparent"></circle></g></g></g><line id="SvgjsLine2439" x1="0" y1="0" x2="60" y2="0" stroke="#b6b6b6" stroke-dasharray="0" stroke-width="1" class="apexcharts-ycrosshairs"></line><line id="SvgjsLine2440" x1="0" y1="0" x2="60" y2="0" stroke-dasharray="0" stroke-width="0" class="apexcharts-ycrosshairs-hidden"></line></g><g id="SvgjsG2427" class="apexcharts-annotations"></g></svg><div class="apexcharts-legend"></div></div></div>
-                                            <div class="resize-triggers"><div class="expand-trigger"><div style="width: 87px; height: 86px;"></div></div><div class="contract-trigger"></div></div></td>
-                                            <td>
-                                                <p class="text-muted mb-1">Sales</p>
-                                                <h5 class="mb-0">37 %</h5>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <h5 class="font-size-14 mb-1">Product B</h5>
-                                                <p class="text-muted mb-0">Quis autem iure</p>
-                                            </td>
+                                                <td class="product_image">
+                                                    <img width="50" src="{{ asset('uploads/product/'.$best_seller_product->thumbnail) }}" alt="{{ $best_seller_product->product_name }}">
+                                                </td>
+                                                <td class="product_sale">
+                                                    <p class="text-muted mb-1">Sales</p>
+                                                    <h5 class="mb-0">{{ $best_seller_product->total_order }}</h5>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="3" class="text-center">No data available!</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4">
+                    <div class="card top_product" id="most_viewed_product">
+                        <div class="card-body">
+                            <h4 class="card-title mb-4">Most Viewed Product</h4>
+                            <div class="table-responsive mt-4">
+                                <table class="table align-middle mb-0">
+                                    <tbody>
+                                        @forelse ($most_viewed_products as $most_viewed_product)
+                                            <tr>
+                                                <td class="product_name">
+                                                    <h5 class="font-size-14 mb-1"><a href="{{ route('product.show', $most_viewed_product->id) }}" class="dash_product_link">{{ $most_viewed_product->product_name }}</a></h5>
+                                                    <p class="text-muted mb-0">{{ '$'.number_format(($most_viewed_product->price/100),2) }}</p>
+                                                </td>
 
-                                            <td style="position: relative;">
-                                                <div id="radialchart-2" class="apex-charts" style="min-height: 61px;"><div id="apexchartspvpa8bc7" class="apexcharts-canvas apexchartspvpa8bc7 apexcharts-theme-light" style="width: 60px; height: 61px;"><svg id="SvgjsSvg2441" width="60" height="61" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" class="apexcharts-svg" xmlns:data="ApexChartsNS" transform="translate(0, 0)" style="background: transparent;"><g id="SvgjsG2443" class="apexcharts-inner apexcharts-graphical" transform="translate(0, 0)"><defs id="SvgjsDefs2442"><clipPath id="gridRectMaskpvpa8bc7"><rect id="SvgjsRect2445" width="66" height="62" x="-3" y="-1" rx="0" ry="0" opacity="1" stroke-width="0" stroke="none" stroke-dasharray="0" fill="#fff"></rect></clipPath><clipPath id="gridRectMarkerMaskpvpa8bc7"><rect id="SvgjsRect2446" width="64" height="64" x="-2" y="-2" rx="0" ry="0" opacity="1" stroke-width="0" stroke="none" stroke-dasharray="0" fill="#fff"></rect></clipPath></defs><g id="SvgjsG2447" class="apexcharts-radialbar"><g id="SvgjsG2448"><g id="SvgjsG2449" class="apexcharts-tracks"><g id="SvgjsG2450" class="apexcharts-radialbar-track apexcharts-track" rel="1"><path id="apexcharts-radialbarTrack-0" d="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 1 1 29.99642420350187 9.512195433998325" fill="none" fill-opacity="1" stroke="rgba(242,242,242,0.85)" stroke-opacity="1" stroke-linecap="butt" stroke-width="5.678048780487805" stroke-dasharray="0" class="apexcharts-radialbar-area" data:pathOrig="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 1 1 29.99642420350187 9.512195433998325"></path></g></g><g id="SvgjsG2452"><g id="SvgjsG2454" class="apexcharts-series apexcharts-radial-series" seriesName="seriesx1" rel="1" data:realIndex="0"><path id="SvgjsPath2455" d="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 1 1 9.888613802535662 33.90925746625116" fill="none" fill-opacity="0.85" stroke="rgba(52,195,143,0.85)" stroke-opacity="1" stroke-linecap="butt" stroke-width="5.853658536585366" stroke-dasharray="0" class="apexcharts-radialbar-area apexcharts-radialbar-slice-0" data:angle="259" data:value="72" index="0" j="0" data:pathOrig="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 1 1 9.888613802535662 33.90925746625116"></path></g><circle id="SvgjsCircle2453" r="17.64878048780488" cx="30" cy="30" class="apexcharts-radialbar-hollow" fill="transparent"></circle></g></g></g><line id="SvgjsLine2456" x1="0" y1="0" x2="60" y2="0" stroke="#b6b6b6" stroke-dasharray="0" stroke-width="1" class="apexcharts-ycrosshairs"></line><line id="SvgjsLine2457" x1="0" y1="0" x2="60" y2="0" stroke-dasharray="0" stroke-width="0" class="apexcharts-ycrosshairs-hidden"></line></g><g id="SvgjsG2444" class="apexcharts-annotations"></g></svg><div class="apexcharts-legend"></div></div></div>
-                                            <div class="resize-triggers"><div class="expand-trigger"><div style="width: 87px; height: 86px;"></div></div><div class="contract-trigger"></div></div></td>
-                                            <td>
-                                                <p class="text-muted mb-1">Sales</p>
-                                                <h5 class="mb-0">72 %</h5>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <h5 class="font-size-14 mb-1">Product C</h5>
-                                                <p class="text-muted mb-0">Sed aliquam mauris.</p>
-                                            </td>
-
-                                            <td style="position: relative;">
-                                                <div id="radialchart-3" class="apex-charts" style="min-height: 61px;"><div id="apexchartsmdznhq26" class="apexcharts-canvas apexchartsmdznhq26 apexcharts-theme-light" style="width: 60px; height: 61px;"><svg id="SvgjsSvg2458" width="60" height="61" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" class="apexcharts-svg" xmlns:data="ApexChartsNS" transform="translate(0, 0)" style="background: transparent;"><g id="SvgjsG2460" class="apexcharts-inner apexcharts-graphical" transform="translate(0, 0)"><defs id="SvgjsDefs2459"><clipPath id="gridRectMaskmdznhq26"><rect id="SvgjsRect2462" width="66" height="62" x="-3" y="-1" rx="0" ry="0" opacity="1" stroke-width="0" stroke="none" stroke-dasharray="0" fill="#fff"></rect></clipPath><clipPath id="gridRectMarkerMaskmdznhq26"><rect id="SvgjsRect2463" width="64" height="64" x="-2" y="-2" rx="0" ry="0" opacity="1" stroke-width="0" stroke="none" stroke-dasharray="0" fill="#fff"></rect></clipPath></defs><g id="SvgjsG2464" class="apexcharts-radialbar"><g id="SvgjsG2465"><g id="SvgjsG2466" class="apexcharts-tracks"><g id="SvgjsG2467" class="apexcharts-radialbar-track apexcharts-track" rel="1"><path id="apexcharts-radialbarTrack-0" d="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 1 1 29.99642420350187 9.512195433998325" fill="none" fill-opacity="1" stroke="rgba(242,242,242,0.85)" stroke-opacity="1" stroke-linecap="butt" stroke-width="5.678048780487805" stroke-dasharray="0" class="apexcharts-radialbar-area" data:pathOrig="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 1 1 29.99642420350187 9.512195433998325"></path></g></g><g id="SvgjsG2469"><g id="SvgjsG2471" class="apexcharts-series apexcharts-radial-series" seriesName="seriesx1" rel="1" data:realIndex="0"><path id="SvgjsPath2472" d="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 1 1 25.043551407226317 49.87922951394725" fill="none" fill-opacity="0.85" stroke="rgba(244,106,106,0.85)" stroke-opacity="1" stroke-linecap="butt" stroke-width="5.853658536585366" stroke-dasharray="0" class="apexcharts-radialbar-area apexcharts-radialbar-slice-0" data:angle="194" data:value="54" index="0" j="0" data:pathOrig="M 30 9.512195121951216 A 20.487804878048784 20.487804878048784 0 1 1 25.043551407226317 49.87922951394725"></path></g><circle id="SvgjsCircle2470" r="17.64878048780488" cx="30" cy="30" class="apexcharts-radialbar-hollow" fill="transparent"></circle></g></g></g><line id="SvgjsLine2473" x1="0" y1="0" x2="60" y2="0" stroke="#b6b6b6" stroke-dasharray="0" stroke-width="1" class="apexcharts-ycrosshairs"></line><line id="SvgjsLine2474" x1="0" y1="0" x2="60" y2="0" stroke-dasharray="0" stroke-width="0" class="apexcharts-ycrosshairs-hidden"></line></g><g id="SvgjsG2461" class="apexcharts-annotations"></g></svg><div class="apexcharts-legend"></div></div></div>
-                                            <div class="resize-triggers"><div class="expand-trigger"><div style="width: 87px; height: 86px;"></div></div><div class="contract-trigger"></div></div></td>
-                                            <td>
-                                                <p class="text-muted mb-1">Sales</p>
-                                                <h5 class="mb-0">54 %</h5>
-                                            </td>
-                                        </tr>
+                                                <td class="product_image">
+                                                    <img width="50" src="{{ asset('uploads/product/'.$most_viewed_product->thumbnail) }}" alt="{{ $most_viewed_product->product_name }}">
+                                                </td>
+                                                <td class="product_view">
+                                                    <p class="text-muted mb-1">Views</p>
+                                                    <h5 class="mb-0">{{ $most_viewed_product->total_view }}</h5>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="3" class="text-center">No data available!</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4">
+                    <div class="card top_product" id="top_rated_product">
+                        <div class="card-body">
+                            <h4 class="card-title mb-4">Top Rated Product</h4>
+                            <div class="table-responsive mt-4">
+                                <table class="table align-middle mb-0">
+                                    <tbody>
+                                        @forelse ($top_rated_products as $top_rated_product)
+                                            <tr>
+                                                <td class="product_name">
+                                                    <h5 class="font-size-14 mb-1">
+                                                        <a href="{{ route('product.show', $top_rated_product->id) }}" class="dash_product_link">{{ $top_rated_product->product_name }}</a>
+                                                    </h5>
+                                                    <p class="text-muted mb-0">{{ '$'.number_format(($top_rated_product->price/100),2) }}</p>
+                                                </td>
+                                                <td class="product_image">
+                                                    <img width="50" src="{{ asset('uploads/product/'.$top_rated_product->thumbnail) }}" alt="{{ $top_rated_product->product_name }}">
+                                                </td>
+                                                <td class="product_rating_count">
+                                                    <p class="text-muted mb-1">Ratings</p>
+                                                    <div class="mb-0 product_rating">
+                                                        <ul>
+                                                            {{ getAvgRating($top_rated_product->id) }}
+                                                            <li class="text-muted">{{ '( '.$top_rated_product->reviews_count.' )' }}</li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="3" class="text-center">No data available!</td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>
@@ -413,7 +464,7 @@
                                         </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="6"  class="text-center">
+                                                <td colspan="8"  class="text-center">
                                                     No data available!
                                                 </td>
                                             </tr>
@@ -462,7 +513,7 @@
     
 
     <script>
-        
+
         $(document).ready(function(){
 
             $.ajaxSetup({
@@ -501,104 +552,166 @@
                 $('#latestOrderDetailModal').find('.modal-body').html('');
             });
 
-
-            (function(){
-                options = {
-                        series: [
-                            {
-                                name: "Order",
-                                data: [
-                                    @foreach ($chart_data as $d)
-                                        [ {{ \Carbon\Carbon::parse($d['date'])->timestamp*1000 }} , {{ $d['order'] }} , {{ number_format(($d['revenue']/100),2) }} ],
-                                    @endforeach
-                                ],
-                            },
-                        ],
-                        chart: { type: "area", height: 240, toolbar: "false" },
-                        dataLabels: { enabled: !1 },
-                        stroke: { curve: "smooth", width: 2 },
-                        markers: { size: 0, style: "hollow" },
-                        // xaxis: { type: "datetime", min: new Date("{{ now()->subMonths()->format('Y M d') }}").getTime(), tickAmount: 6 },
-                        xaxis: { 
-                            type: "datetime", 
-                            min: {{ \Carbon\Carbon::parse(now()->subMonths())->timestamp*1000 }} ,
-                            tickAmount: 6 
-                        },
-                        yaxis: { 
-                            title:{ text:'Orders'},
-                        },
-                        tooltip: { 
-                            theme: "dark",
-                            x: { format: "dd MMM yyyy" },
-                            z: {title: "Revenue: $"}, 
-                        },
-                        colors: ["#556ee6"],
-                        fill: { type: "gradient", gradient: { shadeIntensity: 1, opacityFrom: 0.6, opacityTo: 0.05, stops: [42, 100, 100, 100] } },
-                    };
-                (chart = new ApexCharts(document.querySelector("#overview-chart-timeline"), options)).render();
-
-                var resetCssClasses = function (e) {
-                    var t = document.querySelectorAll("button");
-                    Array.prototype.forEach.call(t, function (e) {
-                        e.classList.remove("active");
-                    }),
-                        e.target.classList.add("active");
-                };
-                document.querySelector("#one_month").addEventListener("click", function (e) {
-                    resetCssClasses(e), 
-                    chart.updateOptions({
-                        xaxis: {
-                            min: {{ \Carbon\Carbon::parse(now()->subMonths())->timestamp*1000 }}, 
-                            // max: new Date("{{ now()->format('Y M d') }}").getTime() 
-                        } 
-                    });
-                }),
-                document.querySelector("#six_months").addEventListener("click", function (e) {
-                    resetCssClasses(e), 
-                    chart.updateOptions({
-                         xaxis: {
-                            min: {{ \Carbon\Carbon::parse(now()->subMonths(6))->timestamp*1000 }}, 
-                            // max: new Date("{{ now()->format('Y M d') }}").getTime() 
-                        } 
-                    });
-                }),
-                document.querySelector("#one_year").addEventListener("click", function (e) {
-                    resetCssClasses(e), 
-                    chart.updateOptions({
-                         xaxis: {
-                            min: {{ \Carbon\Carbon::parse(now()->subYears())->timestamp*1000 }}, 
-                            // max: new Date("{{ now()->format('Y M d') }}").getTime() 
-                        } 
-                    });
-                }),
-                document.querySelector("#all").addEventListener("click", function (e) {
-                    resetCssClasses(e), 
-                    chart.updateOptions({
-                        xaxis: {
-                            min: void 0,
-                            max: void 0 
-                        } 
-                    });
-                });
-            })();
+        });
 
 
-            (function(){
-                let chartElem = document.querySelector(".chart_card");
-                let cityElem = document.querySelector(".city_card");
 
-                let chartHeight = chartElem.offsetHeight;
-                let cityHeight = cityElem.offsetHeight;
+        window.addEventListener('load', function(){
 
-                if(chartHeight > cityHeight){
-                     cityElem.style.height = chartHeight+"px";
-                }
-                else{ 
-                    chartElem.style.height = cityHeight+"px";
-                }
-            })();
+            loadChart();
+
+            adjustElemHeight('.top_product');
+
+            adjustElemHeight(['.city_card','.chart_card']);
+
+            adjustElemHeight(['#daily_revenue_stats','#weekly_revenue_stats','#monthly_revenue_stats','#yearly_revenue_stats']);
 
         });
+
+
+        window.addEventListener('resize', function () {
+
+            adjustElemHeight('.top_product');
+
+            adjustElemHeight(['.city_card','.chart_card']);
+
+            adjustElemHeight(['#daily_revenue_stats','#weekly_revenue_stats','#monthly_revenue_stats','#yearly_revenue_stats']);
+
+        });
+        
+
+        function loadChart(){
+            fetchChartData().then(data => {
+                chart_init(data);
+            }).catch(error => {
+                console.log(error);
+            });
+        }
+
+        
+        async function fetchChartData(){
+            const response = await fetch('/admin/chart-data', {
+                headers: {
+                    'credentials': 'same-origin',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                },
+                method: 'GET'
+            });
+
+            return response.json();
+        }
+
+
+        function chart_init(data){
+            options = {
+                    series: [
+                        {
+                            name: "Order",
+                            data: data,
+                        },
+                    ],
+                    chart: { type: "area", height: 240, toolbar: "false" },
+                    dataLabels: { enabled: !1 },
+                    stroke: { curve: "smooth", width: 2 },
+                    markers: { size: 0, style: "hollow" },
+                    // xaxis: { type: "datetime", min: new Date("{{ now()->subMonths()->format('Y M d') }}").getTime(), tickAmount: 6 },
+                    xaxis: { 
+                        type: "datetime", 
+                        min: {{ \Carbon\Carbon::createFromFormat('Y-m-d', now()->subMonths()->format('Y-m-d'))->timestamp*1000 }} ,
+                        tickAmount: 6,
+                        labels: {
+                            datetimeUTC : false,
+                        }
+                    },
+                    yaxis: { 
+                        title:{ text:'Orders'},
+                    },
+                    tooltip: { 
+                        theme: "dark",
+                        x: { format: "dd MMM yyyy" },
+                        z: {title: "Revenue: $"}, 
+                    },
+                    colors: ["#556ee6"],
+                    fill: { type: "gradient", gradient: { shadeIntensity: 1, opacityFrom: 0.6, opacityTo: 0.05, stops: [42, 100, 100, 100] } },
+            };
+
+            (chart = new ApexCharts(document.querySelector("#overview-chart-timeline"), options)).render();
+                            
+            var resetCssClasses = function (e) {
+                var t = document.querySelectorAll("button");
+                Array.prototype.forEach.call(t, function (e) {
+                    e.classList.remove("active");
+                }),
+                e.target.classList.add("active");
+            };
+
+
+            document.querySelector("#one_month").addEventListener("click", function (e) {
+                resetCssClasses(e), 
+                chart.updateOptions({
+                    xaxis: {
+                        min: {{ \Carbon\Carbon::createFromFormat('Y-m-d', now()->subMonths()->format('Y-m-d'))->timestamp*1000 }}, 
+                        // max: new Date("{{ now()->format('Y M d') }}").getTime() 
+                    } 
+                });
+            }),
+            document.querySelector("#six_months").addEventListener("click", function (e) {
+                resetCssClasses(e), 
+                chart.updateOptions({
+                        xaxis: {
+                        min: {{ \Carbon\Carbon::createFromFormat('Y-m-d', now()->subMonths(6)->format('Y-m-d'))->timestamp*1000 }}, 
+                        // max: new Date("{{ now()->format('Y M d') }}").getTime() 
+                    } 
+                });
+            }),
+            document.querySelector("#one_year").addEventListener("click", function (e) {
+                resetCssClasses(e), 
+                chart.updateOptions({
+                        xaxis: {
+                        min: {{ \Carbon\Carbon::createFromFormat('Y-m-d', now()->subYears()->format('Y-m-d'))->timestamp*1000 }}, 
+                        // max: new Date("{{ now()->format('Y M d') }}").getTime() 
+                    } 
+                });
+            }),
+            document.querySelector("#all").addEventListener("click", function (e) {
+                resetCssClasses(e), 
+                chart.updateOptions({
+                    xaxis: {
+                        min: void 0,
+                        max: void 0 
+                    } 
+                });
+            });
+        }
+
+
+        function adjustElemHeight(elem){
+            let elems = [];
+            let h_height = 0;
+
+            if(typeof elem === 'string'){
+                elems = document.querySelectorAll(elem);
+            }
+            else if(typeof elem === 'object'){
+                elem.forEach(function(el){
+                    elems.push(document.querySelector(el));
+                });
+            }
+
+            elems.forEach(function(elem){
+                elem.style = `min-height:${0+"px"}`;
+
+                if(elem.offsetHeight > h_height){
+                    h_height = elem.offsetHeight;
+                }
+            });
+
+            elems.forEach(function(elem){
+                elem.style = `min-height:${h_height+"px"}`;
+            });
+        }
+
 
     </script>
 

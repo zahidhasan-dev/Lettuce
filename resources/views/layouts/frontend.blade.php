@@ -13,7 +13,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
         <!-- Place favicon.png in the root directory -->
-        <link rel="shortcut icon" href="{{ asset('frontend_assets/img/favicon.png') }}" type="image/x-icon" />
+        <link rel="shortcut icon" href="{{ get_logo_image('favicon') }}" type="image/x-icon" />
         <!-- Font Icons css -->
         <link rel="stylesheet" href="{{ asset('frontend_assets/css/font-icons.css') }}">
         <!-- plugins css -->
@@ -529,7 +529,7 @@
                         <div class="row">
                             <div class="col">
                                 <div class="site-logo">
-                                    <a href="{{ route('index') }}"><img src="{{ asset('frontend_assets/img/logo-dark.png') }}" alt="Logo"></a>
+                                    <a href="{{ route('index') }}"><img src="{{ get_logo_image('dark') }}" alt="Logo"></a>
                                 </div>
                             </div>
                             <div class="col header-contact-serarch-column d-none d-lg-block">
@@ -612,7 +612,7 @@
                             <div class="col header-menu-column justify-content-center">
                                 <div class="sticky-logo">
                                     <div class="site-logo">
-                                        <a href="{{ route('index') }}"><img src="{{ asset('frontend_assets/img/logo-dark.png') }}" alt="Logo"></a>
+                                        <a href="{{ route('index') }}"><img src="{{ get_logo_image('dark') }}" alt="Logo"></a>
                                     </div>
                                 </div>
                                 <div class="header-menu header-menu-2">
@@ -693,7 +693,7 @@
                 <div class="ltn__utilize-menu-inner ltn__scrollbar">
                     <div class="ltn__utilize-menu-head">
                         <div class="site-logo">
-                            <a href="{{ route('index') }}"><img src="{{ asset('frontend_assets/img/logo-dark.png') }}" alt="Logo"></a>
+                            <a href="{{ route('index') }}"><img src="{{ get_logo_image('dark') }}" alt="Logo"></a>
                         </div>
                         <button class="ltn__utilize-close">×</button>
                     </div>
@@ -856,7 +856,7 @@
                                     <div class="footer-logo mb-10">
                                         <div class="site-logo">
                                             <a href="{{ route('index') }}">
-                                                <img src="{{ asset('frontend_assets/img/logo-dark.png') }}" alt="Logo">
+                                                <img src="{{ get_logo_image('dark') }}" alt="Logo">
                                             </a>
                                         </div>
                                     </div>

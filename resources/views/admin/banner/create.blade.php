@@ -47,7 +47,7 @@
                             <form action="{{ route('banner.store') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="row">
-                                    <div class="col-12">
+                                    <div class="col-12 col-xl-6">
 
                                         <div class="mb-3">
                                             <label class="control-label">Banner Type</label>

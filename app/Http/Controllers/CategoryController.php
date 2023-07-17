@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Intervention\Image\Facades\Image;
 use App\Http\Requests\CategoryFormPost;
@@ -60,9 +58,7 @@ class CategoryController extends Controller
 
         $category_slug = Str::slug($request->category_name);
         
-        $create_category = Category::create($request->all()+['category_slug'=>$category_slug]);
-
-        $category = Category::where('id',$create_category->id)->first();
+        $category = Category::create($request->all()+['category_slug'=>$category_slug]);
 
         if($request->hasFile('category_photo')){
             
@@ -72,7 +68,7 @@ class CategoryController extends Controller
 
             if(in_array($img_extension,$allowed_extension)){
                 
-                $new_img_name = 'category'.'_'.$create_category->id.'_'.Carbon::now()->timestamp.'.'.$img_extension;
+                $new_img_name = 'category'.'_'.$category->id.'_'.Carbon::now()->timestamp.'.'.$img_extension;
                 $new_img_location = base_path('public/uploads/category/'.$new_img_name);
 
                 Image::make($uploaded_img)->resize(100,100)->save($new_img_location);

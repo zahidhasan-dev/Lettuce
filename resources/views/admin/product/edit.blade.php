@@ -141,25 +141,27 @@
                                             @enderror
                                         </div>
 
-                                        <div class="mb-3"  id="discount_select_wrapper" style="{{ old('product_has_discount', $product->has_discount) == 1 ? 'display:block;' :'display:none;' }}">
-                                            <select class="form-control" name="product_discount">
-                                                <option selected disabled>Select Discount</option>
-                                                @foreach ($discounts as $discount)
-                                                    @if (getProductDiscount($product->id) != null)
-                                                        <option {{ (old('product_has_discount', $product->has_discount) == 1 && old('product_discount', getProductDiscount($product->id)->id) == $discount->id)?'selected':'' }} value="{{ $discount->id }}">
-                                                            {{ $discount->discount_name.' ( '.discountValueType($discount->id).' )' }}
-                                                        </option>
-                                                    @else
-                                                        <option {{ (old('product_has_discount') == 1 && old('product_discount') == $discount->id)?'selected':'' }} value="{{ $discount->id }}">
-                                                            {{ $discount->discount_name.' ( '.discountValueType($discount->id).' )' }}
-                                                        </option>
-                                                    @endif
-                                                @endforeach
-                                            </select>
-                                            @error('product_discount')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
+                                        @can('create-product-discount', \App\Models\Product::class)
+                                            <div class="mb-3"  id="discount_select_wrapper" style="{{ old('product_has_discount', $product->has_discount) == 1 ? 'display:block;' :'display:none;' }}">
+                                                <select class="form-control" name="product_discount">
+                                                    <option selected disabled>Select Discount</option>
+                                                    @foreach ($discounts as $discount)
+                                                        @if (getProductDiscount($product->id) != null)
+                                                            <option {{ (old('product_has_discount', $product->has_discount) == 1 && old('product_discount', getProductDiscount($product->id)->id) == $discount->id)?'selected':'' }} value="{{ $discount->id }}">
+                                                                {{ $discount->discount_name.' ( '.discountValueType($discount->id).' )' }}
+                                                            </option>
+                                                        @else
+                                                            <option {{ (old('product_has_discount') == 1 && old('product_discount') == $discount->id)?'selected':'' }} value="{{ $discount->id }}">
+                                                                {{ $discount->discount_name.' ( '.discountValueType($discount->id).' )' }}
+                                                            </option>
+                                                        @endif
+                                                    @endforeach
+                                                </select>
+                                                @error('product_discount')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
+                                            </div>
+                                        @endcan
 
                                         <div class="mb-3">
                                             <div class="form-check">

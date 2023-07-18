@@ -32,6 +32,11 @@ Run the database migrations (**Set the database connection in .env before migrat
 
     php artisan migrate
 
+Start queue and schedule
+
+    php artisan queue:work
+    php artisan schedule:work
+
 Start the local development server
 
     php artisan serve
@@ -49,6 +54,8 @@ You can now access the server at http://localhost:8000
 **Make sure you set the correct database connection information before running the migrations** [Environment variables](#environment-variables)
 
     php artisan migrate
+    php artisan queue:work
+    php artisan schedule:work
     php artisan serve
 
 ## Database seeding

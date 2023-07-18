@@ -69,10 +69,10 @@ Run the database seeder and you're done
 **Setup payment gateway for online payment.**
 
 
-Add stripe_key and stripe_secret in .env file
+Add or change stripe_key and stripe_secret in .env file
 
-    STRIPE_KEY=
-    STRIPE_SECRET=
+    STRIPE_KEY= 
+    STRIPE_SECRET= 
 
 ***Note*** : This app only supports Stripe payment gateway.
 

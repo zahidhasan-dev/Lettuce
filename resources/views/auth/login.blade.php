@@ -21,6 +21,7 @@
                     <form method="POST" action="{{ route('login') }}" class="ltn__form-box contact-form-box">
                         @csrf
                         <div>
+                            <label for="">Email: super-admin@lettuce.com</label>
                             <input id="email" type="email" placeholder="Email*" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
                             @error('email')
                                 <span class="invalid-feedback" role="alert">
@@ -30,6 +31,7 @@
                         </div>
 
                         <div>
+                            <label for="">Password: password</label>
                             <input id="password" type="password" placeholder="Password*" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
                             @error('password')
                                 <span class="invalid-feedback" role="alert">

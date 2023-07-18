@@ -5,15 +5,16 @@
 
 ## Installation
 
-Please check the official laravel installation guide for server requirements before you start. [Official Documentation](https://laravel.com/docs/5.4/installation#installation)
+Please check the official laravel installation guide for server requirements before you start. [Official Documentation](https://laravel.com/docs/9.x/installation)
 
 Clone the repository
 
-    git clone git@github.com:gothinkster/laravel-realworld-example-app.git
+    git clone https://github.com/zahidhasan-dev/Lettuce.git
+    
 
 Switch to the repo folder
 
-    cd laravel-realworld-example-app
+    cd lettuce
 
 Install all the dependencies using composer
 
@@ -39,8 +40,8 @@ You can now access the server at http://localhost:8000
 
 **TL;DR command list**
 
-    git clone git@github.com:gothinkster/laravel-realworld-example-app.git
-    cd laravel-realworld-example-app
+    git clone https://github.com/zahidhasan-dev/Lettuce.git
+    cd lettuce
     composer install
     cp .env.example .env
     php artisan key:generate
@@ -62,7 +63,18 @@ Run the database seeder and you're done
 ***Note*** : It's recommended to have a clean database before seeding. You can refresh your migrations at any point to clean the database by running the following command
 
     php artisan migrate:refresh
-    
+
+## Payment Gateway Integration
+
+**Setup payment gateway for online payment.**
+
+
+Add stripe_key and stripe_secret in .env file
+
+    STRIPE_KEY=
+    STRIPE_SECRET=
+
+***Note*** : This app only supports Stripe payment gateway.
 
 
 ## Environment variables
